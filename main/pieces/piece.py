@@ -275,17 +275,3 @@ class Piece:
             return self.move(x, y, **kwargs)
 
         raise InvalidMoveError(f'Moving {self} to {(x, y)} is invalid')
-
-
-# TODO:
-# python isort, black formatting (Github first)
-# Promotion piece dialog - we must ask for piece type from input. Right now
-# it's just defaulting to Queen, which is fine for most cases
-# NewTeam refactor
-
-# TODO start here
-# Board to fen, fen to board + validations
-# Board to PGN, PGN to board
-
-# Without endgame tables, we can determine almost certain wins by looking at
-# material. If one team has +10 or +15 for example, it's almost a sure win
