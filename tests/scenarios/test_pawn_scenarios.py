@@ -2,9 +2,7 @@ import pytest
 
 from main.board import Board
 from main.exceptions import InvalidMoveError
-from main.pieces import (
-    WhitePawn, BlackPawn, Rook, Queen, King, Knight,
-)
+from main.pieces import BlackPawn, King, Knight, Queen, Rook, WhitePawn
 
 
 class TestPawnScenarios:

@@ -1,7 +1,5 @@
 from main.board import Board
-from main.pieces import (
-    Rook, Knight, King, Bishop, Queen
-)
+from main.pieces import Bishop, King, Knight, Queen, Rook
 
 
 class TestCaptureScenarios:

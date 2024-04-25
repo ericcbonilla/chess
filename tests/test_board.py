@@ -1,5 +1,5 @@
 from main.board import Board
-from main.pieces import King, WhitePawn, Queen, Rook
+from main.pieces import King, Queen, Rook, WhitePawn
 
 
 class TestBoard:

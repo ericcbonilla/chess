@@ -2,7 +2,6 @@ from typing import List
 
 from main.types import TeamColor
 
-
 WHITE = 'WHITE'
 BLACK = 'BLACK'
 COLORS: List[TeamColor] = ['WHITE', 'BLACK']

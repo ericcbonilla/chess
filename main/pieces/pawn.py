@@ -1,14 +1,15 @@
-from typing import Set, Union, Type, Dict, Optional
+from typing import Dict, Optional, Set, Type, Union
 
 from main import constants
 from main.exceptions import PromotionError
-from main.types import Position, Change
+from main.types import Change, Position
 from main.xposition import XPosition
-from .piece import Piece
+
 from .bishop import Bishop
 from .knight import Knight
-from .rook import Rook
+from .piece import Piece
 from .queen import Queen
+from .rook import Rook
 
 
 class Pawn(Piece):

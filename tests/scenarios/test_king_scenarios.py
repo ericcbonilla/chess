@@ -2,14 +2,7 @@ import pytest
 
 from main.board import Board
 from main.exceptions import InvalidMoveError
-from main.pieces import (
-    King,
-    Rook,
-    WhitePawn,
-    Queen,
-    Bishop,
-    Knight,
-)
+from main.pieces import Bishop, King, Knight, Queen, Rook, WhitePawn
 
 
 class TestCastling:

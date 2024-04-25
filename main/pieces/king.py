@@ -1,15 +1,15 @@
-from typing import Set, Iterator, Optional, Tuple, Union, TYPE_CHECKING
+from typing import TYPE_CHECKING, Iterator, Optional, Set, Tuple, Union
 
 from main import constants
 from main.game_tree import HalfMove
 from main.team import Team
-from main.types import Position, Change
+from main.types import Change, Position
 from main.xposition import XPosition
 
+from .knight import Knight
+from .pawn import BlackPawn, WhitePawn
 from .piece import Piece
 from .rook import Rook
-from .pawn import WhitePawn, BlackPawn
-from .knight import Knight
 
 if TYPE_CHECKING:
     from main.board import Board

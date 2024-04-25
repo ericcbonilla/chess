@@ -1,6 +1,7 @@
-from tabulate import tabulate
-from typing import Optional
 from dataclasses import dataclass
+from typing import Optional
+
+from tabulate import tabulate
 
 from main import constants
 from main.types import Change, TeamColor

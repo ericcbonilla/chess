@@ -1,17 +1,19 @@
 import random
-from typing import Set, Optional, Iterable, Reversible, Union, Dict, TYPE_CHECKING
+from typing import (TYPE_CHECKING, Dict, Iterable, Optional, Reversible, Set,
+                    Union)
+
 from colorist import yellow
 
 from main import constants
 from main.exceptions import InvalidMoveError
-from main.types import Position, Change, GameResult
-from main.xposition import XPosition
 from main.game_tree import HalfMove
+from main.types import Change, GameResult, Position
+from main.xposition import XPosition
 
 if TYPE_CHECKING:
-    from main.team import Team
     from main.board import Board
     from main.pieces import King
+    from main.team import Team
 
 
 class Piece:

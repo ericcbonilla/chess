@@ -3,9 +3,9 @@ from typing import List, Optional, Type
 from main import constants
 from main.exceptions import InvalidGameError
 from main.game_tree import FullMove, HalfMove
-from main.pieces import WhitePawn, BlackPawn, Rook, Knight, Bishop, Queen, King
+from main.pieces import Bishop, BlackPawn, King, Knight, Queen, Rook, WhitePawn
 from main.team import Team
-from main.types import PieceType, Change, GameResult
+from main.types import Change, GameResult, PieceType
 from main.xposition import XPosition
 
 

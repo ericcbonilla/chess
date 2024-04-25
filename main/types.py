@@ -1,9 +1,9 @@
-from typing import Tuple, TypedDict, Union, Dict, TYPE_CHECKING, Literal
-from typing import NotRequired
-
+from typing import (TYPE_CHECKING, Dict, Literal, NotRequired, Tuple,
+                    TypedDict, Union)
 
 if TYPE_CHECKING:
-    from main.pieces import Bishop, King, Knight, WhitePawn, BlackPawn, Queen, Rook
+    from main.pieces import (Bishop, BlackPawn, King, Knight, Queen, Rook,
+                             WhitePawn)
 
 Position = Tuple['XPosition', int]
 PieceType = Union['Bishop', 'King', 'Knight', 'WhitePawn', 'BlackPawn', 'Queen', 'Rook']

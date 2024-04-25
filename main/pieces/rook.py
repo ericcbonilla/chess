@@ -1,13 +1,14 @@
-from typing import Optional, Union, TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional, Union
 
 from main import constants
 from main.types import Change
 from main.xposition import XPosition
+
 from .piece import Piece
 
 if TYPE_CHECKING:
-    from main.team import Team
     from main.board import Board
+    from main.team import Team
 
 
 class Rook(Piece):

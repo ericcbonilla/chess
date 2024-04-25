@@ -2,10 +2,7 @@ import pytest
 
 from main.board import Board
 from main.exceptions import InvalidMoveError
-from main.pieces import (
-    King,
-    Rook,
-)
+from main.pieces import King, Rook
 
 
 class TestRookScenarios:

@@ -2,10 +2,8 @@ import pytest
 
 from main import constants
 from main.board import Board
-from main.game_tree import HalfMove, FullMove
-from main.pieces import (
-    WhitePawn, BlackPawn, Rook, Knight, Bishop, Queen, King,
-)
+from main.game_tree import FullMove, HalfMove
+from main.pieces import Bishop, BlackPawn, King, Knight, Queen, Rook, WhitePawn
 
 
 @pytest.fixture
