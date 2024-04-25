@@ -278,7 +278,6 @@ class Piece:
 
 
 # TODO:
-# Github VCS
 # python isort, black formatting (Github first)
 # Promotion piece dialog - we must ask for piece type from input. Right now
 # it's just defaulting to Queen, which is fine for most cases
