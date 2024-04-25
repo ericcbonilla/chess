@@ -11,7 +11,7 @@ extra slots for potential promotions. It's a lot, but it's still a relatively
 low number of class attributes. Some other thoughts:
 
 - Instead of having 8 extra slots for potential promotions, we could just have 16
-slots total. You would just replace the pawn with the promoted piece, under the 
+slots total. You would just replace the pawn with the promoted piece, under the
 same slot.
 
 - With pieces as well defined attributes, game state can also be implicitly
@@ -41,28 +41,27 @@ not an antipattern when using slots
 class NewTeam:
     piece_names = (
         # If additional pieces are provided, assign them to any empty pawn slots
-        'a_pawn',
-        'b_pawn',
-        'c_pawn',
-        'd_pawn',
-        'e_pawn',
-        'f_pawn',
-        'g_pawn',
-        'h_pawn',
-
+        "a_pawn",
+        "b_pawn",
+        "c_pawn",
+        "d_pawn",
+        "e_pawn",
+        "f_pawn",
+        "g_pawn",
+        "h_pawn",
         # Would these names be problematic down the road? How would we pick
         # which slot to assign a piece to given a midgame position? Would it
         # even matter?
-        'a_rook',
-        'h_rook',
-        'b_knight',
-        'g_knight',
-        'dark_bishop',
-        'light_bishop',
-        'queen',
-        'king',
+        "a_rook",
+        "h_rook",
+        "b_knight",
+        "g_knight",
+        "dark_bishop",
+        "light_bishop",
+        "queen",
+        "king",
     )
-    __slots__ = ('color', 'en_passant_target') + piece_names
+    __slots__ = ("color", "en_passant_target") + piece_names
 
     def __init__(self, color: TeamColor, en_passant_target: Optional[Position] = None):
         self.color = color

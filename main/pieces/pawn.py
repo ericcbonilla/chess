@@ -13,10 +13,10 @@ from .rook import Rook
 
 
 class Pawn(Piece):
-    symbol = ''
+    symbol = ""
     value = 1
     capture_movements: Set = NotImplemented
-    unicode = '\u2659'
+    unicode = "\u2659"
 
     def is_valid_move(
         self,
@@ -56,7 +56,9 @@ class Pawn(Piece):
     def can_move(self):
         return self.get_valid_moves(lazy=True) or self.get_captures()
 
-    def get_captures(self, valid_moves: Optional[Set[Position]] = None) -> Set[Position]:
+    def get_captures(
+        self, valid_moves: Optional[Set[Position]] = None
+    ) -> Set[Position]:
         # Arg valid_moves isn't used here, because pawns are the only pieces
         # whose captures are not a subset of their valid moves
         captures = set()
@@ -70,45 +72,49 @@ class Pawn(Piece):
         return captures
 
     @staticmethod
-    def _get_promotion_piece_type(promotion_type: str) -> Type[Union[Bishop, Knight, Rook, Queen]]:
-        if promotion_type == 'B':
+    def _get_promotion_piece_type(
+        promotion_type: str,
+    ) -> Type[Union[Bishop, Knight, Rook, Queen]]:
+        if promotion_type == "B":
             return Bishop
-        elif promotion_type == 'N':
+        elif promotion_type == "N":
             return Knight
-        elif promotion_type == 'R':
+        elif promotion_type == "R":
             return Rook
-        elif promotion_type == 'Q':
+        elif promotion_type == "Q":
             return Queen
         else:
-            raise PromotionError('Invalid promotion_type, must be one of B, N, R, or Q')
+            raise PromotionError("Invalid promotion_type, must be one of B, N, R, or Q")
 
     def get_disambiguation(self, x: Union[XPosition, str], y: int) -> str:
         """
         Algebraic notation disambiguates pawns by default
         """
 
-        return ''
+        return ""
 
-    def augment_change(self, x: Union[XPosition, str], y: int, change: Change, **kwargs) -> Change:
+    def augment_change(
+        self, x: Union[XPosition, str], y: int, change: Change, **kwargs
+    ) -> Change:
         if (x, y) == self.opponent_team.en_passant_target:
             piece = self.opponent_team.get_by_position(x, self.y)
             change[self.opponent_team.color] = {
                 piece.name: {
-                    'old_position': (x, self.y),
-                    'new_position': None,
+                    "old_position": (x, self.y),
+                    "new_position": None,
                 }
             }
 
         if not self.is_promotion(y):
             return change
-        elif 'promotion_type' not in kwargs:
+        elif "promotion_type" not in kwargs:
             # If king_is_in_check is testing a promotion move, we must provide a piece type.
             # Just assume Queen in this case
-            promotion_type = 'Q'
+            promotion_type = "Q"
         else:
             # Let's also assume that whatever client is sending the move knows
             # when it needs to supply a promotion_type
-            promotion_type = kwargs['promotion_type']
+            promotion_type = kwargs["promotion_type"]
 
         promotion_piece_type = self._get_promotion_piece_type(promotion_type)
         promotion_piece_name = self.board.get_piece_name(
@@ -116,11 +122,11 @@ class Pawn(Piece):
             color=self.team.color,
         )
 
-        change[self.team.color][self.name]['new_position'] = None
+        change[self.team.color][self.name]["new_position"] = None
         change[self.team.color][promotion_piece_name] = {
-            'old_position': None,
-            'new_position': (x, y),
-            'piece_type': promotion_piece_type,
+            "old_position": None,
+            "new_position": (x, y),
+            "piece_type": promotion_piece_type,
         }
 
         return change

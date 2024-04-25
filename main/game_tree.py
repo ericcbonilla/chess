@@ -30,16 +30,12 @@ haven't thought of yet.
 
 @dataclass
 class FullMove:
-    white: Optional['HalfMove'] = None
-    black: Optional['HalfMove'] = None
-    child: Optional['FullMove'] = None
+    white: Optional["HalfMove"] = None
+    black: Optional["HalfMove"] = None
+    child: Optional["FullMove"] = None
 
     def is_empty(self):
-        return (
-            self.white is None
-            and self.black is None
-            and self.child is None
-        )
+        return self.white is None and self.black is None and self.child is None
 
     def pprint(self):
         data = []
@@ -62,13 +58,13 @@ class FullMove:
 
         table = tabulate(
             data,
-            headers=['', 'White', 'Black'],
+            headers=["", "White", "Black"],
             tablefmt="grid",
             maxcolwidths=[None, 60, 60],
         )
         print(table)
 
-    def _get_node_at_height(self, height: int) -> 'FullMove':
+    def _get_node_at_height(self, height: int) -> "FullMove":
         """
         height of 0 yields a leaf, height of 1 yields second to last node, etc.
         """
@@ -84,7 +80,7 @@ class FullMove:
         _get_next(self)
         return nodes[-1 - height]
 
-    def append(self, halfmove: 'HalfMove'):
+    def append(self, halfmove: "HalfMove"):
         node = self._get_node_at_height(0)
         if halfmove.color == constants.WHITE:
             node.white = halfmove
@@ -93,7 +89,7 @@ class FullMove:
             # The next FullMove is added once the current node is full
             node.child = FullMove()
 
-    def get_latest_halfmove(self) -> Optional['HalfMove']:
+    def get_latest_halfmove(self) -> Optional["HalfMove"]:
         if self.child is None:
             return self.white
         elif self.child.is_empty():  # Removing second move

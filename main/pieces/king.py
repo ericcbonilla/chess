@@ -18,13 +18,13 @@ if TYPE_CHECKING:
 class King(Piece):
     movements = {(1, 0), (0, 1), (-1, 0), (0, -1), (1, 1), (1, -1), (-1, 1), (-1, -1)}
     capture_movements = movements
-    symbol = 'K'
+    symbol = "K"
     value = 0
-    unicode = '\u2654'
+    unicode = "\u2654"
 
     def __init__(
         self,
-        board: 'Board',
+        board: "Board",
         team: Team,
         x: Union[XPosition, str],
         y: int,
@@ -34,7 +34,7 @@ class King(Piece):
 
         if has_moved is None:
             initial_y = 1 if self.team.color == constants.WHITE else 8
-            self.has_moved = self.position != ('e', initial_y)
+            self.has_moved = self.position != ("e", initial_y)
         else:
             self.has_moved = has_moved
 
@@ -44,30 +44,27 @@ class King(Piece):
                 yield piece
 
     def _can_castle(self, rook: Rook) -> Tuple[Union[str, None], bool]:
-        if (
-            rook.has_moved
-            or self.has_moved
-            or self.is_in_check()
-        ):
+        if rook.has_moved or self.has_moved or self.is_in_check():
             return None, False
 
-        if rook.x == 'a':  # Queenside
-            castle_through_check = self.is_in_check(('d', self.y))
-            new_king_xpos = 'c'
+        if rook.x == "a":  # Queenside
+            castle_through_check = self.is_in_check(("d", self.y))
+            new_king_xpos = "c"
         else:  # Kingside
-            castle_through_check = self.is_in_check(('f', self.y))
-            new_king_xpos = 'g'
+            castle_through_check = self.is_in_check(("f", self.y))
+            new_king_xpos = "g"
 
         return new_king_xpos, (
-            not castle_through_check
-            and self.is_open_path(rook.position)
+            not castle_through_check and self.is_open_path(rook.position)
         )
 
     @property
-    def king(self) -> 'King':
+    def king(self) -> "King":
         return self
 
-    def is_valid_move(self, new_position: Position, keep_king_safe: Optional[bool] = True) -> bool:
+    def is_valid_move(
+        self, new_position: Position, keep_king_safe: Optional[bool] = True
+    ) -> bool:
         if (
             new_position not in constants.SQUARES
             or new_position in self.team.positions
@@ -151,24 +148,26 @@ class King(Piece):
         return False
 
     def get_disambiguation(self, x: Union[XPosition, str], y: int) -> str:
-        return ''
+        return ""
 
-    def augment_change(self, x: Union[XPosition, str], y: int, change: Change, **kwargs) -> Change:
+    def augment_change(
+        self, x: Union[XPosition, str], y: int, change: Change, **kwargs
+    ) -> Change:
         if not self.has_moved:
-            change[self.team.color][self.name]['has_moved'] = True
+            change[self.team.color][self.name]["has_moved"] = True
 
-            if (x, y) == ('c', self.y):  # queenside
-                change[self.team.color]['R1'] = {
-                    'old_position': ('a', self.y),
-                    'new_position': ('d', self.y),
-                    'has_moved': True,
+            if (x, y) == ("c", self.y):  # queenside
+                change[self.team.color]["R1"] = {
+                    "old_position": ("a", self.y),
+                    "new_position": ("d", self.y),
+                    "has_moved": True,
                 }
-            elif (x, y) == ('g', self.y):  # kingside
-                rook_name = 'R1' if 'R2' not in self.team else 'R2'
+            elif (x, y) == ("g", self.y):  # kingside
+                rook_name = "R1" if "R2" not in self.team else "R2"
                 change[self.team.color][rook_name] = {
-                    'old_position': ('h', self.y),
-                    'new_position': ('f', self.y),
-                    'has_moved': True,
+                    "old_position": ("h", self.y),
+                    "new_position": ("f", self.y),
+                    "has_moved": True,
                 }
 
         return change

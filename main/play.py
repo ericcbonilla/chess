@@ -38,12 +38,14 @@ class RandomGame(Game):
         move_count = 1
 
         while move_count <= self.max_moves and not self.board.result:
-            print(f"{move_count}. {'=' * (term_size.columns - len(str(move_count)) - 2)}")
-            print(f'Turn: {constants.WHITE}')
+            print(
+                f"{move_count}. {'=' * (term_size.columns - len(str(move_count)) - 2)}"
+            )
+            print(f"Turn: {constants.WHITE}")
             self.move(self.board.white)
 
-            yellow(f'Turn: {constants.BLACK}')
+            yellow(f"Turn: {constants.BLACK}")
             self.move(self.board.black)
-            print('')
+            print("")
 
             move_count += 1

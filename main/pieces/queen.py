@@ -5,6 +5,6 @@ from .rook import Rook
 
 class Queen(Piece):
     movements = Bishop.movements | Rook.movements
-    symbol = 'Q'
+    symbol = "Q"
     value = 9
-    unicode = '\u2655'
+    unicode = "\u2655"

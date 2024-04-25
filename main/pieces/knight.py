@@ -9,9 +9,9 @@ from .piece import Piece
 class Knight(Piece):
     movements = {(2, 1), (1, 2), (2, -1), (1, -2), (-2, 1), (-1, 2), (-2, -1), (-1, -2)}
     capture_movements = movements
-    symbol = 'N'
+    symbol = "N"
     value = 3
-    unicode = '\u2658'
+    unicode = "\u2658"
 
     def is_valid_move(
         self,
@@ -29,4 +29,3 @@ class Knight(Piece):
             return False
 
         return True
-

@@ -17,14 +17,14 @@ class Board:
 
     def __init__(self):
         self.piece_counts = {
-            'WHITE_ROOKS': 0,
-            'BLACK_ROOKS': 0,
-            'WHITE_KNIGHTS': 0,
-            'BLACK_KNIGHTS': 0,
-            'WHITE_BISHOPS': 0,
-            'BLACK_BISHOPS': 0,
-            'WHITE_QUEENS': 0,
-            'BLACK_QUEENS': 0,
+            "WHITE_ROOKS": 0,
+            "BLACK_ROOKS": 0,
+            "WHITE_KNIGHTS": 0,
+            "BLACK_KNIGHTS": 0,
+            "WHITE_BISHOPS": 0,
+            "BLACK_BISHOPS": 0,
+            "WHITE_QUEENS": 0,
+            "BLACK_QUEENS": 0,
         }
 
         self.white = Team(color=constants.WHITE)
@@ -35,11 +35,13 @@ class Board:
         self.game_tree = FullMove()
         self.halfmove_clock = 0
         self.fullmove_number = 0
-        self.result: GameResult = ''
+        self.result: GameResult = ""
 
     def __repr__(self) -> str:
-        return (f'White:\n{self.white}\nWhite graveyard:\n{self.white_graveyard}\n'
-                f'Black:\n{self.black}\nBlack graveyard:\n{self.black_graveyard}')
+        return (
+            f"White:\n{self.white}\nWhite graveyard:\n{self.white_graveyard}\n"
+            f"Black:\n{self.black}\nBlack graveyard:\n{self.black_graveyard}"
+        )
 
     # def team_to_play(self) -> Team:
     #     halfmove = self.game_tree.get_latest_halfmove()
@@ -103,22 +105,22 @@ class Board:
             # TODO this will break if given a FEN position with 2+ pawns on the same column
             # This is a tough one so I'll come back to it later. Passing in team to this
             # method was breaking things for some reason.
-            return f'{x.upper()}P'
+            return f"{x.upper()}P"
             # return self._get_pawn_name(x, team)
         elif piece_type is Rook:
-            count = self.piece_counts[f'{color}_ROOKS']
-            return f'R{count + 1}'
+            count = self.piece_counts[f"{color}_ROOKS"]
+            return f"R{count + 1}"
         elif piece_type is Knight:
-            count = self.piece_counts[f'{color}_KNIGHTS']
-            return f'N{count + 1}'
+            count = self.piece_counts[f"{color}_KNIGHTS"]
+            return f"N{count + 1}"
         elif piece_type is Bishop:
-            count = self.piece_counts[f'{color}_BISHOPS']
-            return f'B{count + 1}'
+            count = self.piece_counts[f"{color}_BISHOPS"]
+            return f"B{count + 1}"
         elif piece_type is Queen:
-            count = self.piece_counts[f'{color}_QUEENS']
-            return f'Q{count + 1}'
+            count = self.piece_counts[f"{color}_QUEENS"]
+            return f"Q{count + 1}"
         elif piece_type is King:
-            return 'K'
+            return "K"
 
     def is_valid_position(self) -> bool:
         # TODO only really blatant stuff, like more than 8 pawns, 1 king
@@ -126,7 +128,7 @@ class Board:
         # If a team is in check, ensure it's that team's turn
         # Pawns cannot be on their back rank
 
-        if not ('K' in self.white and 'K' in self.black):
+        if not ("K" in self.white and "K" in self.black):
             return False
 
         # team_to_play = self.team_to_play()
@@ -155,16 +157,20 @@ class Board:
         piece.name = name or self.get_piece_name(type(piece), piece.team.color, piece.x)
         piece.team[piece.name] = piece
 
-        piece_count_key = f'{piece.team.color}_{piece.__class__.__name__.upper()}S'
+        piece_count_key = f"{piece.team.color}_{piece.__class__.__name__.upper()}S"
         if piece_count_key in self.piece_counts:
             self.piece_counts[piece_count_key] += 1
 
-        graveyard = self.white_graveyard if piece.team.color == constants.WHITE else self.black_graveyard
+        graveyard = (
+            self.white_graveyard
+            if piece.team.color == constants.WHITE
+            else self.black_graveyard
+        )
         if piece.name in graveyard:
             del graveyard[piece.name]
 
     def destroy_piece(self, piece: PieceType):
-        piece_count_key = f'{piece.team.color}_{piece.__class__.__name__.upper()}S'
+        piece_count_key = f"{piece.team.color}_{piece.__class__.__name__.upper()}S"
         if piece_count_key in self.piece_counts:
             self.piece_counts[piece_count_key] -= 1
 
@@ -184,17 +190,17 @@ class Board:
         for team in (self.white, self.black):
             if change[team.color]:
                 for key, datum in change[team.color].items():
-                    if key == 'en_passant_target':
+                    if key == "en_passant_target":
                         team.en_passant_target = datum[1]
                         continue
 
-                    if datum['new_position'] is None:
+                    if datum["new_position"] is None:
                         piece = team[key]
                         self.destroy_piece(piece)
-                    elif datum['old_position'] is None:
+                    elif datum["old_position"] is None:
                         # We're either resurrecting a piece, or promoting a pawn
-                        x, y = datum['new_position']
-                        piece = datum['piece_type'](
+                        x, y = datum["new_position"]
+                        piece = datum["piece_type"](
                             board=self,
                             team=team,
                             x=XPosition(x),
@@ -202,16 +208,16 @@ class Board:
                         )
                         self.add_piece(piece, name=key)
                     else:
-                        x, y = datum['new_position']
+                        x, y = datum["new_position"]
                         piece = team[key]
                         piece.x, piece.y = XPosition(x), y
 
-                    if 'has_moved' in datum:
-                        piece.has_moved = datum['has_moved']
+                    if "has_moved" in datum:
+                        piece.has_moved = datum["has_moved"]
 
-        if 'game_result' in change and change['game_result']:
+        if "game_result" in change and change["game_result"]:
             # TODO if the game is over, use this to prevent further moves
-            self.result = change['game_result']
+            self.result = change["game_result"]
 
     def apply_gametree(self, tree: FullMove):
         def _apply_next(node: FullMove):
@@ -245,20 +251,26 @@ class Board:
         for color in constants.COLORS:
             if halfmove.change[color]:
                 for key, datum in halfmove.change[color].items():
-                    if key == 'en_passant_target':
+                    if key == "en_passant_target":
                         inverted_change[color][key] = (datum[1], datum[0])
                         continue
 
                     inverted_change[color][key] = {
-                        'old_position': datum['new_position'],
-                        'new_position': datum['old_position'],
+                        "old_position": datum["new_position"],
+                        "new_position": datum["old_position"],
                     }
 
-                    graveyard = self.white_graveyard if color == constants.WHITE else self.black_graveyard
+                    graveyard = (
+                        self.white_graveyard
+                        if color == constants.WHITE
+                        else self.black_graveyard
+                    )
                     if key in graveyard:
-                        inverted_change[color][key]['piece_type'] = type(graveyard[key])
-                    if 'has_moved' in datum:
-                        inverted_change[color][key]['has_moved'] = not datum['has_moved']
+                        inverted_change[color][key]["piece_type"] = type(graveyard[key])
+                    if "has_moved" in datum:
+                        inverted_change[color][key]["has_moved"] = not datum[
+                            "has_moved"
+                        ]
 
         self.apply_change(inverted_change)
         self.game_tree.prune()

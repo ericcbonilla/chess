@@ -24,7 +24,7 @@ class Team(dict):
         self.en_passant_target = en_passant_target
 
     def __repr__(self):
-        return ''.join(f'  {name}: {piece}\n' for name, piece in self.items())
+        return "".join(f"  {name}: {piece}\n" for name, piece in self.items())
 
     @property
     def material(self) -> int:
@@ -39,7 +39,7 @@ class Team(dict):
             if piece.position == (x, y):
                 return self[piece_name]
 
-        raise Exception(f'Piece not found on {(x, y)}')
+        raise Exception(f"Piece not found on {(x, y)}")
 
     def can_move(self) -> bool:
         for piece in self.values():

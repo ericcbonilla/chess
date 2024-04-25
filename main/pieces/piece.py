@@ -1,6 +1,5 @@
 import random
-from typing import (TYPE_CHECKING, Dict, Iterable, Optional, Reversible, Set,
-                    Union)
+from typing import TYPE_CHECKING, Dict, Iterable, Optional, Reversible, Set, Union
 
 from colorist import yellow
 
@@ -18,19 +17,19 @@ if TYPE_CHECKING:
 
 class Piece:
     def __repr__(self) -> str:
-        return f'<{self.__class__.__name__} ({self.unicode}): {self.position}>'
+        return f"<{self.__class__.__name__} ({self.unicode}): {self.position}>"
 
-    def __init__(self, board: 'Board', team: 'Team', x: Union[XPosition, str], y: int):
+    def __init__(self, board: "Board", team: "Team", x: Union[XPosition, str], y: int):
         self.board = board
         self.team = team
         self.x = XPosition(x)
         self.y = y
-        self.name = ''
+        self.name = ""
 
         if self.team.color == constants.WHITE:
-            self.opponent_team: 'Team' = self.board.black
+            self.opponent_team: "Team" = self.board.black
         else:
-            self.opponent_team: 'Team' = self.board.white
+            self.opponent_team: "Team" = self.board.white
 
     movements: Set = NotImplemented
     symbol: str = NotImplemented
@@ -48,8 +47,8 @@ class Piece:
         return self.x, self.y
 
     @property
-    def king(self) -> 'King':
-        return self.team['K']
+    def king(self) -> "King":
+        return self.team["K"]
 
     @staticmethod
     def _get_squares_in_range(old: int, new: int) -> Union[Iterable, Reversible]:
@@ -122,7 +121,9 @@ class Piece:
     def can_move(self):
         return self.get_valid_moves(lazy=True)
 
-    def get_captures(self, valid_moves: Optional[Set[Position]] = None) -> Set[Position]:
+    def get_captures(
+        self, valid_moves: Optional[Set[Position]] = None
+    ) -> Set[Position]:
         valid_moves = valid_moves or set()
         return valid_moves & self.opponent_team.positions
 
@@ -134,14 +135,15 @@ class Piece:
         e.g. 'h', '4', 'h4'
         """
 
-        disambiguation = ''
+        disambiguation = ""
         siblings = [
-            piece for piece in self.team.values()
+            piece
+            for piece in self.team.values()
             if piece is not self and isinstance(piece, type(self))
         ]
 
         for sibling in siblings:
-            if disambiguation in (f'{self.x}{self.y}', f'{self.y}{self.x}'):
+            if disambiguation in (f"{self.x}{self.y}", f"{self.y}{self.x}"):
                 break
             if (x, y) in sibling.get_valid_moves():
                 if sibling.x == self.x:
@@ -152,13 +154,13 @@ class Piece:
                     disambiguation += self.x
 
         # Remove duplicate characters, then sort them (e.g. 3c -> c3)
-        return ''.join(sorted(set(disambiguation), reverse=True))
+        return "".join(sorted(set(disambiguation), reverse=True))
 
     def king_is_in_check(
         self,
-        king: 'King',
+        king: "King",
         new_position: Optional[Position] = None,
-        change: Optional[Change] = None
+        change: Optional[Change] = None,
     ) -> bool:
         # If we're constructing a new change, it means we're verifying King
         # safety for this Team. Skip augmentations in this case - they can't
@@ -179,13 +181,15 @@ class Piece:
         opponent_can_move = self.opponent_team.can_move()
         self.board.rollback_halfmove(halfmove)
 
-        if change['check'] and not opponent_can_move:
-            return '1-0' if self.team.color == constants.WHITE else '0-1'
+        if change["check"] and not opponent_can_move:
+            return "1-0" if self.team.color == constants.WHITE else "0-1"
         elif not opponent_can_move:
-            return '½-½'
-        return ''
+            return "½-½"
+        return ""
 
-    def augment_change(self, x: Union[XPosition, str], y: int, change: Change, **kwargs) -> Change:
+    def augment_change(
+        self, x: Union[XPosition, str], y: int, change: Change, **kwargs
+    ) -> Change:
         """
         Piece specific augmentations/side effects: castling, promotions, etc.
         """
@@ -204,40 +208,41 @@ class Piece:
         change = {
             self.team.color: {
                 self.name: {
-                    'old_position': (self.x, self.y),
-                    'new_position': (x, y),
+                    "old_position": (self.x, self.y),
+                    "new_position": (x, y),
                 }
             },
             self.opponent_team.color: {},
-            'disambiguation': '',
-            'check': False,
-            'game_result': '',
+            "disambiguation": "",
+            "check": False,
+            "game_result": "",
         }
 
         if (x, y) in self.opponent_team.positions:  # capture
             piece = self.opponent_team.get_by_position(x, y)
             change[self.opponent_team.color] = {
                 piece.name: {
-                    'old_position': (x, y),
-                    'new_position': None,
+                    "old_position": (x, y),
+                    "new_position": None,
                 }
             }
 
         if augment:
             change = self.augment_change(x, y, change, **kwargs)
-            change['disambiguation'] = self.get_disambiguation(x, y)
+            change["disambiguation"] = self.get_disambiguation(x, y)
 
             # These must be computed after the piece-specific augmentations in
             # augment_change because castling and promotion create new possibilities
-            change['check'] = self.king_is_in_check(
-                king=self.opponent_team['K'],
+            change["check"] = self.king_is_in_check(
+                king=self.opponent_team["K"],
                 change=change,
             )
-            change['game_result'] = self.get_game_result(change=change)
+            change["game_result"] = self.get_game_result(change=change)
 
             if self.opponent_team.en_passant_target:
-                change[self.opponent_team.color]['en_passant_target'] = (
-                    self.opponent_team.en_passant_target, None
+                change[self.opponent_team.color]["en_passant_target"] = (
+                    self.opponent_team.en_passant_target,
+                    None,
                 )
 
         return change
@@ -258,10 +263,12 @@ class Piece:
             return None
 
         pick = random.sample(legal_moves, 1)[0]
-        if pick in self.opponent_team.positions | {self.opponent_team.en_passant_target}:
-            self._print(f'{self} capturing on {pick}')
+        if pick in self.opponent_team.positions | {
+            self.opponent_team.en_passant_target
+        }:
+            self._print(f"{self} capturing on {pick}")
         else:
-            self._print(f'Moving {self} to {pick}')
+            self._print(f"Moving {self} to {pick}")
 
         return self.move(*pick)
 
@@ -270,10 +277,10 @@ class Piece:
         captures = self.get_captures(valid_moves)
 
         if (x, y) in captures:
-            self._print(f'{self} capturing on {(x, y)}')
+            self._print(f"{self} capturing on {(x, y)}")
             return self.move(x, y, **kwargs)
         elif (x, y) in valid_moves:
-            self._print(f'Moving {self} to {(x, y)}')
+            self._print(f"Moving {self} to {(x, y)}")
             return self.move(x, y, **kwargs)
 
-        raise InvalidMoveError(f'Moving {self} to {(x, y)} is invalid')
+        raise InvalidMoveError(f"Moving {self} to {(x, y)} is invalid")

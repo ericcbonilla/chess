@@ -7,17 +7,17 @@ class TestGetLatestHalfmove:
         expected = HalfMove(
             color=constants.WHITE,
             change={
-                'WHITE': {
-                    'EP': {
-                        'old_position': ('e', 2),
-                        'new_position': ('e', 4),
+                "WHITE": {
+                    "EP": {
+                        "old_position": ("e", 2),
+                        "new_position": ("e", 4),
                     },
                 },
-                'BLACK': {},
-                'disambiguation': '',
-                'check': False,
-                'game_result': '',
-            }
+                "BLACK": {},
+                "disambiguation": "",
+                "check": False,
+                "game_result": "",
+            },
         )
 
         assert half_move_tree.get_latest_halfmove() == expected
@@ -26,16 +26,16 @@ class TestGetLatestHalfmove:
         expected = HalfMove(
             color=constants.BLACK,
             change={
-                'WHITE': {},
-                'BLACK': {
-                    'EP': {
-                        'old_position': ('e', 7),
-                        'new_position': ('e', 5),
+                "WHITE": {},
+                "BLACK": {
+                    "EP": {
+                        "old_position": ("e", 7),
+                        "new_position": ("e", 5),
                     }
                 },
-                'disambiguation': '',
-                'check': False,
-                'game_result': '',
+                "disambiguation": "",
+                "check": False,
+                "game_result": "",
             },
         )
 
@@ -45,17 +45,17 @@ class TestGetLatestHalfmove:
         expected = HalfMove(
             color=constants.WHITE,
             change={
-                'WHITE': {
-                    'N2': {
-                        'old_position': ('g', 1),
-                        'new_position': ('f', 3),
+                "WHITE": {
+                    "N2": {
+                        "old_position": ("g", 1),
+                        "new_position": ("f", 3),
                     },
                 },
-                'BLACK': {},
-                'disambiguation': '',
-                'check': False,
-                'game_result': '',
-            }
+                "BLACK": {},
+                "disambiguation": "",
+                "check": False,
+                "game_result": "",
+            },
         )
 
         assert one_and_a_half_fullmove_tree.get_latest_halfmove() == expected
@@ -64,17 +64,17 @@ class TestGetLatestHalfmove:
         expected = HalfMove(
             color=constants.BLACK,
             change={
-                'WHITE': {},
-                'BLACK': {
-                    'N1': {
-                        'old_position': ('b', 8),
-                        'new_position': ('c', 6),
+                "WHITE": {},
+                "BLACK": {
+                    "N1": {
+                        "old_position": ("b", 8),
+                        "new_position": ("c", 6),
                     }
                 },
-                'disambiguation': '',
-                'check': False,
-                'game_result': '',
-            }
+                "disambiguation": "",
+                "check": False,
+                "game_result": "",
+            },
         )
 
         assert two_fullmove_tree.get_latest_halfmove() == expected

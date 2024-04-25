@@ -8,6 +8,6 @@ class Bishop(Piece):
         *((-p, p) for p in range(1, 9)),
         *((-p, -p) for p in range(1, 9)),
     }
-    symbol = 'B'
+    symbol = "B"
     value = 3
-    unicode = '\u2657'
+    unicode = "\u2657"
