@@ -27,10 +27,10 @@ class Board:
             "BLACK_QUEENS": 0,
         }
 
-        self.white = Team(color=constants.WHITE)
-        self.black = Team(color=constants.BLACK)
-        self.white_graveyard = Team(color=constants.WHITE)
-        self.black_graveyard = Team(color=constants.BLACK)
+        self.white: Team = Team(color=constants.WHITE)
+        self.black: Team = Team(color=constants.BLACK)
+        self.white_graveyard: Team = Team(color=constants.WHITE)
+        self.black_graveyard: Team = Team(color=constants.BLACK)
 
         self.game_tree = FullMove()
         self.halfmove_clock = 0

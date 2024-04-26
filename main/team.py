@@ -1,7 +1,5 @@
-from typing import TYPE_CHECKING, Optional, Set
+from typing import Optional, Set
 
-# if TYPE_CHECKING:
-from main.pieces import BlackPawn, WhitePawn
 from main.types import PieceType, Position, TeamColor
 from main.xposition import XPosition
 

@@ -1,7 +1,16 @@
 import random
-from typing import TYPE_CHECKING, Dict, Iterable, Optional, Reversible, Set, Union
+from typing import (
+    TYPE_CHECKING,
+    Callable,
+    Dict,
+    Iterable,
+    Optional,
+    Reversible,
+    Set,
+    Union,
+)
 
-from colorist import yellow
+from colorist import red, white, yellow
 
 from main import constants
 from main.exceptions import InvalidMoveError
@@ -36,11 +45,9 @@ class Piece:
     value: int = NotImplemented
     unicode: str = NotImplemented
 
-    def _print(self, message: str):
-        if self.team.color == constants.BLACK:
-            yellow(message)
-        else:
-            print(message)
+    def _print(self, message: str, color: Optional[Callable] = None):
+        color = color or (yellow if self.team.color == constants.BLACK else white)
+        color(message)
 
     @property
     def position(self) -> Position:
@@ -266,7 +273,7 @@ class Piece:
         if pick in self.opponent_team.positions | {
             self.opponent_team.en_passant_target
         }:
-            self._print(f"{self} capturing on {pick}")
+            self._print(f"{self} capturing on {pick}", color=red)
         else:
             self._print(f"Moving {self} to {pick}")
 
@@ -277,7 +284,7 @@ class Piece:
         captures = self.get_captures(valid_moves)
 
         if (x, y) in captures:
-            self._print(f"{self} capturing on {(x, y)}")
+            self._print(f"{self} capturing on {(x, y)}", color=red)
             return self.move(x, y, **kwargs)
         elif (x, y) in valid_moves:
             self._print(f"Moving {self} to {(x, y)}")
