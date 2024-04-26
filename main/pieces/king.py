@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Iterator, Optional, Set, Tuple, Union
+from typing import TYPE_CHECKING, Iterator, Optional, Set, Tuple
 
 from main import constants
 from main.game_tree import HalfMove
@@ -26,7 +26,7 @@ class King(Piece):
         self,
         board: "Board",
         team: Team,
-        x: XPosition,
+        x: str,
         y: int,
         has_moved: Optional[bool] = None,
     ):

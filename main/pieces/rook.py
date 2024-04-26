@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Optional, Union
+from typing import TYPE_CHECKING, Optional
 
 from main import constants
 from main.types import Change
@@ -26,7 +26,7 @@ class Rook(Piece):
         self,
         board: "Board",
         team: "Team",
-        x: XPosition,
+        x: str,
         y: int,
         has_moved: Optional[bool] = None,
     ):

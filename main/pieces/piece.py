@@ -1,14 +1,5 @@
 import random
-from typing import (
-    TYPE_CHECKING,
-    Callable,
-    Dict,
-    Iterable,
-    Optional,
-    Reversible,
-    Set,
-    Union,
-)
+from typing import TYPE_CHECKING, Callable, Dict, Iterable, Optional, Reversible, Set
 
 from colorist import red, white, yellow
 
@@ -28,7 +19,7 @@ class Piece:
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__} ({self.unicode}): {self.position}>"
 
-    def __init__(self, board: "Board", team: "Team", x: XPosition, y: int):
+    def __init__(self, board: "Board", team: "Team", x: str, y: int):
         self.board = board
         self.team = team
         self.x = XPosition(x)

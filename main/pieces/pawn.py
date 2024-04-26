@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Dict, Optional, Set, Type, Union
+from typing import Dict, Optional, Set
 
 from main import constants
 from main.exceptions import PromotionError

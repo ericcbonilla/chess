@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Dict, Literal, NotRequired, Tuple, TypedDict, Union
+from typing import Dict, Literal, NotRequired, Tuple, TypedDict, Union
 
 Position = Tuple["XPosition", int]
 PieceType = Union["Bishop", "King", "Knight", "WhitePawn", "BlackPawn", "Queen", "Rook"]
