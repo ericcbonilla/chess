@@ -78,9 +78,7 @@ class Piece:
                 y_range = reversed(y_range)
             squares_on_path = {(chr(x), y) for x, y in zip(x_range, y_range)}
 
-        # print(f'Checking {self} → {target_position} against {squares_on_path}')
         if squares_on_path & (self.team.positions | self.opponent_team.positions):
-            # print(f'Blocked by {squares_on_path & (self.team.positions | self.opponent_team.positions)}')
             return False
         return True
 
@@ -128,8 +126,8 @@ class Piece:
     def get_disambiguation(self, x: XPosition, y: int) -> str:
         """
         Used for algebraic notation. If we have other pieces of the same type
-        that can also move to the target square, return the rank and/or file
-        of this piece.
+        that can also move to the target square, return the rank (y) and/or
+        file (x) of this piece.
         e.g. 'h', '4', 'h4'
         """
 

@@ -5,7 +5,7 @@ from main.exceptions import InvalidGameError
 from main.game_tree import FullMove, HalfMove
 from main.pieces import Bishop, BlackPawn, King, Knight, Queen, Rook, WhitePawn
 from main.team import Team
-from main.types import Change, GameResult, PieceType
+from main.types import Change, GameResult, PieceType, TeamColor
 from main.xposition import XPosition
 
 
@@ -96,7 +96,7 @@ class Board:
     def get_piece_name(
         self,
         piece_type: Type[PieceType],
-        color: str,
+        color: TeamColor,
         x: Optional[XPosition] = None,
         # team: Optional[Team] = None,
     ) -> str:
