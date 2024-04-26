@@ -34,7 +34,7 @@ class TestPawnScenarios:
             ]
         )
 
-        board.white["FP"].manual_move("g", 8, promotion_type="Q")
+        board.white["FP"].manual_move("g", 8, promotee_value="Q")
 
         assert "FP" in board.white_graveyard
         assert "R1" in board.black_graveyard
@@ -51,7 +51,7 @@ class TestPawnScenarios:
             ]
         )
 
-        board.white["FP"].manual_move("g", 8, promotion_type="Q")
+        board.white["FP"].manual_move("g", 8, promotee_value="Q")
         board.rollback_halfmove()
 
         assert board.white["FP"].position == ("f", 7)
@@ -72,7 +72,7 @@ class TestPawnScenarios:
             ]
         )
 
-        board.white["FP"].manual_move("f", 8, promotion_type="N")
+        board.white["FP"].manual_move("f", 8, promotee_value="N")
 
         assert board.white["N3"].position == ("f", 8)
 
@@ -87,7 +87,7 @@ class TestPawnScenarios:
             ]
         )
 
-        board.white["FP"].manual_move("g", 8, promotion_type="N")
+        board.white["FP"].manual_move("g", 8, promotee_value="N")
 
         assert board.white["N1"].position == ("g", 8)
         assert "R1" in board.black_graveyard
@@ -104,7 +104,7 @@ class TestPawnScenarios:
         )
 
         with pytest.raises(InvalidMoveError):
-            board.white["FP"].manual_move("f", 8, promotion_type="Q")
+            board.white["FP"].manual_move("f", 8, promotee_value="Q")
 
         # Also check that the pawn is left unchanged - we want to ensure
         # the king_is_in_check method has no side effects
@@ -122,7 +122,7 @@ class TestPawnScenarios:
             ]
         )
 
-        board.white["FP"].manual_move("g", 8, promotion_type="Q")
+        board.white["FP"].manual_move("g", 8, promotee_value="Q")
 
         halfmove = board.game_tree.get_latest_halfmove()
         assert halfmove.change == {

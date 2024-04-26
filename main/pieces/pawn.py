@@ -1,8 +1,10 @@
+from __future__ import annotations
+
 from typing import Dict, Optional, Set, Type, Union
 
 from main import constants
 from main.exceptions import PromotionError
-from main.types import Change, Position
+from main.types import Change, Position, PromoteeType
 from main.xposition import XPosition
 
 from .bishop import Bishop
@@ -72,30 +74,28 @@ class Pawn(Piece):
         return captures
 
     @staticmethod
-    def _get_promotion_piece_type(
-        promotion_type: str,
-    ) -> Type[Union[Bishop, Knight, Rook, Queen]]:
-        if promotion_type == "B":
+    def get_promotee_type(
+        promotee_value: str,
+    ) -> PromoteeType:
+        if promotee_value == "B":
             return Bishop
-        elif promotion_type == "N":
+        elif promotee_value == "N":
             return Knight
-        elif promotion_type == "R":
+        elif promotee_value == "R":
             return Rook
-        elif promotion_type == "Q":
+        elif promotee_value == "Q":
             return Queen
         else:
-            raise PromotionError("Invalid promotion_type, must be one of B, N, R, or Q")
+            raise PromotionError("Invalid promotee value, must be one of B, N, R, or Q")
 
-    def get_disambiguation(self, x: Union[XPosition, str], y: int) -> str:
+    def get_disambiguation(self, x: XPosition, y: int) -> str:
         """
         Algebraic notation disambiguates pawns by default
         """
 
         return ""
 
-    def augment_change(
-        self, x: Union[XPosition, str], y: int, change: Change, **kwargs
-    ) -> Change:
+    def augment_change(self, x: XPosition, y: int, change: Change, **kwargs) -> Change:
         if (x, y) == self.opponent_team.en_passant_target:
             piece = self.opponent_team.get_by_position(x, self.y)
             change[self.opponent_team.color] = {
@@ -107,16 +107,18 @@ class Pawn(Piece):
 
         if not self.is_promotion(y):
             return change
-        elif "promotion_type" not in kwargs:
+        elif "promotee_value" not in kwargs:
             # If king_is_in_check is testing a promotion move, we must provide a piece type.
-            # Just assume Queen in this case
-            promotion_type = "Q"
+            # Just assume Queen in this case. Or, if a promotee_value is not provided,
+            # also just assume Queen. You could play a decade of chess and never find a
+            # situation where you need a Knight. This is fine for our purposes.
+            promotee_value = "Q"
         else:
             # Let's also assume that whatever client is sending the move knows
-            # when it needs to supply a promotion_type
-            promotion_type = kwargs["promotion_type"]
+            # when it needs to supply a promotee_value
+            promotee_value = kwargs["promotee_value"]
 
-        promotion_piece_type = self._get_promotion_piece_type(promotion_type)
+        promotion_piece_type = self.get_promotee_type(promotee_value)
         promotion_piece_name = self.board.get_piece_name(
             piece_type=promotion_piece_type,
             color=self.team.color,
@@ -131,7 +133,7 @@ class Pawn(Piece):
 
         return change
 
-    def move(self, x: Union[XPosition, str], y: int, **kwargs) -> Dict:
+    def move(self, x: XPosition, y: int, **kwargs) -> Dict:
         if abs(self.y - y) == 2:
             target_y = int((self.y + y) / 2)
             self.team.en_passant_target = (self.x, target_y)

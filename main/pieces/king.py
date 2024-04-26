@@ -26,7 +26,7 @@ class King(Piece):
         self,
         board: "Board",
         team: Team,
-        x: Union[XPosition, str],
+        x: XPosition,
         y: int,
         has_moved: Optional[bool] = None,
     ):
@@ -43,7 +43,7 @@ class King(Piece):
             if isinstance(piece, Rook):
                 yield piece
 
-    def _can_castle(self, rook: Rook) -> Tuple[Union[str, None], bool]:
+    def _can_castle(self, rook: Rook) -> Tuple[str | None, bool]:
         if rook.has_moved or self.has_moved or self.is_in_check():
             return None, False
 
@@ -147,12 +147,10 @@ class King(Piece):
 
         return False
 
-    def get_disambiguation(self, x: Union[XPosition, str], y: int) -> str:
+    def get_disambiguation(self, x: XPosition, y: int) -> str:
         return ""
 
-    def augment_change(
-        self, x: Union[XPosition, str], y: int, change: Change, **kwargs
-    ) -> Change:
+    def augment_change(self, x: XPosition, y: int, change: Change, **kwargs) -> Change:
         if not self.has_moved:
             change[self.team.color][self.name]["has_moved"] = True
 

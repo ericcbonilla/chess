@@ -28,7 +28,7 @@ class Piece:
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__} ({self.unicode}): {self.position}>"
 
-    def __init__(self, board: "Board", team: "Team", x: Union[XPosition, str], y: int):
+    def __init__(self, board: "Board", team: "Team", x: XPosition, y: int):
         self.board = board
         self.team = team
         self.x = XPosition(x)
@@ -58,7 +58,7 @@ class Piece:
         return self.team["K"]
 
     @staticmethod
-    def _get_squares_in_range(old: int, new: int) -> Union[Iterable, Reversible]:
+    def _get_squares_in_range(old: int, new: int) -> Iterable | Reversible:
         if old > new:
             return range(*sorted((old, new)))[1:]
         else:
@@ -134,7 +134,7 @@ class Piece:
         valid_moves = valid_moves or set()
         return valid_moves & self.opponent_team.positions
 
-    def get_disambiguation(self, x: Union[XPosition, str], y: int) -> str:
+    def get_disambiguation(self, x: XPosition, y: int) -> str:
         """
         Used for algebraic notation. If we have other pieces of the same type
         that can also move to the target square, return the rank and/or file
@@ -194,9 +194,7 @@ class Piece:
             return "½-½"
         return ""
 
-    def augment_change(
-        self, x: Union[XPosition, str], y: int, change: Change, **kwargs
-    ) -> Change:
+    def augment_change(self, x: XPosition, y: int, change: Change, **kwargs) -> Change:
         """
         Piece specific augmentations/side effects: castling, promotions, etc.
         """
@@ -204,7 +202,7 @@ class Piece:
 
     def construct_change(
         self,
-        x: Union[XPosition, str],
+        x: XPosition,
         y: int,
         augment: Optional[bool] = True,
         **kwargs,
@@ -254,7 +252,7 @@ class Piece:
 
         return change
 
-    def move(self, x: Union[XPosition, str], y: int, **kwargs) -> Dict:
+    def move(self, x: XPosition, y: int, **kwargs) -> Dict:
         change = self.construct_change(x, y, **kwargs)
         halfmove = HalfMove(color=self.team.color, change=change)
         self.board.apply_halfmove(halfmove)
@@ -279,7 +277,8 @@ class Piece:
 
         return self.move(*pick)
 
-    def manual_move(self, x: Union[XPosition, str], y: int, **kwargs) -> Dict:
+    def manual_move(self, x: str, y: int, **kwargs) -> Dict:
+        x = XPosition(x)
         valid_moves = self.get_valid_moves()
         captures = self.get_captures(valid_moves)
 

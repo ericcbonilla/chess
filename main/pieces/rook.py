@@ -26,7 +26,7 @@ class Rook(Piece):
         self,
         board: "Board",
         team: "Team",
-        x: Union[XPosition, str],
+        x: XPosition,
         y: int,
         has_moved: Optional[bool] = None,
     ):
@@ -38,9 +38,7 @@ class Rook(Piece):
         else:
             self.has_moved = has_moved
 
-    def augment_change(
-        self, x: Union[XPosition, str], y: int, change: Change, **kwargs
-    ) -> Change:
+    def augment_change(self, x: XPosition, y: int, change: Change, **kwargs) -> Change:
         if not self.has_moved:
             change[self.team.color][self.name]["has_moved"] = True
 
