@@ -1,9 +1,20 @@
-from typing import Dict, Literal, NotRequired, Tuple, TypedDict, Union
+from typing import (
+    TYPE_CHECKING,
+    Dict,
+    Literal,
+    NotRequired,
+    Tuple,
+    Type,
+    TypedDict,
+    Union,
+)
+
+if TYPE_CHECKING:
+    from main.pieces import Piece
 
 Position = Tuple["XPosition", int]
-PieceType = Union["Bishop", "King", "Knight", "WhitePawn", "BlackPawn", "Queen", "Rook"]
-PromoteeType = Union["Bishop", "Knight", "Queen", "Rook"]
-TeamType = Dict[str, PieceType]
+Promotee = Union["Bishop", "Knight", "Queen", "Rook"]
+TeamType = Dict[str, "Piece"]
 TeamColor = Literal["WHITE", "BLACK"]
 GameResult = Literal["", "1-0", "0-1", "½-½"]
 
@@ -12,7 +23,7 @@ class PieceChange(TypedDict):
     old_position: Position | None
     new_position: Position | None
     has_moved: NotRequired[bool]
-    piece_type: NotRequired[PieceType]
+    piece_type: NotRequired[Type["Piece"]]
 
 
 TeamChange = Dict[str, PieceChange | Tuple[Position, None]]

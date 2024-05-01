@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-from typing import Optional, Set
+from typing import Optional, Set, Type
 
 from main import constants
 from main.exceptions import PromotionError
-from main.types import Change, Position, PromoteeType
+from main.types import Change, Position, Promotee
 from main.xposition import XPosition
 
 from .bishop import Bishop
@@ -76,7 +76,7 @@ class Pawn(Piece):
     @staticmethod
     def get_promotee_type(
         promotee_value: str,
-    ) -> PromoteeType:
+    ) -> Type[Promotee]:
         if promotee_value == "B":
             return Bishop
         elif promotee_value == "N":

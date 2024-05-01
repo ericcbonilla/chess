@@ -1,6 +1,7 @@
 from typing import Optional, Set
 
-from main.types import PieceType, Position, TeamColor
+from main.pieces import Piece
+from main.types import Position, TeamColor
 from main.xposition import XPosition
 
 
@@ -32,7 +33,7 @@ class Team(dict):
     def positions(self) -> Set[Position]:
         return set(piece.position for piece in self.values())
 
-    def get_by_position(self, x: XPosition, y: int) -> PieceType:
+    def get_by_position(self, x: XPosition, y: int) -> Piece:
         for piece_name, piece in self.items():
             if piece.position == (x, y):
                 return self[piece_name]
