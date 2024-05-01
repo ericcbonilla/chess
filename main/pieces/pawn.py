@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Dict, Optional, Set
+from typing import Optional, Set
 
 from main import constants
 from main.exceptions import PromotionError
@@ -55,7 +55,7 @@ class Pawn(Piece):
 
         return new_position in self.opponent_team.positions
 
-    def can_move(self):
+    def can_move(self) -> Set[Position]:
         return self.get_valid_moves(lazy=True) or self.get_captures()
 
     def get_captures(
@@ -133,7 +133,7 @@ class Pawn(Piece):
 
         return change
 
-    def move(self, x: XPosition, y: int, **kwargs) -> Dict:
+    def move(self, x: XPosition, y: int, **kwargs) -> Change:
         if abs(self.y - y) == 2:
             target_y = int((self.y + y) / 2)
             self.team.en_passant_target = (self.x, target_y)

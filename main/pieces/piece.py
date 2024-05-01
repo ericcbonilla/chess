@@ -1,5 +1,5 @@
 import random
-from typing import TYPE_CHECKING, Callable, Dict, Iterable, Optional, Reversible, Set
+from typing import TYPE_CHECKING, Callable, Iterable, Optional, Reversible, Set
 
 from colorist import red, white, yellow
 
@@ -36,9 +36,9 @@ class Piece:
     value: int = NotImplemented
     unicode: str = NotImplemented
 
-    def _print(self, message: str, color: Optional[Callable] = None):
-        color = color or (yellow if self.team.color == constants.BLACK else white)
-        color(message)
+    def _print(self, message: str, color_fn: Optional[Callable] = None):
+        color_fn = color_fn or (yellow if self.team.color == constants.BLACK else white)
+        color_fn(message)
 
     @property
     def position(self) -> Position:
@@ -55,7 +55,7 @@ class Piece:
         else:
             return [p + 1 for p in range(*sorted((old, new)))][0:-1]
 
-    def is_open_path(self, target_position: Position):
+    def is_open_path(self, target_position: Position) -> bool:
         target_x, target_y = target_position
         ord_x = ord(self.x)
         ord_target_x = ord(target_x)
@@ -114,7 +114,7 @@ class Piece:
 
         return valid_moves
 
-    def can_move(self):
+    def can_move(self) -> Set[Position]:
         return self.get_valid_moves(lazy=True)
 
     def get_captures(
@@ -196,9 +196,6 @@ class Piece:
         augment: Optional[bool] = True,
         **kwargs,
     ) -> Change:
-        # By this point we already know that the provided move is legal,
-        # so we don't need to do any validation checks
-
         change = {
             self.team.color: {
                 self.name: {
@@ -241,14 +238,14 @@ class Piece:
 
         return change
 
-    def move(self, x: XPosition, y: int, **kwargs) -> Dict:
+    def move(self, x: XPosition, y: int, **kwargs) -> Change:
         change = self.construct_change(x, y, **kwargs)
         halfmove = HalfMove(color=self.team.color, change=change)
         self.board.apply_halfmove(halfmove)
 
         return change
 
-    def random_move(self) -> Optional[Dict]:
+    def random_move(self) -> Optional[Change]:
         valid_moves = self.get_valid_moves()
         captures = self.get_captures(valid_moves)
         legal_moves = list(valid_moves | captures)
@@ -260,19 +257,19 @@ class Piece:
         if pick in self.opponent_team.positions | {
             self.opponent_team.en_passant_target
         }:
-            self._print(f"{self} capturing on {pick}", color=red)
+            self._print(f"{self} capturing on {pick}", color_fn=red)
         else:
             self._print(f"Moving {self} to {pick}")
 
         return self.move(*pick)
 
-    def manual_move(self, x: str, y: int, **kwargs) -> Dict:
+    def manual_move(self, x: str, y: int, **kwargs) -> Change:
         x = XPosition(x)
         valid_moves = self.get_valid_moves()
         captures = self.get_captures(valid_moves)
 
         if (x, y) in captures:
-            self._print(f"{self} capturing on {(x, y)}", color=red)
+            self._print(f"{self} capturing on {(x, y)}", color_fn=red)
             return self.move(x, y, **kwargs)
         elif (x, y) in valid_moves:
             self._print(f"Moving {self} to {(x, y)}")

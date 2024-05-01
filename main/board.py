@@ -71,6 +71,11 @@ class Board:
     def to_pgn(self):
         pass
 
+    def get_graveyard(self, color: TeamColor):
+        if color == constants.WHITE:
+            return self.white_graveyard
+        return self.black_graveyard
+
     # def _get_pawn_name(
     #     self,
     #     x: Optional[XPosition] = None,
@@ -161,11 +166,7 @@ class Board:
         if piece_count_key in self.piece_counts:
             self.piece_counts[piece_count_key] += 1
 
-        graveyard = (
-            self.white_graveyard
-            if piece.team.color == constants.WHITE
-            else self.black_graveyard
-        )
+        graveyard = self.get_graveyard(piece.team.color)
         if piece.name in graveyard:
             del graveyard[piece.name]
 
@@ -174,10 +175,8 @@ class Board:
         if piece_count_key in self.piece_counts:
             self.piece_counts[piece_count_key] -= 1
 
-        if piece.team.color == constants.WHITE:
-            self.white_graveyard[piece.name] = piece
-        else:
-            self.black_graveyard[piece.name] = piece
+        graveyard = self.get_graveyard(piece.team.color)
+        graveyard[piece.name] = piece
 
         del piece.team[piece.name]
 
@@ -260,11 +259,7 @@ class Board:
                         "new_position": datum["old_position"],
                     }
 
-                    graveyard = (
-                        self.white_graveyard
-                        if color == constants.WHITE
-                        else self.black_graveyard
-                    )
+                    graveyard = self.get_graveyard(color)
                     if key in graveyard:
                         inverted_change[color][key]["piece_type"] = type(graveyard[key])
                     if "has_moved" in datum:

@@ -34,7 +34,7 @@ class FullMove:
     black: Optional["HalfMove"] = None
     child: Optional["FullMove"] = None
 
-    def is_empty(self):
+    def is_empty(self) -> bool:
         return self.white is None and self.black is None and self.child is None
 
     def pprint(self):

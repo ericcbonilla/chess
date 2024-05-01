@@ -125,7 +125,7 @@ class King(Piece):
 
         return is_capturable
 
-    def _is_capturable(self):
+    def _is_capturable(self) -> bool:
         # TODO: Think of a way to ~avoid~ calling this for every single move
         # Or at least try to reduce the number of opponent pieces that we evaluate
         # Maybe only loop over movable pieces?

@@ -1,11 +1,13 @@
 import os
 import random
+from typing import Optional
 
 from colorist import yellow
 
 from main import constants
 from main.board import Board
 from main.team import Team
+from main.types import Change
 
 term_size = os.get_terminal_size()
 
@@ -23,7 +25,7 @@ class Game:
 class RandomGame(Game):
     # TODO Should we unify this with Board?
 
-    def move(self, team: Team):
+    def move(self, team: Team) -> Optional[Change]:
         for piece in sorted(team.values(), key=lambda x: random.random()):
             result = piece.random_move()
             if result is None:
