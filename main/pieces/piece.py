@@ -30,9 +30,6 @@ class Piece:
     ):
         self.attr = attr
         self.agent = agent
-
-        # TODO is this code smell? I feel like we should have
-        #  to do self.agent.board.other_agent for this
         self.opponent_agent = opponent_agent
         self.x = XPosition(x)
         self.y = y
