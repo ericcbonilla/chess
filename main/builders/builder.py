@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING, Dict, List, Optional, Type
 from main import constants
 from main.board import Board
 from main.pieces import Bishop, King, Knight, Queen, Rook
+from main.types import AgentScaffold, PieceScaffold
 from main.xposition import XPosition
 
 from .scaffolds import BLACK_SCAFFOLD, EMPTY_SCAFFOLD, WHITE_SCAFFOLD
@@ -26,7 +27,7 @@ class BoardBuilder:
         return board
 
     @staticmethod
-    def _set_pieces(agent: "Agent", opponent_agent: "Agent", scaffold: Dict[str, Dict]):
+    def _set_pieces(agent: "Agent", opponent_agent: "Agent", scaffold: AgentScaffold):
         for attr, data in scaffold.items():
             if data is None:
                 continue
@@ -64,7 +65,9 @@ class BoardBuilder:
 
         return board
 
-    def _get_slot(self, scaffold, datum, x1, x2, name) -> str:
+    def _get_slot(
+        self, scaffold: AgentScaffold, datum: PieceScaffold, x1: str, x2: str, name: str
+    ) -> str:
         if scaffold[f"{x1}_{name}"] and scaffold[f"{x2}_{name}"]:
             return self._get_promotion_slot(scaffold, datum)
         elif datum["x"] in (x1, x2) and scaffold[f"{datum['x']}_{name}"] is None:
@@ -75,7 +78,7 @@ class BoardBuilder:
             return f"{x2}_{name}"
 
     @staticmethod
-    def _get_file_slot(scaffold, datum, name) -> str:
+    def _get_file_slot(scaffold: AgentScaffold, datum: PieceScaffold, name: str) -> str:
         x = XPosition(datum["x"], wrap=True)
         slot = None
         while not slot:
@@ -86,13 +89,13 @@ class BoardBuilder:
 
         return slot
 
-    def _get_promotion_slot(self, scaffold, datum) -> str:
+    def _get_promotion_slot(self, scaffold: AgentScaffold, datum: PieceScaffold) -> str:
         return self._get_file_slot(scaffold, datum, "prom")
 
-    def _get_pawn_slot(self, scaffold, datum) -> str:
+    def _get_pawn_slot(self, scaffold: AgentScaffold, datum: PieceScaffold) -> str:
         return self._get_file_slot(scaffold, datum, "pawn")
 
-    def _get_scaffold(self, piece_data: List[Dict]):
+    def _get_scaffold(self, piece_data: List[PieceScaffold]):
         scaffold = EMPTY_SCAFFOLD.copy()
 
         for datum in piece_data:
@@ -120,8 +123,8 @@ class BoardBuilder:
         self,
         white_agent_cls: Type["Agent"],
         black_agent_cls: Type["Agent"],
-        white_data: List[Dict],
-        black_data: List[Dict],
+        white_data: List[PieceScaffold],
+        black_data: List[PieceScaffold],
         max_moves: Optional[int] = 50,
     ):
         board = self._get_board(white_agent_cls, black_agent_cls, max_moves)

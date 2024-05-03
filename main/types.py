@@ -34,3 +34,13 @@ class Change(TypedDict):
     disambiguation: NotRequired[str]
     check: NotRequired[bool]
     game_result: NotRequired[GameResult]
+
+
+class PieceScaffold(TypedDict):
+    piece_type: Type["Piece"]
+    x: str
+    y: int
+    has_moved: NotRequired[bool]
+
+
+AgentScaffold = Dict[str, PieceScaffold | None]
