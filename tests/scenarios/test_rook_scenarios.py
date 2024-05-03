@@ -10,10 +10,10 @@ class TestRookScenarios:
         board = Board()
         board.add_pieces(
             [
-                King(board=board, team=board.black, x="e", y=8),
-                Rook(board=board, team=board.black, x="a", y=8),
-                Rook(board=board, team=board.black, x="h", y=8),
-                King(board=board, team=board.white, x="e", y=1),
+                King(board=board, agent=board.black, x="e", y=8),
+                Rook(board=board, agent=board.black, x="a", y=8),
+                Rook(board=board, agent=board.black, x="h", y=8),
+                King(board=board, agent=board.white, x="e", y=1),
             ]
         )
 
@@ -32,9 +32,9 @@ class TestRookScenarios:
         board = Board()
         board.add_pieces(
             [
-                King(board=board, team=board.black, x="e", y=8),
-                Rook(board=board, team=board.black, x="h", y=8),
-                King(board=board, team=board.white, x="e", y=1),
+                King(board=board, agent=board.black, x="e", y=8),
+                Rook(board=board, agent=board.black, x="h", y=8),
+                King(board=board, agent=board.white, x="e", y=1),
             ]
         )
 

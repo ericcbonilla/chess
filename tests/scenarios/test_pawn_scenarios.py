@@ -27,10 +27,10 @@ class TestPawnScenarios:
         board = Board()
         board.add_pieces(
             [
-                King(board=board, team=board.white, x="c", y=4),
-                King(board=board, team=board.black, x="e", y=5),
-                Rook(board=board, team=board.black, x="g", y=8),
-                WhitePawn(board=board, team=board.white, x="f", y=7),
+                King(board=board, agent=board.white, x="c", y=4),
+                King(board=board, agent=board.black, x="e", y=5),
+                Rook(board=board, agent=board.black, x="g", y=8),
+                WhitePawn(board=board, agent=board.white, x="f", y=7),
             ]
         )
 
@@ -44,10 +44,10 @@ class TestPawnScenarios:
         board = Board()
         board.add_pieces(
             [
-                King(board=board, team=board.white, x="c", y=4),
-                King(board=board, team=board.black, x="e", y=5),
-                Rook(board=board, team=board.black, x="g", y=8),
-                WhitePawn(board=board, team=board.white, x="f", y=7),
+                King(board=board, agent=board.white, x="c", y=4),
+                King(board=board, agent=board.black, x="e", y=5),
+                Rook(board=board, agent=board.black, x="g", y=8),
+                WhitePawn(board=board, agent=board.white, x="f", y=7),
             ]
         )
 
@@ -64,11 +64,11 @@ class TestPawnScenarios:
         board = Board()
         board.add_pieces(
             [
-                King(board=board, team=board.white, x="c", y=4),
-                King(board=board, team=board.black, x="e", y=5),
-                WhitePawn(board=board, team=board.white, x="f", y=7),
-                Knight(board=board, team=board.white, x="a", y=1),
-                Knight(board=board, team=board.white, x="b", y=1),
+                King(board=board, agent=board.white, x="c", y=4),
+                King(board=board, agent=board.black, x="e", y=5),
+                WhitePawn(board=board, agent=board.white, x="f", y=7),
+                Knight(board=board, agent=board.white, x="a", y=1),
+                Knight(board=board, agent=board.white, x="b", y=1),
             ]
         )
 
@@ -80,10 +80,10 @@ class TestPawnScenarios:
         board = Board()
         board.add_pieces(
             [
-                King(board=board, team=board.white, x="c", y=4),
-                King(board=board, team=board.black, x="e", y=5),
-                WhitePawn(board=board, team=board.white, x="f", y=7),
-                Rook(board=board, team=board.black, x="g", y=8),
+                King(board=board, agent=board.white, x="c", y=4),
+                King(board=board, agent=board.black, x="e", y=5),
+                WhitePawn(board=board, agent=board.white, x="f", y=7),
+                Rook(board=board, agent=board.black, x="g", y=8),
             ]
         )
 
@@ -96,10 +96,10 @@ class TestPawnScenarios:
         board = Board()
         board.add_pieces(
             [
-                King(board=board, team=board.white, x="h", y=7),
-                King(board=board, team=board.black, x="e", y=5),
-                WhitePawn(board=board, team=board.white, x="f", y=7),
-                Queen(board=board, team=board.black, x="a", y=7),
+                King(board=board, agent=board.white, x="h", y=7),
+                King(board=board, agent=board.black, x="e", y=5),
+                WhitePawn(board=board, agent=board.white, x="f", y=7),
+                Queen(board=board, agent=board.black, x="a", y=7),
             ]
         )
 
@@ -115,10 +115,10 @@ class TestPawnScenarios:
         board = Board()
         board.add_pieces(
             [
-                King(board=board, team=board.white, x="c", y=4),
-                King(board=board, team=board.black, x="e", y=5),
-                Rook(board=board, team=board.black, x="g", y=8),
-                WhitePawn(board=board, team=board.white, x="f", y=7),
+                King(board=board, agent=board.white, x="c", y=4),
+                King(board=board, agent=board.black, x="e", y=5),
+                Rook(board=board, agent=board.black, x="g", y=8),
+                WhitePawn(board=board, agent=board.white, x="f", y=7),
             ]
         )
 
@@ -154,9 +154,9 @@ class TestEnPassant:
         board = Board()
         board.add_pieces(
             [
-                King(board=board, team=board.white, x="e", y=1),
-                WhitePawn(board=board, team=board.white, x="e", y=2),
-                King(board=board, team=board.black, x="e", y=8),
+                King(board=board, agent=board.white, x="e", y=1),
+                WhitePawn(board=board, agent=board.white, x="e", y=2),
+                King(board=board, agent=board.black, x="e", y=8),
             ]
         )
 
@@ -168,9 +168,9 @@ class TestEnPassant:
         board = Board()
         board.add_pieces(
             [
-                King(board=board, team=board.white, x="e", y=1),
-                King(board=board, team=board.black, x="e", y=8),
-                BlackPawn(board=board, team=board.black, x="d", y=7),
+                King(board=board, agent=board.white, x="e", y=1),
+                King(board=board, agent=board.black, x="e", y=8),
+                BlackPawn(board=board, agent=board.black, x="d", y=7),
             ]
         )
 
@@ -182,9 +182,9 @@ class TestEnPassant:
         board = Board()
         board.add_pieces(
             [
-                King(board=board, team=board.white, x="e", y=1),
-                WhitePawn(board=board, team=board.white, x="e", y=2),
-                King(board=board, team=board.black, x="e", y=8),
+                King(board=board, agent=board.white, x="e", y=1),
+                WhitePawn(board=board, agent=board.white, x="e", y=2),
+                King(board=board, agent=board.black, x="e", y=8),
             ]
         )
 

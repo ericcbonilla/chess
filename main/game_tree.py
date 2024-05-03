@@ -4,7 +4,7 @@ from typing import Optional
 from tabulate import tabulate
 
 from main import constants
-from main.types import Change, TeamColor
+from main.types import AgentColor, Change
 
 """
 Game tree
@@ -166,7 +166,7 @@ class HalfMove:
     }
     """
 
-    color: TeamColor
+    color: AgentColor
     change: Change
 
     def to_an(self) -> str:

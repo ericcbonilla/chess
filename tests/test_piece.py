@@ -7,10 +7,10 @@ class TestGetGameResult:
         board = Board()
         board.add_pieces(
             [
-                King(board=board, team=board.white, x="a", y=1),
-                King(board=board, team=board.black, x="h", y=8),
-                Queen(board=board, team=board.black, x="f", y=8),
-                Queen(board=board, team=board.black, x="b", y=7),
+                King(board=board, agent=board.white, x="a", y=1),
+                King(board=board, agent=board.black, x="h", y=8),
+                Queen(board=board, agent=board.black, x="f", y=8),
+                Queen(board=board, agent=board.black, x="b", y=7),
             ]
         )
 
@@ -24,11 +24,11 @@ class TestGetGameResult:
         board = Board()
         board.add_pieces(
             [
-                King(board=board, team=board.white, x="a", y=1),
-                WhitePawn(board=board, team=board.white, x="a", y=2),
-                Bishop(board=board, team=board.white, x="b", y=1),
-                King(board=board, team=board.black, x="h", y=8),
-                Bishop(board=board, team=board.black, x="h", y=6),
+                King(board=board, agent=board.white, x="a", y=1),
+                WhitePawn(board=board, agent=board.white, x="a", y=2),
+                Bishop(board=board, agent=board.white, x="b", y=1),
+                King(board=board, agent=board.black, x="h", y=8),
+                Bishop(board=board, agent=board.black, x="h", y=6),
             ]
         )
 
@@ -42,9 +42,9 @@ class TestGetGameResult:
         board = Board()
         board.add_pieces(
             [
-                King(board=board, team=board.white, x="a", y=6),
-                Rook(board=board, team=board.white, x="h", y=6),
-                King(board=board, team=board.black, x="a", y=8),
+                King(board=board, agent=board.white, x="a", y=6),
+                Rook(board=board, agent=board.white, x="h", y=6),
+                King(board=board, agent=board.black, x="a", y=8),
             ]
         )
 
@@ -58,11 +58,11 @@ class TestGetGameResult:
         board = Board()
         board.add_pieces(
             [
-                King(board=board, team=board.white, x="a", y=1),
-                King(board=board, team=board.black, x="h", y=8),
-                WhitePawn(board=board, team=board.white, x="a", y=2),
-                Knight(board=board, team=board.white, x="b", y=1),
-                Bishop(board=board, team=board.black, x="h", y=6),
+                King(board=board, agent=board.white, x="a", y=1),
+                King(board=board, agent=board.black, x="h", y=8),
+                WhitePawn(board=board, agent=board.white, x="a", y=2),
+                Knight(board=board, agent=board.white, x="b", y=1),
+                Bishop(board=board, agent=board.black, x="h", y=6),
             ]
         )
 
@@ -77,12 +77,12 @@ class TestGetGameResult:
         board = Board()
         board.add_pieces(
             [
-                King(board=board, team=board.white, x="a", y=1),
-                WhitePawn(board=board, team=board.white, x="a", y=2),
-                WhitePawn(board=board, team=board.white, x="d", y=3),
-                Bishop(board=board, team=board.white, x="b", y=1),
-                King(board=board, team=board.black, x="h", y=8),
-                Bishop(board=board, team=board.black, x="h", y=6),
+                King(board=board, agent=board.white, x="a", y=1),
+                WhitePawn(board=board, agent=board.white, x="a", y=2),
+                WhitePawn(board=board, agent=board.white, x="d", y=3),
+                Bishop(board=board, agent=board.white, x="b", y=1),
+                King(board=board, agent=board.black, x="h", y=8),
+                Bishop(board=board, agent=board.black, x="h", y=6),
             ]
         )
 
@@ -99,10 +99,10 @@ class TestGetDisambiguation:
         board = Board()
         board.add_pieces(
             [
-                King(board=board, team=board.white, x="a", y=1),
-                King(board=board, team=board.black, x="a", y=8),
-                Knight(board=board, team=board.white, x="c", y=3),
-                Knight(board=board, team=board.white, x="g", y=3),
+                King(board=board, agent=board.white, x="a", y=1),
+                King(board=board, agent=board.black, x="a", y=8),
+                Knight(board=board, agent=board.white, x="c", y=3),
+                Knight(board=board, agent=board.white, x="g", y=3),
             ]
         )
 
@@ -112,11 +112,11 @@ class TestGetDisambiguation:
         board = Board()
         board.add_pieces(
             [
-                King(board=board, team=board.white, x="a", y=1),
-                King(board=board, team=board.black, x="a", y=8),
-                Knight(board=board, team=board.white, x="c", y=3),
-                Knight(board=board, team=board.white, x="g", y=3),
-                Knight(board=board, team=board.white, x="c", y=5),
+                King(board=board, agent=board.white, x="a", y=1),
+                King(board=board, agent=board.black, x="a", y=8),
+                Knight(board=board, agent=board.white, x="c", y=3),
+                Knight(board=board, agent=board.white, x="g", y=3),
+                Knight(board=board, agent=board.white, x="c", y=5),
             ]
         )
 
@@ -126,11 +126,11 @@ class TestGetDisambiguation:
         board = Board()
         board.add_pieces(
             [
-                King(board=board, team=board.white, x="a", y=1),
-                King(board=board, team=board.black, x="a", y=8),
-                Knight(board=board, team=board.white, x="c", y=3),
-                Knight(board=board, team=board.white, x="g", y=3),
-                Knight(board=board, team=board.white, x="g", y=5),
+                King(board=board, agent=board.white, x="a", y=1),
+                King(board=board, agent=board.black, x="a", y=8),
+                Knight(board=board, agent=board.white, x="c", y=3),
+                Knight(board=board, agent=board.white, x="g", y=3),
+                Knight(board=board, agent=board.white, x="g", y=5),
             ]
         )
 
@@ -140,11 +140,11 @@ class TestGetDisambiguation:
         board = Board()
         board.add_pieces(
             [
-                King(board=board, team=board.white, x="a", y=1),
-                King(board=board, team=board.black, x="a", y=8),
-                Rook(board=board, team=board.white, x="g", y=1),
-                Rook(board=board, team=board.white, x="g", y=6),
-                Rook(board=board, team=board.white, x="c", y=4),
+                King(board=board, agent=board.white, x="a", y=1),
+                King(board=board, agent=board.black, x="a", y=8),
+                Rook(board=board, agent=board.white, x="g", y=1),
+                Rook(board=board, agent=board.white, x="g", y=6),
+                Rook(board=board, agent=board.white, x="c", y=4),
             ]
         )
 
@@ -154,11 +154,11 @@ class TestGetDisambiguation:
         board = Board()
         board.add_pieces(
             [
-                King(board=board, team=board.white, x="a", y=1),
-                King(board=board, team=board.black, x="a", y=8),
-                Rook(board=board, team=board.white, x="g", y=1),
-                Rook(board=board, team=board.white, x="g", y=6),
-                Rook(board=board, team=board.white, x="c", y=3),
+                King(board=board, agent=board.white, x="a", y=1),
+                King(board=board, agent=board.black, x="a", y=8),
+                Rook(board=board, agent=board.white, x="g", y=1),
+                Rook(board=board, agent=board.white, x="g", y=6),
+                Rook(board=board, agent=board.white, x="c", y=3),
             ]
         )
 
@@ -168,10 +168,10 @@ class TestGetDisambiguation:
         board = Board()
         board.add_pieces(
             [
-                King(board=board, team=board.white, x="a", y=1),
-                King(board=board, team=board.black, x="a", y=8),
-                Queen(board=board, team=board.white, x="b", y=2),
-                Queen(board=board, team=board.white, x="b", y=4),
+                King(board=board, agent=board.white, x="a", y=1),
+                King(board=board, agent=board.black, x="a", y=8),
+                Queen(board=board, agent=board.white, x="b", y=2),
+                Queen(board=board, agent=board.white, x="b", y=4),
             ]
         )
 
@@ -181,11 +181,11 @@ class TestGetDisambiguation:
         board = Board()
         board.add_pieces(
             [
-                King(board=board, team=board.white, x="a", y=1),
-                King(board=board, team=board.black, x="a", y=8),
-                Queen(board=board, team=board.white, x="b", y=2),
-                Queen(board=board, team=board.white, x="b", y=4),
-                Queen(board=board, team=board.white, x="f", y=6),
+                King(board=board, agent=board.white, x="a", y=1),
+                King(board=board, agent=board.black, x="a", y=8),
+                Queen(board=board, agent=board.white, x="b", y=2),
+                Queen(board=board, agent=board.white, x="b", y=4),
+                Queen(board=board, agent=board.white, x="f", y=6),
             ]
         )
 
@@ -200,13 +200,13 @@ class TestGetDisambiguation:
         board = Board()
         board.add_pieces(
             [
-                King(board=board, team=board.white, x="a", y=1),
-                King(board=board, team=board.black, x="a", y=8),
-                Knight(board=board, team=board.white, x="g", y=3),
-                Knight(board=board, team=board.white, x="c", y=5),
-                Knight(board=board, team=board.white, x="g", y=8),
-                Knight(board=board, team=board.white, x="h", y=8),
-                Knight(board=board, team=board.white, x="c", y=3),
+                King(board=board, agent=board.white, x="a", y=1),
+                King(board=board, agent=board.black, x="a", y=8),
+                Knight(board=board, agent=board.white, x="g", y=3),
+                Knight(board=board, agent=board.white, x="c", y=5),
+                Knight(board=board, agent=board.white, x="g", y=8),
+                Knight(board=board, agent=board.white, x="h", y=8),
+                Knight(board=board, agent=board.white, x="c", y=3),
             ]
         )
 

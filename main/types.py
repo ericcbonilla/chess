@@ -10,13 +10,12 @@ from typing import (
 )
 
 if TYPE_CHECKING:
-    from main.pieces import Piece
+    from main.pieces.piece import Piece
 
 Position = Tuple["XPosition", int]
 Promotee = Union["Bishop", "Knight", "Queen", "Rook"]
-TeamType = Dict[str, "Piece"]
-TeamColor = Literal["WHITE", "BLACK"]
-GameResult = Literal["", "1-0", "0-1", "½-½"]
+AgentColor = Literal["WHITE", "BLACK"]
+GameResult = Literal[None, "1-0", "0-1", "½-½"]
 
 
 class PieceChange(TypedDict):
@@ -34,4 +33,4 @@ class Change(TypedDict):
     BLACK: TeamChange
     disambiguation: NotRequired[str]
     check: NotRequired[bool]
-    game_result: NotRequired[str]
+    game_result: NotRequired[GameResult]

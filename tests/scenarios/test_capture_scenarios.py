@@ -28,11 +28,11 @@ class TestCaptureScenarios:
         board = Board()
         board.add_pieces(
             [
-                King(board=board, team=board.white, x="c", y=4),
-                King(board=board, team=board.black, x="e", y=8),
-                Bishop(board=board, team=board.black, x="e", y=5),
-                Knight(board=board, team=board.white, x="g", y=4),
-                Rook(board=board, team=board.black, x="h", y=6),
+                King(board=board, agent=board.white, x="c", y=4),
+                King(board=board, agent=board.black, x="e", y=8),
+                Bishop(board=board, agent=board.black, x="e", y=5),
+                Knight(board=board, agent=board.white, x="g", y=4),
+                Rook(board=board, agent=board.black, x="h", y=6),
             ]
         )
 
@@ -46,10 +46,10 @@ class TestCaptureScenarios:
         board = Board()
         board.add_pieces(
             [
-                King(board=board, team=board.white, x="c", y=4),
-                Rook(board=board, team=board.white, x="d", y=4),
-                King(board=board, team=board.black, x="e", y=5),
-                Queen(board=board, team=board.black, x="g", y=1),
+                King(board=board, agent=board.white, x="c", y=4),
+                Rook(board=board, agent=board.white, x="d", y=4),
+                King(board=board, agent=board.black, x="e", y=5),
+                Queen(board=board, agent=board.black, x="g", y=1),
             ]
         )
 

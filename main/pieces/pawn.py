@@ -1,3 +1,4 @@
+# TODO why is this here again?
 from __future__ import annotations
 
 from typing import Optional, Set, Type
@@ -27,7 +28,7 @@ class Pawn(Piece):
     ) -> bool:
         if (
             new_position not in constants.SQUARES
-            or new_position in self.team.positions | self.opponent_team.positions
+            or new_position in self.agent.positions | self.opponent_agent.positions
             or not self.is_open_path(new_position)
         ):
             return False
@@ -50,10 +51,10 @@ class Pawn(Piece):
         ):
             return False
 
-        if new_position == self.opponent_team.en_passant_target:
+        if new_position == self.opponent_agent.en_passant_target:
             return True
 
-        return new_position in self.opponent_team.positions
+        return new_position in self.opponent_agent.positions
 
     def can_move(self) -> Set[Position]:
         return self.get_valid_moves(lazy=True) or self.get_captures()
@@ -96,10 +97,10 @@ class Pawn(Piece):
         return ""
 
     def augment_change(self, x: XPosition, y: int, change: Change, **kwargs) -> Change:
-        if (x, y) == self.opponent_team.en_passant_target:
-            piece = self.opponent_team.get_by_position(x, self.y)
-            change[self.opponent_team.color] = {
-                piece.name: {
+        if (x, y) == self.opponent_agent.en_passant_target:
+            piece = self.opponent_agent.get_by_position(x, self.y)
+            change[self.opponent_agent.color] = {
+                piece.attr: {
                     "old_position": (x, self.y),
                     "new_position": None,
                 }
@@ -107,7 +108,8 @@ class Pawn(Piece):
 
         if not self.is_promotion(y):
             return change
-        elif "promotee_value" not in kwargs:
+
+        if "promotee_value" not in kwargs:
             # If king_is_in_check is testing a promotion move, we must provide a piece type.
             # Just assume Queen in this case. Or, if a promotee_value is not provided,
             # also just assume Queen. You could play a decade of chess and never find a
@@ -119,13 +121,8 @@ class Pawn(Piece):
             promotee_value = kwargs["promotee_value"]
 
         promotion_piece_type = self.get_promotee_type(promotee_value)
-        promotion_piece_name = self.board.get_piece_name(
-            piece_type=promotion_piece_type,
-            color=self.team.color,
-        )
-
-        change[self.team.color][self.name]["new_position"] = None
-        change[self.team.color][promotion_piece_name] = {
+        change[self.agent.color][self.attr]["new_position"] = None
+        change[self.agent.color][f"{self.attr[0]}_prom"] = {
             "old_position": None,
             "new_position": (x, y),
             "piece_type": promotion_piece_type,
@@ -136,7 +133,7 @@ class Pawn(Piece):
     def move(self, x: XPosition, y: int, **kwargs) -> Change:
         if abs(self.y - y) == 2:
             target_y = int((self.y + y) / 2)
-            self.team.en_passant_target = (self.x, target_y)
+            self.agent.en_passant_target = (self.x, target_y)
 
         return super().move(x, y, **kwargs)
 

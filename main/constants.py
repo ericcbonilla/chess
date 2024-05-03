@@ -1,10 +1,10 @@
 from typing import List
 
-from main.types import TeamColor
+from main.types import AgentColor
 
 WHITE = "WHITE"
 BLACK = "BLACK"
-COLORS: List[TeamColor] = ["WHITE", "BLACK"]
+COLORS: List[AgentColor] = ["WHITE", "BLACK"]
 
 # fmt: off
 SQUARES_READABLE = [

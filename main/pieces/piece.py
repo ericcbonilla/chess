@@ -1,4 +1,3 @@
-import random
 from typing import TYPE_CHECKING, Callable, Iterable, Optional, Reversible, Set
 
 from colorist import red, white, yellow
@@ -7,38 +6,41 @@ from main import constants
 from main.exceptions import InvalidMoveError
 from main.game_tree import HalfMove
 from main.types import Change, GameResult, Position
+from main.utils import cprint
 from main.xposition import XPosition
 
 if TYPE_CHECKING:
-    from main.board import Board
+    from main.agents import Agent
     from main.pieces import King
-    from main.team import Team
 
 
 class Piece:
+    """
+    Responsibilities:
+    - Compute my legal moves
+    - Compute King safety
+    - Move where I'm told by my agent (agnostic of strategy)
+    """
+
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__} ({self.unicode}): {self.position}>"
 
-    def __init__(self, board: "Board", team: "Team", x: str, y: int):
-        self.board = board
-        self.team = team
+    def __init__(
+        self, attr: str, agent: "Agent", opponent_agent: "Agent", x: str, y: int
+    ):
+        self.attr = attr
+        self.agent = agent
+
+        # TODO is this code smell? I feel like we should have
+        #  to do self.agent.board.other_agent for this
+        self.opponent_agent = opponent_agent
         self.x = XPosition(x)
         self.y = y
-        self.name = ""
-
-        if self.team.color == constants.WHITE:
-            self.opponent_team: "Team" = self.board.black
-        else:
-            self.opponent_team: "Team" = self.board.white
 
     movements: Set = NotImplemented
     symbol: str = NotImplemented
     value: int = NotImplemented
     unicode: str = NotImplemented
-
-    def _print(self, message: str, color_fn: Optional[Callable] = None):
-        color_fn = color_fn or (yellow if self.team.color == constants.BLACK else white)
-        color_fn(message)
 
     @property
     def position(self) -> Position:
@@ -46,7 +48,7 @@ class Piece:
 
     @property
     def king(self) -> "King":
-        return self.team["K"]
+        return self.agent.king
 
     @staticmethod
     def _get_squares_in_range(old: int, new: int) -> Iterable | Reversible:
@@ -78,7 +80,7 @@ class Piece:
                 y_range = reversed(y_range)
             squares_on_path = {(chr(x), y) for x, y in zip(x_range, y_range)}
 
-        if squares_on_path & (self.team.positions | self.opponent_team.positions):
+        if squares_on_path & (self.agent.positions | self.opponent_agent.positions):
             return False
         return True
 
@@ -89,7 +91,7 @@ class Piece:
     ) -> bool:
         if (
             new_position not in constants.SQUARES
-            or new_position in self.team.positions
+            or new_position in self.agent.positions
             or not self.is_open_path(new_position)
         ):
             return False
@@ -121,7 +123,7 @@ class Piece:
         self, valid_moves: Optional[Set[Position]] = None
     ) -> Set[Position]:
         valid_moves = valid_moves or set()
-        return valid_moves & self.opponent_team.positions
+        return valid_moves & self.opponent_agent.positions
 
     def get_disambiguation(self, x: XPosition, y: int) -> str:
         """
@@ -134,7 +136,7 @@ class Piece:
         disambiguation = ""
         siblings = [
             piece
-            for piece in self.team.values()
+            for piece in self.agent.pieces
             if piece is not self and isinstance(piece, type(self))
         ]
 
@@ -164,21 +166,21 @@ class Piece:
         # about here. Without this, it'll recursively call this method infinitely.
         change = change or self.construct_change(*new_position, augment=False)
 
-        halfmove = HalfMove(color=self.team.color, change=change)
-        self.board.apply_halfmove(halfmove)
+        halfmove = HalfMove(color=self.agent.color, change=change)
+        self.agent.board.apply_halfmove(halfmove)
         in_check = king.is_in_check()
-        self.board.rollback_halfmove(halfmove)
+        self.agent.board.rollback_halfmove(halfmove)
 
         return in_check
 
     def get_game_result(self, change: Change) -> GameResult:
-        halfmove = HalfMove(color=self.team.color, change=change)
-        self.board.apply_halfmove(halfmove)
-        opponent_can_move = self.opponent_team.can_move()
-        self.board.rollback_halfmove(halfmove)
+        halfmove = HalfMove(color=self.agent.color, change=change)
+        self.agent.board.apply_halfmove(halfmove)
+        opponent_can_move = self.opponent_agent.can_move()
+        self.agent.board.rollback_halfmove(halfmove)
 
         if change["check"] and not opponent_can_move:
-            return "1-0" if self.team.color == constants.WHITE else "0-1"
+            return "1-0" if self.agent.color == constants.WHITE else "0-1"
         elif not opponent_can_move:
             return "½-½"
         return ""
@@ -197,22 +199,22 @@ class Piece:
         **kwargs,
     ) -> Change:
         change = {
-            self.team.color: {
-                self.name: {
+            self.agent.color: {
+                self.attr: {
                     "old_position": (self.x, self.y),
                     "new_position": (x, y),
                 }
             },
-            self.opponent_team.color: {},
+            self.opponent_agent.color: {},
             "disambiguation": "",
             "check": False,
             "game_result": "",
         }
 
-        if (x, y) in self.opponent_team.positions:  # capture
-            piece = self.opponent_team.get_by_position(x, y)
-            change[self.opponent_team.color] = {
-                piece.name: {
+        if (x, y) in self.opponent_agent.positions:  # capture
+            piece = self.opponent_agent.get_by_position(x, y)
+            change[self.opponent_agent.color] = {
+                piece.attr: {
                     "old_position": (x, y),
                     "new_position": None,
                 }
@@ -225,14 +227,14 @@ class Piece:
             # These must be computed after the piece-specific augmentations in
             # augment_change because castling and promotion create new possibilities
             change["check"] = self.king_is_in_check(
-                king=self.opponent_team["K"],
+                king=self.opponent_agent.king,
                 change=change,
             )
             change["game_result"] = self.get_game_result(change=change)
 
-            if self.opponent_team.en_passant_target:
-                change[self.opponent_team.color]["en_passant_target"] = (
-                    self.opponent_team.en_passant_target,
+            if self.opponent_agent.en_passant_target:
+                change[self.opponent_agent.color]["en_passant_target"] = (
+                    self.opponent_agent.en_passant_target,
                     None,
                 )
 
@@ -240,39 +242,22 @@ class Piece:
 
     def move(self, x: XPosition, y: int, **kwargs) -> Change:
         change = self.construct_change(x, y, **kwargs)
-        halfmove = HalfMove(color=self.team.color, change=change)
-        self.board.apply_halfmove(halfmove)
+        halfmove = HalfMove(color=self.agent.color, change=change)
+        self.agent.board.apply_halfmove(halfmove)
 
         return change
 
-    def random_move(self) -> Optional[Change]:
-        valid_moves = self.get_valid_moves()
-        captures = self.get_captures(valid_moves)
-        legal_moves = list(valid_moves | captures)
-
-        if not legal_moves:
-            return None
-
-        pick = random.sample(legal_moves, 1)[0]
-        if pick in self.opponent_team.positions | {
-            self.opponent_team.en_passant_target
-        }:
-            self._print(f"{self} capturing on {pick}", color_fn=red)
-        else:
-            self._print(f"Moving {self} to {pick}")
-
-        return self.move(*pick)
-
+    # TODO manual_move should be part of ManualAgent
     def manual_move(self, x: str, y: int, **kwargs) -> Change:
         x = XPosition(x)
         valid_moves = self.get_valid_moves()
         captures = self.get_captures(valid_moves)
 
         if (x, y) in captures:
-            self._print(f"{self} capturing on {(x, y)}", color_fn=red)
+            cprint(self.agent.color, f"{self} capturing on {(x, y)}", color_fn=red)
             return self.move(x, y, **kwargs)
         elif (x, y) in valid_moves:
-            self._print(f"Moving {self} to {(x, y)}")
+            cprint(self.agent.color, f"Moving {self} to {(x, y)}")
             return self.move(x, y, **kwargs)
 
         raise InvalidMoveError(f"Moving {self} to {(x, y)} is invalid")

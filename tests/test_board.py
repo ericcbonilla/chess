@@ -7,9 +7,9 @@ class TestBoard:
         board = Board()
         board.add_pieces(
             [
-                King(board=board, team=board.white, x="c", y=4),
-                King(board=board, team=board.black, x="e", y=5),
-                WhitePawn(board=board, team=board.white, x="f", y=2),
+                King(board=board, agent=board.white, x="c", y=4),
+                King(board=board, agent=board.black, x="e", y=5),
+                WhitePawn(board=board, agent=board.white, x="f", y=2),
             ]
         )
 
@@ -19,11 +19,11 @@ class TestBoard:
         board = Board()
         board.add_pieces(
             [
-                King(board=board, team=board.white, x="c", y=4),
-                King(board=board, team=board.black, x="e", y=5),
-                Queen(board=board, team=board.white, x="g", y=5),
-                Queen(board=board, team=board.black, x="g", y=4),
-                Queen(board=board, team=board.white, x="g", y=3),
+                King(board=board, agent=board.white, x="c", y=4),
+                King(board=board, agent=board.black, x="e", y=5),
+                Queen(board=board, agent=board.white, x="g", y=5),
+                Queen(board=board, agent=board.black, x="g", y=4),
+                Queen(board=board, agent=board.white, x="g", y=3),
             ]
         )
 
@@ -33,10 +33,10 @@ class TestBoard:
     # def test_multiple_pawns_on_same_column_have_correct_names(self):
     #     board = Board()
     #     board.add_pieces([
-    #         King(board=board, team=board.white, x='c', y=4),
-    #         King(board=board, team=board.black, x='e', y=5),
-    #         BlackPawn(board=board, team=board.black, x='e', y=7),
-    #         BlackPawn(board=board, team=board.black, x='e', y=6),
+    #         King(board=board, agent=board.white, x='c', y=4),
+    #         King(board=board, agent=board.black, x='e', y=5),
+    #         BlackPawn(board=board, agent=board.black, x='e', y=7),
+    #         BlackPawn(board=board, agent=board.black, x='e', y=6),
     #     ])
     #
     #     assert 'EP' in board.black
@@ -46,8 +46,8 @@ class TestBoard:
         board = Board()
         board.add_pieces(
             [
-                King(board=board, team=board.white, x="e", y=1),
-                King(board=board, team=board.black, x="e", y=8),
+                King(board=board, agent=board.white, x="e", y=1),
+                King(board=board, agent=board.black, x="e", y=8),
             ]
         )
 
@@ -58,8 +58,8 @@ class TestBoard:
         board = Board()
         board.add_pieces(
             [
-                King(board=board, team=board.white, x="e", y=2),
-                King(board=board, team=board.black, x="e", y=7),
+                King(board=board, agent=board.white, x="e", y=2),
+                King(board=board, agent=board.black, x="e", y=7),
             ]
         )
 
@@ -70,10 +70,10 @@ class TestBoard:
         board = Board()
         board.add_pieces(
             [
-                King(board=board, team=board.white, x="e", y=1),
-                King(board=board, team=board.black, x="e", y=8),
-                Rook(board=board, team=board.black, x="a", y=8),
-                Rook(board=board, team=board.black, x="h", y=8),
+                King(board=board, agent=board.white, x="e", y=1),
+                King(board=board, agent=board.black, x="e", y=8),
+                Rook(board=board, agent=board.black, x="a", y=8),
+                Rook(board=board, agent=board.black, x="h", y=8),
             ]
         )
 
@@ -84,10 +84,10 @@ class TestBoard:
         board = Board()
         board.add_pieces(
             [
-                King(board=board, team=board.white, x="e", y=1),
-                King(board=board, team=board.black, x="e", y=8),
-                Rook(board=board, team=board.black, x="a", y=1),
-                Rook(board=board, team=board.black, x="h", y=1),
+                King(board=board, agent=board.white, x="e", y=1),
+                King(board=board, agent=board.black, x="e", y=8),
+                Rook(board=board, agent=board.black, x="a", y=1),
+                Rook(board=board, agent=board.black, x="h", y=1),
             ]
         )
 

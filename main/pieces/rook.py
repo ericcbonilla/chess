@@ -7,8 +7,7 @@ from main.xposition import XPosition
 from .piece import Piece
 
 if TYPE_CHECKING:
-    from main.board import Board
-    from main.team import Team
+    from main.agents import Agent
 
 
 class Rook(Piece):
@@ -24,22 +23,23 @@ class Rook(Piece):
 
     def __init__(
         self,
-        board: "Board",
-        team: "Team",
+        attr: str,
+        agent: "Agent",
+        opponent_agent: "Agent",
         x: str,
         y: int,
         has_moved: Optional[bool] = None,
     ):
-        super().__init__(board, team, x, y)
+        super().__init__(attr, agent, opponent_agent, x, y)
 
         if has_moved is None:
-            initial_y = 1 if self.team.color == constants.WHITE else 8
+            initial_y = 1 if self.agent.color == constants.WHITE else 8
             self.has_moved = self.position not in [("a", initial_y), ("h", initial_y)]
         else:
             self.has_moved = has_moved
 
     def augment_change(self, x: XPosition, y: int, change: Change, **kwargs) -> Change:
         if not self.has_moved:
-            change[self.team.color][self.name]["has_moved"] = True
+            change[self.agent.color][self.attr]["has_moved"] = True
 
         return change
