@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Dict, List, Optional, Type
+from typing import TYPE_CHECKING, List, Optional, Type
 
 from main import constants
 from main.board import Board

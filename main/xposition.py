@@ -9,7 +9,7 @@ class XPosition(str):
     def __new__(cls, value, *args, **kwargs):
         return super().__new__(cls, value)
 
-    def __init__(self, value: str, wrap: Optional[bool] = False):
+    def __init__(self, _, wrap: Optional[bool] = False):
         self.wrap = wrap
 
     def _operate(self, operation: Callable, other: int):

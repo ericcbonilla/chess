@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, Iterable, List, Optional, Set
+from typing import TYPE_CHECKING, Iterable, Optional, Set
 
 from main.graveyard import Graveyard
 from main.pieces import Bishop, BlackPawn, King, Knight, Queen, Rook, WhitePawn

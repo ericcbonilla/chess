@@ -123,14 +123,15 @@ class Board:
     #
     #     return True
 
-    # TODO type attr as one of Agent.piece_attrs
-    def set_piece(self, piece: "Piece", attr: str):
+    @staticmethod
+    def set_piece(piece: "Piece", attr: str):
         setattr(piece.agent, attr, piece)
 
         if hasattr(piece.agent.graveyard, attr):
             setattr(piece.agent.graveyard, attr, None)
 
-    def destroy_piece(self, piece: "Piece", attr: str):
+    @staticmethod
+    def destroy_piece(piece: "Piece", attr: str):
         setattr(piece.agent.graveyard, attr, piece)
         setattr(piece.agent, attr, None)
 

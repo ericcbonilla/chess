@@ -1,7 +1,6 @@
 from main.pieces import Bishop, BlackPawn, King, Knight, Queen, Rook, WhitePawn
 
 WHITE_SCAFFOLD = {
-    # TODO typing for piece datum
     "king": {"piece_type": King, "x": "e", "y": 1, "has_moved": False},
     "queen": {"piece_type": Queen, "x": "d", "y": 1},
     "a_rook": {"piece_type": Rook, "x": "a", "y": 1, "has_moved": False},

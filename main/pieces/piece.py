@@ -1,6 +1,6 @@
-from typing import TYPE_CHECKING, Callable, Iterable, Optional, Reversible, Set
+from typing import TYPE_CHECKING, Iterable, Optional, Reversible, Set
 
-from colorist import red, white, yellow
+from colorist import red
 
 from main import constants
 from main.exceptions import InvalidMoveError
@@ -183,7 +183,7 @@ class Piece:
             return "1-0" if self.agent.color == constants.WHITE else "0-1"
         elif not opponent_can_move:
             return "½-½"
-        return ""
+        return None
 
     def augment_change(self, x: XPosition, y: int, change: Change, **kwargs) -> Change:
         """
