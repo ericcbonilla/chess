@@ -132,6 +132,7 @@ class Board:
 
     def destroy_piece(self, piece: "Piece", attr: str):
         setattr(piece.agent.graveyard, attr, piece)
+        setattr(piece.agent, attr, None)
 
     def apply_change(self, change: Change):
         """
