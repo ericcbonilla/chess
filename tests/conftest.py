@@ -8,8 +8,12 @@ from main.pieces import Queen
 
 
 @pytest.fixture
-def default_board():
-    builder = BoardBuilder()
+def builder():
+    return BoardBuilder()
+
+
+@pytest.fixture
+def default_board(builder):
     return builder.from_start(white_agent_cls=ManualAgent, black_agent_cls=ManualAgent)
 
 

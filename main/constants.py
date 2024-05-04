@@ -20,3 +20,31 @@ SQUARES_READABLE = [
 # fmt: on
 
 SQUARES = {(s[0], int(s[1])) for s in SQUARES_READABLE}
+
+
+PIECE_ATTRS = (
+    "king",
+    "queen",
+    "a_rook",
+    "h_rook",
+    "b_knight",
+    "g_knight",
+    "c_bishop",
+    "f_bishop",
+    "a_pawn",
+    "b_pawn",
+    "c_pawn",
+    "d_pawn",
+    "e_pawn",
+    "f_pawn",
+    "g_pawn",
+    "h_pawn",
+    "a_prom",
+    "b_prom",
+    "c_prom",
+    "d_prom",
+    "e_prom",
+    "f_prom",
+    "g_prom",
+    "h_prom",
+)

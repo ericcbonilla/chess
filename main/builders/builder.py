@@ -2,6 +2,7 @@ from typing import TYPE_CHECKING, List, Optional, Type
 
 from main import constants
 from main.board import Board
+from main.exceptions import SlotError
 from main.pieces import Bishop, King, Knight, Queen, Rook
 from main.types import AgentScaffold, PieceScaffold
 from main.xposition import XPosition
@@ -82,11 +83,16 @@ class BoardBuilder:
     def _get_file_slot(scaffold: AgentScaffold, datum: PieceScaffold, name: str) -> str:
         x = XPosition(datum["x"], wrap=True)
         slot = None
+
         while not slot:
             if scaffold[f"{x}_{name}"] is None:
                 slot = f"{x}_{name}"
             else:
                 x += 1
+                if x == datum["x"]:
+                    raise SlotError(
+                        f"Could not add {datum['piece_type']} at {(datum['x'], datum['y'])}; all slots taken"
+                    )
 
         return slot
 
@@ -120,7 +126,9 @@ class BoardBuilder:
 
         return scaffold
 
-    # TODO add tests for this
+    # TODO add tests for this:
+    # - 8 Promotees
+    # - Multiple pawns on file
     def from_data(
         self,
         white_agent_cls: Type["Agent"],

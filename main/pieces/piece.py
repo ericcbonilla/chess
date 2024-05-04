@@ -30,6 +30,8 @@ class Piece:
     ):
         self.attr = attr
         self.agent = agent
+
+        # TODO Might be an antipattern, try self.agent.board.black
         self.opponent_agent = opponent_agent
         self.x = XPosition(x)
         self.y = y

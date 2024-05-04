@@ -1,6 +1,7 @@
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Iterable, Optional, Set
 
+from main import constants
 from main.graveyard import Graveyard
 from main.pieces import Bishop, BlackPawn, King, Knight, Queen, Rook, WhitePawn
 from main.types import AgentColor, Position
@@ -24,32 +25,7 @@ class Agent:
     color: AgentColor
     board: "Board"
     graveyard: Graveyard = field(default_factory=Graveyard)
-    piece_attrs = (
-        "king",
-        "queen",
-        "a_rook",
-        "h_rook",
-        "b_knight",
-        "g_knight",
-        "c_bishop",
-        "f_bishop",
-        "a_pawn",
-        "b_pawn",
-        "c_pawn",
-        "d_pawn",
-        "e_pawn",
-        "f_pawn",
-        "g_pawn",
-        "h_pawn",
-        "a_prom",
-        "b_prom",
-        "c_prom",
-        "d_prom",
-        "e_prom",
-        "f_prom",
-        "g_prom",
-        "h_prom",
-    )
+    piece_attrs = constants.PIECE_ATTRS
 
     king: Optional[King] = None
     queen: Optional[Queen] = None
@@ -69,7 +45,6 @@ class Agent:
     g_pawn: Optional[WhitePawn | BlackPawn] = None
     h_pawn: Optional[WhitePawn | BlackPawn] = None
 
-    # Promotees
     # TODO Can we unify this with pawn attrs?
     a_prom: Optional["Piece"] = None
     b_prom: Optional["Piece"] = None

@@ -8,3 +8,7 @@ class InvalidMoveError(Exception):
 
 class InvalidGameError(Exception):
     pass
+
+
+class SlotError(Exception):
+    pass
