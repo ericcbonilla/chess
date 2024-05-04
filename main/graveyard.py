@@ -5,7 +5,7 @@ from main import constants
 from main.pieces import Bishop, BlackPawn, King, Knight, Queen, Rook, WhitePawn
 
 if TYPE_CHECKING:
-    from main.pieces.piece import Piece
+    from main.pieces import Piece
 
 
 @dataclass

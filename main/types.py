@@ -10,7 +10,7 @@ from typing import (
 )
 
 if TYPE_CHECKING:
-    from main.pieces.piece import Piece
+    from main.pieces import Piece
 
 Position = Tuple["XPosition", int]
 Promotee = Union["Bishop", "Knight", "Queen", "Rook"]

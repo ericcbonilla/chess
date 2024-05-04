@@ -1,11 +1,9 @@
 from main.agents import ManualAgent
-from main.builders import BoardBuilder
 from main.pieces import Bishop, King, Knight, Queen, Rook, WhitePawn
 
 
 class TestGetGameResult:
-    def test_white_in_check_and_cant_move_yields_checkmate(self):
-        builder = BoardBuilder()
+    def test_white_in_check_and_cant_move_yields_checkmate(self, builder):
         board = builder.from_data(
             white_agent_cls=ManualAgent,
             black_agent_cls=ManualAgent,
@@ -25,8 +23,7 @@ class TestGetGameResult:
         assert halfmove.change["check"]
         assert halfmove.change["game_result"] == "0-1"
 
-    def test_white_in_check_and_cant_move_defenders_yields_checkmate(self):
-        builder = BoardBuilder()
+    def test_white_in_check_and_cant_move_defenders_yields_checkmate(self, builder):
         board = builder.from_data(
             white_agent_cls=ManualAgent,
             black_agent_cls=ManualAgent,
@@ -47,8 +44,7 @@ class TestGetGameResult:
         assert halfmove.change["check"]
         assert halfmove.change["game_result"] == "0-1"
 
-    def test_opponent_not_in_check_and_cant_moves_yields_draw(self):
-        builder = BoardBuilder()
+    def test_opponent_not_in_check_and_cant_moves_yields_draw(self, builder):
         board = builder.from_data(
             white_agent_cls=ManualAgent,
             black_agent_cls=ManualAgent,
@@ -67,8 +63,7 @@ class TestGetGameResult:
         assert not halfmove.change["check"]
         assert halfmove.change["game_result"] == "½-½"
 
-    def test_opponent_in_check_but_can_still_move_yields_no_result(self):
-        builder = BoardBuilder()
+    def test_opponent_in_check_but_can_still_move_yields_no_result(self, builder):
         board = builder.from_data(
             white_agent_cls=ManualAgent,
             black_agent_cls=ManualAgent,
@@ -89,8 +84,7 @@ class TestGetGameResult:
         assert halfmove.change["check"]
         assert halfmove.change["game_result"] is None  # Can still do Nc3
 
-    def test_opponent_in_check_but_pawn_can_still_move_yields_no_result(self):
-        builder = BoardBuilder()
+    def test_opponent_in_check_but_pawn_can_still_move_yields_no_result(self, builder):
         board = builder.from_data(
             white_agent_cls=ManualAgent,
             black_agent_cls=ManualAgent,
@@ -114,8 +108,7 @@ class TestGetGameResult:
 
 
 class TestGetDisambiguation:
-    def test_knight_disambiguation(self):
-        builder = BoardBuilder()
+    def test_knight_disambiguation(self, builder):
         board = builder.from_data(
             white_agent_cls=ManualAgent,
             black_agent_cls=ManualAgent,

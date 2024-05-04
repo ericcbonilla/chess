@@ -10,7 +10,7 @@ from main.xposition import XPosition
 
 if TYPE_CHECKING:
     from main.agents import Agent
-    from main.pieces.piece import Piece
+    from main.pieces import Piece
 
 
 class Board:
@@ -229,7 +229,10 @@ class Board:
     def play(self):
         term_size = os.get_terminal_size()
 
-        while self.fullmove_number <= self.max_moves or not self.result:
+        while not self.result:
+            if (self.fullmove_number - 1) == self.max_moves:
+                break
+
             num_breaks = term_size.columns - len(str(self.fullmove_number)) - 2
             print(f"\n{self.fullmove_number}. {'=' * num_breaks}")
 

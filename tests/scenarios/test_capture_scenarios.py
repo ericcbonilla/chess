@@ -1,5 +1,4 @@
 from main.agents import ManualAgent
-from main.builders import BoardBuilder
 from main.pieces import Bishop, King, Knight, Queen, Rook
 
 
@@ -17,7 +16,7 @@ class TestCaptureScenarios:
         assert default_board.black.f_bishop.position == ("b", 2)
         assert ("b", 2) not in default_board.white.positions
 
-    def test_capture_puts_captured_piece_in_graveyard(self):
+    def test_capture_puts_captured_piece_in_graveyard(self, builder):
         """
         Aside: There was a weird bug where if a King was within two valid knight moves,
         (as seen here - Nf6 -> Nxe8??) that moving knight would "capture" it due to
@@ -26,7 +25,6 @@ class TestCaptureScenarios:
         similar bugs.
         """
 
-        builder = BoardBuilder()
         board = builder.from_data(
             white_agent_cls=ManualAgent,
             black_agent_cls=ManualAgent,
@@ -47,8 +45,7 @@ class TestCaptureScenarios:
         assert board.black.graveyard.h_rook
         assert board.black.graveyard.c_bishop is None
 
-    def test_queen_capture_and_check_results_in_expected_change(self):
-        builder = BoardBuilder()
+    def test_queen_capture_and_check_results_in_expected_change(self, builder):
         board = builder.from_data(
             white_agent_cls=ManualAgent,
             black_agent_cls=ManualAgent,

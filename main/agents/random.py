@@ -9,7 +9,7 @@ from main.utils import cprint
 from .agent import Agent
 
 if TYPE_CHECKING:
-    from main.pieces.piece import Piece
+    from main.pieces import Piece
 
 
 class RandomAgent(Agent):

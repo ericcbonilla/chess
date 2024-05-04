@@ -1,7 +1,6 @@
 import pytest
 
 from main.agents import ManualAgent
-from main.builders import BoardBuilder
 from main.exceptions import InvalidMoveError
 from main.pieces import BlackPawn, King, Knight, Queen, Rook, WhitePawn
 
@@ -24,8 +23,7 @@ class TestPawnScenarios:
         with pytest.raises(InvalidMoveError):
             default_board.white.e_pawn.manual_move("e", 5)
 
-    def test_pawn_promotion_capture_results_in_expected_state(self):
-        builder = BoardBuilder()
+    def test_pawn_promotion_capture_results_in_expected_state(self, builder):
         board = builder.from_data(
             white_agent_cls=ManualAgent,
             black_agent_cls=ManualAgent,
@@ -45,8 +43,7 @@ class TestPawnScenarios:
         assert board.black.graveyard.a_rook
         assert board.white.f_prom.position == ("g", 8)
 
-    def test_rollback_pawn_promotion_capture_results_in_expected_state(self):
-        builder = BoardBuilder()
+    def test_rollback_pawn_promotion_capture_results_in_expected_state(self, builder):
         board = builder.from_data(
             white_agent_cls=ManualAgent,
             black_agent_cls=ManualAgent,
@@ -68,8 +65,7 @@ class TestPawnScenarios:
         assert board.white.f_prom is None
         assert board.white.graveyard.f_prom
 
-    def test_pawn_promotion_can_create_third_piece(self):
-        builder = BoardBuilder()
+    def test_pawn_promotion_can_create_third_piece(self, builder):
         board = builder.from_data(
             white_agent_cls=ManualAgent,
             black_agent_cls=ManualAgent,
@@ -89,8 +85,7 @@ class TestPawnScenarios:
         assert isinstance(board.white.a_prom, Knight)
         assert board.white.a_prom.position == ("a", 8)
 
-    def test_pawn_promotion_capture_results_in_expected_piece(self):
-        builder = BoardBuilder()
+    def test_pawn_promotion_capture_results_in_expected_piece(self, builder):
         board = builder.from_data(
             white_agent_cls=ManualAgent,
             black_agent_cls=ManualAgent,
@@ -110,8 +105,7 @@ class TestPawnScenarios:
         assert board.white.f_prom.position == ("g", 8)
         assert board.black.graveyard.a_rook
 
-    def test_pawn_promotion_invalid_if_king_is_in_check(self):
-        builder = BoardBuilder()
+    def test_pawn_promotion_invalid_if_king_is_in_check(self, builder):
         board = builder.from_data(
             white_agent_cls=ManualAgent,
             black_agent_cls=ManualAgent,
@@ -133,8 +127,7 @@ class TestPawnScenarios:
         assert board.white.f_pawn.position == ("f", 7)
         assert board.white.queen is None
 
-    def test_pawn_promotion_capture_results_in_expected_change(self):
-        builder = BoardBuilder()
+    def test_pawn_promotion_capture_results_in_expected_change(self, builder):
         board = builder.from_data(
             white_agent_cls=ManualAgent,
             black_agent_cls=ManualAgent,
@@ -176,8 +169,7 @@ class TestPawnScenarios:
 
 
 class TestEnPassant:
-    def test_white_pawn_moving_two_squares_sets_en_passant_target(self):
-        builder = BoardBuilder()
+    def test_white_pawn_moving_two_squares_sets_en_passant_target(self, builder):
         board = builder.from_data(
             white_agent_cls=ManualAgent,
             black_agent_cls=ManualAgent,
@@ -194,8 +186,7 @@ class TestEnPassant:
 
         assert board.white.en_passant_target == ("e", 3)
 
-    def test_black_pawn_moving_two_squares_sets_en_passant_target(self):
-        builder = BoardBuilder()
+    def test_black_pawn_moving_two_squares_sets_en_passant_target(self, builder):
         board = builder.from_data(
             white_agent_cls=ManualAgent,
             black_agent_cls=ManualAgent,
@@ -212,8 +203,7 @@ class TestEnPassant:
 
         assert board.black.en_passant_target == ("d", 6)
 
-    def test_pawn_moving_one_square_does_not_set_en_passant_target(self):
-        builder = BoardBuilder()
+    def test_pawn_moving_one_square_does_not_set_en_passant_target(self, builder):
         board = builder.from_data(
             white_agent_cls=ManualAgent,
             black_agent_cls=ManualAgent,

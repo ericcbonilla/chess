@@ -1,7 +1,6 @@
 import pytest
 
 from main.agents import ManualAgent
-from main.builders import BoardBuilder
 from main.exceptions import InvalidMoveError
 from main.pieces import Bishop, King, Knight, Queen, Rook, WhitePawn
 
@@ -31,8 +30,7 @@ class TestCastling:
         assert default_board.white.h_rook.position == ("h", 1)
         assert not default_board.white.h_rook.has_moved
 
-    def test_cant_castle_if_king_has_moved(self):
-        builder = BoardBuilder()
+    def test_cant_castle_if_king_has_moved(self, builder):
         board = builder.from_data(
             white_agent_cls=ManualAgent,
             black_agent_cls=ManualAgent,
@@ -74,8 +72,7 @@ class TestCastling:
         assert default_board.white.king.position == ("g", 1)
         assert default_board.white.h_rook.position == ("f", 1)
 
-    def test_cant_castle_out_of_check(self):
-        builder = BoardBuilder()
+    def test_cant_castle_out_of_check(self, builder):
         board = builder.from_data(
             white_agent_cls=ManualAgent,
             black_agent_cls=ManualAgent,
@@ -93,8 +90,7 @@ class TestCastling:
         with pytest.raises(InvalidMoveError):
             board.black.king.manual_move("g", 8)
 
-    def test_cant_castle_if_skewered(self):
-        builder = BoardBuilder()
+    def test_cant_castle_if_skewered(self, builder):
         board = builder.from_data(
             white_agent_cls=ManualAgent,
             black_agent_cls=ManualAgent,
@@ -112,8 +108,7 @@ class TestCastling:
         with pytest.raises(InvalidMoveError):
             board.black.king.manual_move("g", 8)
 
-    def test_doesnt_castle_when_king_is_not_moving_from_starting_square(self):
-        builder = BoardBuilder()
+    def test_doesnt_castle_when_king_is_not_moving_from_starting_square(self, builder):
         board = builder.from_data(
             white_agent_cls=ManualAgent,
             black_agent_cls=ManualAgent,
@@ -132,6 +127,36 @@ class TestCastling:
 
 
 class TestKingScenarios:
+    def test_when_king_added_on_starting_square_has_moved_false(self, builder):
+        board = builder.from_data(
+            white_agent_cls=ManualAgent,
+            black_agent_cls=ManualAgent,
+            white_data=[
+                {"piece_type": King, "x": "e", "y": 1},
+            ],
+            black_data=[
+                {"piece_type": King, "x": "e", "y": 8},
+            ],
+        )
+
+        assert not board.white.king.has_moved
+        assert not board.black.king.has_moved
+
+    def test_when_king_added_not_on_starting_square_has_moved_true(self, builder):
+        board = builder.from_data(
+            white_agent_cls=ManualAgent,
+            black_agent_cls=ManualAgent,
+            white_data=[
+                {"piece_type": King, "x": "e", "y": 2},
+            ],
+            black_data=[
+                {"piece_type": King, "x": "e", "y": 7},
+            ],
+        )
+
+        assert board.white.king.has_moved
+        assert board.black.king.has_moved
+
     def test_white_king_put_in_check(self, default_board):
         default_board.white.d_pawn.manual_move("d", 4)
         default_board.black.e_pawn.manual_move("e", 6)
@@ -159,8 +184,7 @@ class TestKingScenarios:
         default_board.white.king.manual_move("f", 2)
         assert default_board.white.king.position == ("f", 2)
 
-    def test_king_cant_move_next_to_king(self):
-        builder = BoardBuilder()
+    def test_king_cant_move_next_to_king(self, builder):
         board = builder.from_data(
             white_agent_cls=ManualAgent,
             black_agent_cls=ManualAgent,
@@ -187,8 +211,7 @@ class TestKingScenarios:
         default_board.white.b_knight.manual_move("c", 3)  # Works
         assert default_board.white.b_knight.position == ("c", 3)
 
-    def test_discovered_check(self):
-        builder = BoardBuilder()
+    def test_discovered_check(self, builder):
         board = builder.from_data(
             white_agent_cls=ManualAgent,
             black_agent_cls=ManualAgent,
@@ -208,8 +231,7 @@ class TestKingScenarios:
         assert board.white.a_rook.position == ("d", 8)
         assert board.black.king.is_in_check()
 
-    def test_cant_leave_king_in_check_from_pawn(self):
-        builder = BoardBuilder()
+    def test_cant_leave_king_in_check_from_pawn(self, builder):
         board = builder.from_data(
             white_agent_cls=ManualAgent,
             black_agent_cls=ManualAgent,
@@ -228,8 +250,9 @@ class TestKingScenarios:
         with pytest.raises(InvalidMoveError):
             board.black.queen.manual_move("h", 4)
 
-    def test_king_cant_move_into_check_from_pawn_even_if_discovered_check(self):
-        builder = BoardBuilder()
+    def test_king_cant_move_into_check_from_pawn_even_if_discovered_check(
+        self, builder
+    ):
         board = builder.from_data(
             white_agent_cls=ManualAgent,
             black_agent_cls=ManualAgent,
@@ -247,8 +270,7 @@ class TestKingScenarios:
         with pytest.raises(InvalidMoveError):
             board.black.king.manual_move("e", 4)
 
-    def test_cant_leave_king_in_check_from_knight(self):
-        builder = BoardBuilder()
+    def test_cant_leave_king_in_check_from_knight(self, builder):
         board = builder.from_data(
             white_agent_cls=ManualAgent,
             black_agent_cls=ManualAgent,
@@ -265,8 +287,7 @@ class TestKingScenarios:
         with pytest.raises(InvalidMoveError):
             board.white.b_pawn.manual_move("b", 4)
 
-    def test_cant_move_into_check_from_knight(self):
-        builder = BoardBuilder()
+    def test_cant_move_into_check_from_knight(self, builder):
         board = builder.from_data(
             white_agent_cls=ManualAgent,
             black_agent_cls=ManualAgent,
@@ -282,8 +303,7 @@ class TestKingScenarios:
         with pytest.raises(InvalidMoveError):
             board.white.king.manual_move("e", 3)
 
-    def test_cant_move_backwards_if_skewered(self):
-        builder = BoardBuilder()
+    def test_cant_move_backwards_if_skewered(self, builder):
         board = builder.from_data(
             white_agent_cls=ManualAgent,
             black_agent_cls=ManualAgent,
@@ -299,8 +319,7 @@ class TestKingScenarios:
         with pytest.raises(InvalidMoveError):
             board.white.king.manual_move("d", 2)
 
-    def test_cant_move_toward_attacker_when_cornered_on_diagonal(self):
-        builder = BoardBuilder()
+    def test_cant_move_toward_attacker_when_cornered_on_diagonal(self, builder):
         board = builder.from_data(
             white_agent_cls=ManualAgent,
             black_agent_cls=ManualAgent,

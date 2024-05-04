@@ -91,7 +91,8 @@ class BoardBuilder:
                 x += 1
                 if x == datum["x"]:
                     raise SlotError(
-                        f"Could not add {datum['piece_type']} at {(datum['x'], datum['y'])}; all slots taken"
+                        f"Could not add {datum['piece_type']} at "
+                        f"{(datum['x'], datum['y'])}; all slots taken"
                     )
 
         return slot

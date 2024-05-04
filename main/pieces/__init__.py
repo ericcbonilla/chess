@@ -3,6 +3,7 @@ Order matters here - else circular imports occur
 isort:skip_file
 """
 
+from .piece import Piece
 from .pawn import WhitePawn, BlackPawn
 from .bishop import Bishop
 from .king import King

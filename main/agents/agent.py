@@ -9,7 +9,7 @@ from main.xposition import XPosition
 
 if TYPE_CHECKING:
     from main.board import Board
-    from main.pieces.piece import Piece
+    from main.pieces import Piece
 
 
 @dataclass
