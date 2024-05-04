@@ -1,6 +1,3 @@
-# TODO why is this here again?
-from __future__ import annotations
-
 from typing import Optional, Set, Type
 
 from main import constants
