@@ -74,55 +74,6 @@ class Board:
     def to_pgn(self):
         pass
 
-    # def get_piece_name(
-    #     self,
-    #     piece_type: Type["Piece"],
-    #     color: AgentColor,
-    #     x: Optional[XPosition] = None,
-    #     # agent: Optional[Team] = None,
-    # ) -> str:
-    #     if piece_type in (WhitePawn, BlackPawn) and x:
-    #         # and agent is not None:
-    #         # TODO this will break if given a FEN position with 2+ pawns on the same column
-    #         # This is a tough one so I'll come back to it later. Passing in agent to this
-    #         # method was breaking things for some reason.
-    #         return f"{x.upper()}P"
-    #         # return self._get_pawn_name(x, agent)
-    #     elif piece_type is Rook:
-    #         count = self.piece_counts[f"{color}_ROOKS"]
-    #         return f"R{count + 1}"
-    #     elif piece_type is Knight:
-    #         count = self.piece_counts[f"{color}_KNIGHTS"]
-    #         return f"N{count + 1}"
-    #     elif piece_type is Bishop:
-    #         count = self.piece_counts[f"{color}_BISHOPS"]
-    #         return f"B{count + 1}"
-    #     elif piece_type is Queen:
-    #         count = self.piece_counts[f"{color}_QUEENS"]
-    #         return f"Q{count + 1}"
-    #     elif piece_type is King:
-    #         return "K"
-
-    # def is_valid_position(self) -> bool:
-    #     # TODO only really blatant stuff, like more than 8 pawns, 1 king
-    #     # Same stuff that FEN would check for
-    #     # If a agent is in check, ensure it's that agent's turn
-    #     # Pawns cannot be on their back rank
-    #
-    #     if not ("K" in self.white and "K" in self.black):
-    #         return False
-    #
-    #     # team_to_play = self.team_to_play()
-    #     # team_last_played = self.white if team_to_play is self.black else self.black
-    #     # if team_last_played['K'].is_in_check():
-    #     #     return False
-    #
-    #     for agent in (self.white, self.black):
-    #         if len(agent) > 16:
-    #             return False
-    #
-    #     return True
-
     @staticmethod
     def set_piece(piece: "Piece", attr: str):
         setattr(piece.agent, attr, piece)

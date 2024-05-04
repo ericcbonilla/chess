@@ -2,7 +2,7 @@ from typing import TYPE_CHECKING, List, Optional, Type
 
 from main import constants
 from main.board import Board
-from main.exceptions import SlotError
+from main.exceptions import BuildError
 from main.pieces import Bishop, King, Knight, Queen, Rook
 from main.types import AgentScaffold, PieceScaffold
 from main.xposition import XPosition
@@ -90,7 +90,7 @@ class BoardBuilder:
             else:
                 x += 1
                 if x == datum["x"]:
-                    raise SlotError(
+                    raise BuildError(
                         f"Could not add {datum['piece_type']} at "
                         f"{(datum['x'], datum['y'])}; all slots taken"
                     )
@@ -101,6 +101,8 @@ class BoardBuilder:
         return self._get_file_slot(scaffold, datum, "prom")
 
     def _get_pawn_slot(self, scaffold: AgentScaffold, datum: PieceScaffold) -> str:
+        if datum["y"] in (1, 8):
+            raise BuildError("Pawns cannot be on back ranks")
         return self._get_file_slot(scaffold, datum, "pawn")
 
     def _get_scaffold(self, piece_data: List[PieceScaffold]):
@@ -125,11 +127,11 @@ class BoardBuilder:
 
             scaffold[slot] = datum
 
+        if scaffold["king"] is None:
+            raise BuildError("Cannot build board with missing King")
+
         return scaffold
 
-    # TODO add tests for this:
-    # - 8 Promotees
-    # - Multiple pawns on file
     def from_data(
         self,
         white_agent_cls: Type["Agent"],

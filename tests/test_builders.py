@@ -1,9 +1,25 @@
+import pytest
+
 from main.agents import ManualAgent
+from main.exceptions import BuildError
 from main.pieces import King, Queen, WhitePawn
 
 
 class TestBoardBuilder:
-    def test_added_pawn_has_correct_name(self, builder):
+    def test_no_king_raises_build_error(self, builder):
+        with pytest.raises(BuildError):
+            builder.from_data(
+                white_agent_cls=ManualAgent,
+                black_agent_cls=ManualAgent,
+                white_data=[
+                    {"piece_type": WhitePawn, "x": "a", "y": 2},
+                ],
+                black_data=[
+                    {"piece_type": King, "x": "e", "y": 5},
+                ],
+            )
+
+    def test_pawn_added_to_correct_slot(self, builder):
         board = builder.from_data(
             white_agent_cls=ManualAgent,
             black_agent_cls=ManualAgent,
@@ -17,6 +33,61 @@ class TestBoardBuilder:
         )
 
         assert board.white.f_pawn
+
+    def test_multiple_pawns_on_same_file_added_to_correct_slots(self, builder):
+        board = builder.from_data(
+            white_agent_cls=ManualAgent,
+            black_agent_cls=ManualAgent,
+            white_data=[
+                {"piece_type": King, "x": "c", "y": 4},
+                {"piece_type": WhitePawn, "x": "g", "y": 2},
+                {"piece_type": WhitePawn, "x": "g", "y": 3},
+                {"piece_type": WhitePawn, "x": "g", "y": 4},
+            ],
+            black_data=[
+                {"piece_type": King, "x": "e", "y": 5},
+            ],
+        )
+
+        assert board.white.g_pawn.position == ("g", 2)
+        assert board.white.h_pawn.position == ("g", 3)
+        assert board.white.a_pawn.position == ("g", 4)
+
+    def test_too_many_pawns_raises_build_error(self, builder):
+        with pytest.raises(BuildError):
+            builder.from_data(
+                white_agent_cls=ManualAgent,
+                black_agent_cls=ManualAgent,
+                white_data=[
+                    {"piece_type": King, "x": "e", "y": 1},
+                    {"piece_type": WhitePawn, "x": "a", "y": 2},
+                    {"piece_type": WhitePawn, "x": "b", "y": 2},
+                    {"piece_type": WhitePawn, "x": "c", "y": 2},
+                    {"piece_type": WhitePawn, "x": "d", "y": 2},
+                    {"piece_type": WhitePawn, "x": "e", "y": 2},
+                    {"piece_type": WhitePawn, "x": "f", "y": 2},
+                    {"piece_type": WhitePawn, "x": "g", "y": 2},
+                    {"piece_type": WhitePawn, "x": "h", "y": 2},
+                    {"piece_type": WhitePawn, "x": "a", "y": 3},
+                ],
+                black_data=[
+                    {"piece_type": King, "x": "e", "y": 5},
+                ],
+            )
+
+    def test_pawn_on_back_rank_raises_build_error(self, builder):
+        with pytest.raises(BuildError):
+            builder.from_data(
+                white_agent_cls=ManualAgent,
+                black_agent_cls=ManualAgent,
+                white_data=[
+                    {"piece_type": King, "x": "e", "y": 1},
+                    {"piece_type": WhitePawn, "x": "a", "y": 1},
+                ],
+                black_data=[
+                    {"piece_type": King, "x": "e", "y": 5},
+                ],
+            )
 
     def test_second_added_queen_has_correct_name(self, builder):
         board = builder.from_data(
@@ -36,16 +107,3 @@ class TestBoardBuilder:
         assert board.white.queen.position == ("g", 5)
         assert board.white.g_prom.position == ("g", 4)
         assert board.white.h_prom.position == ("g", 3)
-
-    # TODO
-    # def test_multiple_pawns_on_same_column_have_correct_names(self):
-    #     board = Board()
-    #     board.add_pieces([
-    #         King(board=board, agent=board.white, x='c', y=4),
-    #         King(board=board, agent=board.black, x='e', y=5),
-    #         BlackPawn(board=board, agent=board.black, x='e', y=7),
-    #         BlackPawn(board=board, agent=board.black, x='e', y=6),
-    #     ])
-    #
-    #     assert 'EP' in board.black
-    #     assert 'FP' in board.black

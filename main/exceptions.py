@@ -6,9 +6,5 @@ class InvalidMoveError(Exception):
     pass
 
 
-class InvalidGameError(Exception):
-    pass
-
-
-class SlotError(Exception):
+class BuildError(Exception):
     pass
