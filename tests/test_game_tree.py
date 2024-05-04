@@ -8,7 +8,7 @@ class TestGetLatestHalfmove:
             color=constants.WHITE,
             change={
                 "WHITE": {
-                    "EP": {
+                    "e_pawn": {
                         "old_position": ("e", 2),
                         "new_position": ("e", 4),
                     },
@@ -16,7 +16,7 @@ class TestGetLatestHalfmove:
                 "BLACK": {},
                 "disambiguation": "",
                 "check": False,
-                "game_result": "",
+                "game_result": None,
             },
         )
 
@@ -28,14 +28,14 @@ class TestGetLatestHalfmove:
             change={
                 "WHITE": {},
                 "BLACK": {
-                    "EP": {
+                    "e_pawn": {
                         "old_position": ("e", 7),
                         "new_position": ("e", 5),
                     }
                 },
                 "disambiguation": "",
                 "check": False,
-                "game_result": "",
+                "game_result": None,
             },
         )
 
@@ -46,7 +46,7 @@ class TestGetLatestHalfmove:
             color=constants.WHITE,
             change={
                 "WHITE": {
-                    "N2": {
+                    "g_knight": {
                         "old_position": ("g", 1),
                         "new_position": ("f", 3),
                     },
@@ -54,7 +54,7 @@ class TestGetLatestHalfmove:
                 "BLACK": {},
                 "disambiguation": "",
                 "check": False,
-                "game_result": "",
+                "game_result": None,
             },
         )
 
@@ -66,14 +66,14 @@ class TestGetLatestHalfmove:
             change={
                 "WHITE": {},
                 "BLACK": {
-                    "N1": {
+                    "b_knight": {
                         "old_position": ("b", 8),
                         "new_position": ("c", 6),
                     }
                 },
                 "disambiguation": "",
                 "check": False,
-                "game_result": "",
+                "game_result": None,
             },
         )
 

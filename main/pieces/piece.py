@@ -205,7 +205,7 @@ class Piece:
             self.opponent_agent.color: {},
             "disambiguation": "",
             "check": False,
-            "game_result": "",
+            "game_result": None,
         }
 
         if (x, y) in self.opponent_agent.positions:  # capture

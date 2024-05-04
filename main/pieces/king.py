@@ -156,14 +156,13 @@ class King(Piece):
             change[self.agent.color][self.attr]["has_moved"] = True
 
             if (x, y) == ("c", self.y):  # queenside
-                change[self.agent.color]["R1"] = {
+                change[self.agent.color]["a_rook"] = {
                     "old_position": ("a", self.y),
                     "new_position": ("d", self.y),
                     "has_moved": True,
                 }
             elif (x, y) == ("g", self.y):  # kingside
-                rook_name = "R1" if "R2" not in self.agent else "R2"
-                change[self.agent.color][rook_name] = {
+                change[self.agent.color]["h_rook"] = {
                     "old_position": ("h", self.y),
                     "new_position": ("f", self.y),
                     "has_moved": True,

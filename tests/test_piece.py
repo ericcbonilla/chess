@@ -14,7 +14,7 @@ class TestGetGameResult:
             ]
         )
 
-        board.black["Q1"].manual_move("a", 8)
+        board.black.queen.manual_move("a", 8)
 
         halfmove = board.game_tree.get_latest_halfmove()
         assert halfmove.change["check"]
@@ -32,7 +32,7 @@ class TestGetGameResult:
             ]
         )
 
-        board.black["B1"].manual_move("g", 7)
+        board.black.c_bishop.manual_move("g", 7)
 
         halfmove = board.game_tree.get_latest_halfmove()
         assert halfmove.change["check"]
@@ -48,7 +48,7 @@ class TestGetGameResult:
             ]
         )
 
-        board.white["R1"].manual_move("b", 6)
+        board.white.a_rook.manual_move("b", 6)
 
         halfmove = board.game_tree.get_latest_halfmove()
         assert not halfmove.change["check"]
@@ -66,7 +66,7 @@ class TestGetGameResult:
             ]
         )
 
-        board.black["B1"].manual_move("g", 7)
+        board.black.c_bishop.manual_move("g", 7)
 
         halfmove = board.game_tree.get_latest_halfmove()
         assert halfmove.change["check"]
@@ -86,7 +86,7 @@ class TestGetGameResult:
             ]
         )
 
-        board.black["B1"].manual_move("g", 7)
+        board.black.c_bishop.manual_move("g", 7)
 
         halfmove = board.game_tree.get_latest_halfmove()
         assert halfmove.change["check"]
@@ -106,7 +106,7 @@ class TestGetDisambiguation:
             ]
         )
 
-        assert board.white["N1"].get_disambiguation("e", 4) == "c"
+        assert board.white.b_knight.get_disambiguation("e", 4) == "c"
 
     def test_knight_double_disambiguation(self):
         board = Board()
@@ -120,7 +120,7 @@ class TestGetDisambiguation:
             ]
         )
 
-        assert board.white["N1"].get_disambiguation("e", 4) == "c3"
+        assert board.white.b_knight.get_disambiguation("e", 4) == "c3"
 
     def test_knight_two_knights_but_just_one_disambiguation(self):
         board = Board()
@@ -134,7 +134,7 @@ class TestGetDisambiguation:
             ]
         )
 
-        assert board.white["N1"].get_disambiguation("e", 4) == "c"
+        assert board.white.b_knight.get_disambiguation("e", 4) == "c"
 
     def test_rook_disambiguation(self):
         board = Board()
@@ -148,7 +148,7 @@ class TestGetDisambiguation:
             ]
         )
 
-        assert board.white["R1"].get_disambiguation("g", 3) == "1"
+        assert board.white.a_rook.get_disambiguation("g", 3) == "1"
 
     def test_rook_double_disambiguation(self):
         board = Board()
@@ -162,7 +162,7 @@ class TestGetDisambiguation:
             ]
         )
 
-        assert board.white["R1"].get_disambiguation("g", 3) == "g1"
+        assert board.white.a_rook.get_disambiguation("g", 3) == "g1"
 
     def test_queen_disambiguation(self):
         board = Board()
@@ -175,7 +175,7 @@ class TestGetDisambiguation:
             ]
         )
 
-        assert board.white["Q1"].get_disambiguation("d", 4) == "2"
+        assert board.white.queen.get_disambiguation("d", 4) == "2"
 
     def test_queen_double_disambiguation(self):
         board = Board()
@@ -189,7 +189,7 @@ class TestGetDisambiguation:
             ]
         )
 
-        assert board.white["Q1"].get_disambiguation("d", 4) == "b2"
+        assert board.white.queen.get_disambiguation("d", 4) == "b2"
 
     def test_hella_siblings_disambiguation(self):
         """

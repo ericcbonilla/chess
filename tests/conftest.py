@@ -1,52 +1,16 @@
 import pytest
 
 from main import constants
-from main.board import Board
+from main.agents import ManualAgent
+from main.builders import BoardBuilder
 from main.game_tree import FullMove, HalfMove
-from main.pieces import Bishop, BlackPawn, King, Knight, Queen, Rook, WhitePawn
+from main.pieces import Queen
 
 
 @pytest.fixture
 def default_board():
-    board = Board()
-    board.add_pieces(
-        [
-            WhitePawn(board=board, agent=board.white, x="a", y=2),
-            WhitePawn(board=board, agent=board.white, x="b", y=2),
-            WhitePawn(board=board, agent=board.white, x="c", y=2),
-            WhitePawn(board=board, agent=board.white, x="d", y=2),
-            WhitePawn(board=board, agent=board.white, x="e", y=2),
-            WhitePawn(board=board, agent=board.white, x="f", y=2),
-            WhitePawn(board=board, agent=board.white, x="g", y=2),
-            WhitePawn(board=board, agent=board.white, x="h", y=2),
-            Rook(board=board, agent=board.white, x="a", y=1),
-            Rook(board=board, agent=board.white, x="h", y=1),
-            Knight(board=board, agent=board.white, x="b", y=1),
-            Knight(board=board, agent=board.white, x="g", y=1),
-            Bishop(board=board, agent=board.white, x="c", y=1),
-            Bishop(board=board, agent=board.white, x="f", y=1),
-            Queen(board=board, agent=board.white, x="d", y=1),
-            King(board=board, agent=board.white, x="e", y=1),
-            BlackPawn(board=board, agent=board.black, x="a", y=7),
-            BlackPawn(board=board, agent=board.black, x="b", y=7),
-            BlackPawn(board=board, agent=board.black, x="c", y=7),
-            BlackPawn(board=board, agent=board.black, x="d", y=7),
-            BlackPawn(board=board, agent=board.black, x="e", y=7),
-            BlackPawn(board=board, agent=board.black, x="f", y=7),
-            BlackPawn(board=board, agent=board.black, x="g", y=7),
-            BlackPawn(board=board, agent=board.black, x="h", y=7),
-            Rook(board=board, agent=board.black, x="a", y=8),
-            Rook(board=board, agent=board.black, x="h", y=8),
-            Knight(board=board, agent=board.black, x="b", y=8),
-            Knight(board=board, agent=board.black, x="g", y=8),
-            Bishop(board=board, agent=board.black, x="c", y=8),
-            Bishop(board=board, agent=board.black, x="f", y=8),
-            Queen(board=board, agent=board.black, x="d", y=8),
-            King(board=board, agent=board.black, x="e", y=8),
-        ]
-    )
-
-    return board
+    builder = BoardBuilder()
+    return builder.from_start(white_agent_cls=ManualAgent, black_agent_cls=ManualAgent)
 
 
 @pytest.fixture
@@ -62,7 +26,7 @@ def three_fullmove_tree():
             color=constants.WHITE,
             change={
                 "WHITE": {
-                    "EP": {
+                    "e_pawn": {
                         "old_position": ("e", 2),
                         "new_position": ("e", 4),
                     },
@@ -70,7 +34,7 @@ def three_fullmove_tree():
                 "BLACK": {},
                 "disambiguation": "",
                 "check": False,
-                "game_result": "",
+                "game_result": None,
             },
         ),
         black=HalfMove(
@@ -78,14 +42,14 @@ def three_fullmove_tree():
             change={
                 "WHITE": {},
                 "BLACK": {
-                    "EP": {
+                    "e_pawn": {
                         "old_position": ("e", 7),
                         "new_position": ("e", 5),
                     }
                 },
                 "disambiguation": "",
                 "check": False,
-                "game_result": "",
+                "game_result": None,
             },
         ),
         child=FullMove(
@@ -93,7 +57,7 @@ def three_fullmove_tree():
                 color=constants.WHITE,
                 change={
                     "WHITE": {
-                        "N2": {
+                        "g_knight": {
                             "old_position": ("g", 1),
                             "new_position": ("f", 3),
                         },
@@ -101,7 +65,7 @@ def three_fullmove_tree():
                     "BLACK": {},
                     "disambiguation": "",
                     "check": False,
-                    "game_result": "",
+                    "game_result": None,
                 },
             ),
             black=HalfMove(
@@ -109,14 +73,14 @@ def three_fullmove_tree():
                 change={
                     "WHITE": {},
                     "BLACK": {
-                        "N1": {
+                        "b_knight": {
                             "old_position": ("b", 8),
                             "new_position": ("c", 6),
                         }
                     },
                     "disambiguation": "",
                     "check": False,
-                    "game_result": "",
+                    "game_result": None,
                 },
             ),
             child=FullMove(
@@ -124,7 +88,7 @@ def three_fullmove_tree():
                     color=constants.WHITE,
                     change={
                         "WHITE": {
-                            "B2": {
+                            "f_bishop": {
                                 "old_position": ("f", 1),
                                 "new_position": ("b", 5),
                             },
@@ -132,7 +96,7 @@ def three_fullmove_tree():
                         "BLACK": {},
                         "disambiguation": "",
                         "check": False,
-                        "game_result": "",
+                        "game_result": None,
                     },
                 ),
                 black=HalfMove(
@@ -140,14 +104,14 @@ def three_fullmove_tree():
                     change={
                         "WHITE": {},
                         "BLACK": {
-                            "AP": {
+                            "a_pawn": {
                                 "old_position": ("a", 7),
                                 "new_position": ("a", 6),
                             }
                         },
                         "disambiguation": "",
                         "check": False,
-                        "game_result": "",
+                        "game_result": None,
                     },
                 ),
                 child=FullMove(),
@@ -168,7 +132,7 @@ def two_fullmove_tree():
             color=constants.WHITE,
             change={
                 "WHITE": {
-                    "EP": {
+                    "e_pawn": {
                         "old_position": ("e", 2),
                         "new_position": ("e", 4),
                     },
@@ -176,7 +140,7 @@ def two_fullmove_tree():
                 "BLACK": {},
                 "disambiguation": "",
                 "check": False,
-                "game_result": "",
+                "game_result": None,
             },
         ),
         black=HalfMove(
@@ -184,14 +148,14 @@ def two_fullmove_tree():
             change={
                 "WHITE": {},
                 "BLACK": {
-                    "EP": {
+                    "e_pawn": {
                         "old_position": ("e", 7),
                         "new_position": ("e", 5),
                     }
                 },
                 "disambiguation": "",
                 "check": False,
-                "game_result": "",
+                "game_result": None,
             },
         ),
         child=FullMove(
@@ -199,7 +163,7 @@ def two_fullmove_tree():
                 color=constants.WHITE,
                 change={
                     "WHITE": {
-                        "N2": {
+                        "g_knight": {
                             "old_position": ("g", 1),
                             "new_position": ("f", 3),
                         },
@@ -207,7 +171,7 @@ def two_fullmove_tree():
                     "BLACK": {},
                     "disambiguation": "",
                     "check": False,
-                    "game_result": "",
+                    "game_result": None,
                 },
             ),
             black=HalfMove(
@@ -215,14 +179,14 @@ def two_fullmove_tree():
                 change={
                     "WHITE": {},
                     "BLACK": {
-                        "N1": {
+                        "b_knight": {
                             "old_position": ("b", 8),
                             "new_position": ("c", 6),
                         }
                     },
                     "disambiguation": "",
                     "check": False,
-                    "game_result": "",
+                    "game_result": None,
                 },
             ),
             child=FullMove(),
@@ -242,7 +206,7 @@ def one_and_a_half_fullmove_tree():
             color=constants.WHITE,
             change={
                 "WHITE": {
-                    "EP": {
+                    "e_pawn": {
                         "old_position": ("e", 2),
                         "new_position": ("e", 4),
                     },
@@ -250,7 +214,7 @@ def one_and_a_half_fullmove_tree():
                 "BLACK": {},
                 "disambiguation": "",
                 "check": False,
-                "game_result": "",
+                "game_result": None,
             },
         ),
         black=HalfMove(
@@ -258,14 +222,14 @@ def one_and_a_half_fullmove_tree():
             change={
                 "WHITE": {},
                 "BLACK": {
-                    "EP": {
+                    "e_pawn": {
                         "old_position": ("e", 7),
                         "new_position": ("e", 5),
                     }
                 },
                 "disambiguation": "",
                 "check": False,
-                "game_result": "",
+                "game_result": None,
             },
         ),
         child=FullMove(
@@ -273,7 +237,7 @@ def one_and_a_half_fullmove_tree():
                 color=constants.WHITE,
                 change={
                     "WHITE": {
-                        "N2": {
+                        "g_knight": {
                             "old_position": ("g", 1),
                             "new_position": ("f", 3),
                         },
@@ -281,7 +245,7 @@ def one_and_a_half_fullmove_tree():
                     "BLACK": {},
                     "disambiguation": "",
                     "check": False,
-                    "game_result": "",
+                    "game_result": None,
                 },
             ),
             black=None,
@@ -301,7 +265,7 @@ def one_fullmove_tree():
             color=constants.WHITE,
             change={
                 "WHITE": {
-                    "EP": {
+                    "e_pawn": {
                         "old_position": ("e", 2),
                         "new_position": ("e", 4),
                     },
@@ -309,7 +273,7 @@ def one_fullmove_tree():
                 "BLACK": {},
                 "disambiguation": "",
                 "check": False,
-                "game_result": "",
+                "game_result": None,
             },
         ),
         black=HalfMove(
@@ -317,14 +281,14 @@ def one_fullmove_tree():
             change={
                 "WHITE": {},
                 "BLACK": {
-                    "EP": {
+                    "e_pawn": {
                         "old_position": ("e", 7),
                         "new_position": ("e", 5),
                     }
                 },
                 "disambiguation": "",
                 "check": False,
-                "game_result": "",
+                "game_result": None,
             },
         ),
         child=FullMove(),
@@ -342,7 +306,7 @@ def half_move_tree():
             color=constants.WHITE,
             change={
                 "WHITE": {
-                    "EP": {
+                    "e_pawn": {
                         "old_position": ("e", 2),
                         "new_position": ("e", 4),
                     },
@@ -350,7 +314,7 @@ def half_move_tree():
                 "BLACK": {},
                 "disambiguation": "",
                 "check": False,
-                "game_result": "",
+                "game_result": None,
             },
         ),
         black=None,
@@ -370,7 +334,7 @@ def one_fullmove_then_capture_tree():
             color=constants.WHITE,
             change={
                 "WHITE": {
-                    "EP": {
+                    "e_pawn": {
                         "old_position": ("e", 2),
                         "new_position": ("e", 4),
                     },
@@ -378,7 +342,7 @@ def one_fullmove_then_capture_tree():
                 "BLACK": {},
                 "disambiguation": "",
                 "check": False,
-                "game_result": "",
+                "game_result": None,
             },
         ),
         black=HalfMove(
@@ -386,14 +350,14 @@ def one_fullmove_then_capture_tree():
             change={
                 "WHITE": {},
                 "BLACK": {
-                    "DP": {
+                    "d_pawn": {
                         "old_position": ("d", 7),
                         "new_position": ("d", 5),
                     }
                 },
                 "disambiguation": "",
                 "check": False,
-                "game_result": "",
+                "game_result": None,
             },
         ),
         child=FullMove(
@@ -401,20 +365,20 @@ def one_fullmove_then_capture_tree():
                 color=constants.WHITE,
                 change={
                     "WHITE": {
-                        "EP": {
+                        "e_pawn": {
                             "old_position": ("e", 4),
                             "new_position": ("d", 5),
                         },
                     },
                     "BLACK": {
-                        "DP": {
+                        "d_pawn": {
                             "old_position": ("d", 5),
                             "new_position": None,
                         }
                     },
                     "disambiguation": "",
                     "check": False,
-                    "game_result": "",
+                    "game_result": None,
                 },
             ),
             black=None,
@@ -446,7 +410,7 @@ def white_kingside_castle():
                 "BLACK": {},
                 "disambiguation": "",
                 "check": False,
-                "game_result": "",
+                "game_result": None,
             },
         ),
         black=None,
@@ -488,10 +452,6 @@ def white_queen_ambiguous_capture():
 def white_pawn_promotion_to_queen():
     # fxg8=Q
 
-    # What we really need is to construct these scenarios using
-    # manual_move() and random_move(), output the tree, then
-    # autoformat (using black?)
-
     return FullMove(
         white=HalfMove(
             color=constants.WHITE,
@@ -515,7 +475,7 @@ def white_pawn_promotion_to_queen():
                 },
                 "disambiguation": "",
                 "check": False,
-                "game_result": "",
+                "game_result": None,
             },
         ),
         black=None,
@@ -530,5 +490,5 @@ def empty_change():
         "BLACK": {},
         "disambiguation": "",
         "check": False,
-        "game_result": "",
+        "game_result": None,
     }

@@ -45,7 +45,7 @@ class Board:
 
     def __repr__(self) -> str:
         return (
-            f"White:\n{self.white}\nWhite graveyard:\n{self.white.graveyard}\n"
+            f"White:\n{self.white}\nWhite graveyard:\n{self.white.graveyard}\n\n"
             f"Black:\n{self.black}\nBlack graveyard:\n{self.black.graveyard}"
         )
 

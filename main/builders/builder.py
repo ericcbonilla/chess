@@ -12,6 +12,7 @@ if TYPE_CHECKING:
     from main.agents import Agent
 
 
+# TODO Do we want one unified builder or multiple (for FEN, PGN, default, ...)
 class BoardBuilder:
     @staticmethod
     def _get_board(
@@ -119,6 +120,7 @@ class BoardBuilder:
 
         return scaffold
 
+    # TODO add tests for this
     def from_data(
         self,
         white_agent_cls: Type["Agent"],
