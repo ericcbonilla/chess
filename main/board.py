@@ -108,8 +108,8 @@ class Board:
                         piece = datum["piece_type"](
                             attr=key,
                             agent=agent,
-                            opponent_agent=opponent,
-                            x=XPosition(x),
+                            opponent=opponent,
+                            x=x,
                             y=y,
                         )
                         self.set_piece(piece, attr=key)

@@ -25,12 +25,12 @@ class Rook(Piece):
         self,
         attr: str,
         agent: "Agent",
-        opponent_agent: "Agent",
+        opponent: "Agent",
         x: str,
         y: int,
         has_moved: Optional[bool] = None,
     ):
-        super().__init__(attr, agent, opponent_agent, x, y)
+        super().__init__(attr, agent, opponent, x, y)
 
         if has_moved is None:
             initial_y = 1 if self.agent.color == constants.WHITE else 8

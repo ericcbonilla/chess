@@ -25,14 +25,12 @@ class Piece:
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__} ({self.unicode}): {self.position}>"
 
-    def __init__(
-        self, attr: str, agent: "Agent", opponent_agent: "Agent", x: str, y: int
-    ):
+    def __init__(self, attr: str, agent: "Agent", opponent: "Agent", x: str, y: int):
         self.attr = attr
         self.agent = agent
 
         # TODO Might be an antipattern, try self.agent.board.black
-        self.opponent_agent = opponent_agent
+        self.opponent = opponent
         self.x = XPosition(x)
         self.y = y
 
@@ -79,7 +77,7 @@ class Piece:
                 y_range = reversed(y_range)
             squares_on_path = {(chr(x), y) for x, y in zip(x_range, y_range)}
 
-        if squares_on_path & (self.agent.positions | self.opponent_agent.positions):
+        if squares_on_path & (self.agent.positions | self.opponent.positions):
             return False
         return True
 
@@ -122,7 +120,7 @@ class Piece:
         self, valid_moves: Optional[Set[Position]] = None
     ) -> Set[Position]:
         valid_moves = valid_moves or set()
-        return valid_moves & self.opponent_agent.positions
+        return valid_moves & self.opponent.positions
 
     def get_disambiguation(self, x: XPosition, y: int) -> str:
         """
@@ -175,7 +173,7 @@ class Piece:
     def get_game_result(self, change: Change) -> GameResult:
         halfmove = HalfMove(color=self.agent.color, change=change)
         self.agent.board.apply_halfmove(halfmove)
-        opponent_can_move = self.opponent_agent.can_move()
+        opponent_can_move = self.opponent.can_move()
         self.agent.board.rollback_halfmove(halfmove)
 
         if change["check"] and not opponent_can_move:
@@ -204,15 +202,15 @@ class Piece:
                     "new_position": (x, y),
                 }
             },
-            self.opponent_agent.color: {},
+            self.opponent.color: {},
             "disambiguation": "",
             "check": False,
             "game_result": None,
         }
 
-        if (x, y) in self.opponent_agent.positions:  # capture
-            piece = self.opponent_agent.get_by_position(x, y)
-            change[self.opponent_agent.color] = {
+        if (x, y) in self.opponent.positions:  # capture
+            piece = self.opponent.get_by_position(x, y)
+            change[self.opponent.color] = {
                 piece.attr: {
                     "old_position": (x, y),
                     "new_position": None,
@@ -226,14 +224,14 @@ class Piece:
             # These must be computed after the piece-specific augmentations in
             # augment_change because castling and promotion create new possibilities
             change["check"] = self.king_is_in_check(
-                king=self.opponent_agent.king,
+                king=self.opponent.king,
                 change=change,
             )
             change["game_result"] = self.get_game_result(change=change)
 
-            if self.opponent_agent.en_passant_target:
-                change[self.opponent_agent.color]["en_passant_target"] = (
-                    self.opponent_agent.en_passant_target,
+            if self.opponent.en_passant_target:
+                change[self.opponent.color]["en_passant_target"] = (
+                    self.opponent.en_passant_target,
                     None,
                 )
 

@@ -25,7 +25,7 @@ class Pawn(Piece):
     ) -> bool:
         if (
             new_position not in constants.SQUARES
-            or new_position in self.agent.positions | self.opponent_agent.positions
+            or new_position in self.agent.positions | self.opponent.positions
             or not self.is_open_path(new_position)
         ):
             return False
@@ -48,10 +48,10 @@ class Pawn(Piece):
         ):
             return False
 
-        if new_position == self.opponent_agent.en_passant_target:
+        if new_position == self.opponent.en_passant_target:
             return True
 
-        return new_position in self.opponent_agent.positions
+        return new_position in self.opponent.positions
 
     def can_move(self) -> Set[Position]:
         return self.get_valid_moves(lazy=True) or self.get_captures()
@@ -94,9 +94,9 @@ class Pawn(Piece):
         return ""
 
     def augment_change(self, x: XPosition, y: int, change: Change, **kwargs) -> Change:
-        if (x, y) == self.opponent_agent.en_passant_target:
-            piece = self.opponent_agent.get_by_position(x, self.y)
-            change[self.opponent_agent.color] = {
+        if (x, y) == self.opponent.en_passant_target:
+            piece = self.opponent.get_by_position(x, self.y)
+            change[self.opponent.color] = {
                 piece.attr: {
                     "old_position": (x, self.y),
                     "new_position": None,

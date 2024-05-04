@@ -22,9 +22,7 @@ class RandomAgent(Agent):
             return None
 
         pick = random.sample(legal_moves, 1)[0]
-        if pick in piece.opponent_agent.positions | {
-            piece.opponent_agent.en_passant_target
-        }:
+        if pick in piece.opponent.positions | {piece.opponent.en_passant_target}:
             cprint(self.color, f"{piece} capturing on {pick}", color_fn=red)
         else:
             cprint(self.color, f"Moving {piece} to {pick}")

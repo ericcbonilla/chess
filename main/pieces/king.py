@@ -25,12 +25,12 @@ class King(Piece):
         self,
         attr: str,
         agent: "Agent",
-        opponent_agent: "Agent",
+        opponent: "Agent",
         x: str,
         y: int,
         has_moved: Optional[bool] = None,
     ):
-        super().__init__(attr, agent, opponent_agent, x, y)
+        super().__init__(attr, agent, opponent, x, y)
 
         if has_moved is None:
             initial_y = 1 if self.agent.color == constants.WHITE else 8
@@ -97,7 +97,7 @@ class King(Piece):
     def is_in_check(self, target_position: Optional[Position] = None) -> bool:
         """
         This is used in several different ways:
-        1. To ensure a move from this agent would not leave this King in check
+        1. To ensure a move from this King's agent would not leave this King in check
         (direct checks, pins)
         2. By the opponent agent to see if they've checked this King
         (direct checks, discoveries)
@@ -129,9 +129,10 @@ class King(Piece):
     def _is_capturable(self) -> bool:
         # TODO: Think of a way to ~avoid~ calling this for every single move
         # Or at least try to reduce the number of opponent pieces that we evaluate
-        # Maybe only loop over movable pieces?
+        # Maybe only loop over movable pieces? Maybe there's some piece of this
+        # we could memoize?
 
-        for piece in self.opponent_agent.pieces:
+        for piece in self.opponent.pieces:
             if isinstance(piece, (WhitePawn, BlackPawn, Knight, King)):
                 for x_d, y_d in piece.capture_movements:
                     new_position = piece.x + x_d, piece.y + y_d
