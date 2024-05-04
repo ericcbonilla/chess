@@ -30,12 +30,12 @@ class Board:
     def __init__(
         self,
         max_moves: int,
-        game_tree: Optional[FullMove] = FullMove(),
+        game_tree: Optional[FullMove] = None,
         halfmove_clock: Optional[int] = 0,
         fullmove_number: Optional[int] = 1,
     ):
         self.max_moves = max_moves
-        self.game_tree = game_tree
+        self.game_tree = game_tree or FullMove()
         self.halfmove_clock = halfmove_clock
         self.fullmove_number = fullmove_number
         self.result: GameResult = None
