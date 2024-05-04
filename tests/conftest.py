@@ -7,7 +7,7 @@ from main.game_tree import FullMove, HalfMove
 from main.pieces import Queen
 
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def builder():
     return BoardBuilder()
 
