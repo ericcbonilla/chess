@@ -1,6 +1,5 @@
 from typing import Optional, Set, Type
 
-from main import constants
 from main.exceptions import PromotionError
 from main.types import Change, Position, Promotee
 from main.xposition import XPosition
