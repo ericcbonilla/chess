@@ -162,7 +162,7 @@ class HalfMove:
         # there are no state changes made based on these values
         'disambiguation': '',
         'check': False,
-        'game_result': '',
+        'game_result': None,
     }
     """
 
