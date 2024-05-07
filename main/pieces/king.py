@@ -37,14 +37,8 @@ class King(Piece):
         else:
             self.has_moved = has_moved
 
-    def _get_original_rooks(self) -> Iterator[Rook]:
-        if self.agent.a_rook:
-            yield self.agent.a_rook
-        if self.agent.h_rook:
-            yield self.agent.h_rook
-
-    def _can_castle(self, rook: Rook) -> Tuple[str | None, bool]:
-        if rook.has_moved or self.has_moved or self.is_in_check():
+    def _can_castle(self, rook: Rook | None) -> Tuple[str | None, bool]:
+        if rook is None or rook.has_moved or self.has_moved or self.is_in_check():
             return None, False
 
         if rook.x == "a":  # Queenside
@@ -57,10 +51,6 @@ class King(Piece):
         return new_king_xpos, (
             not castle_through_check and self.is_open_path(rook.position)
         )
-
-    @property
-    def king(self) -> "King":
-        return self
 
     def is_valid_move(
         self, new_position: Position, keep_king_safe: Optional[bool] = True
@@ -86,7 +76,7 @@ class King(Piece):
             if lazy:
                 return valid_moves
 
-        for rook in self._get_original_rooks():
+        for rook in (self.agent.a_rook, self.agent.h_rook):
             new_king_xpos, can_castle = self._can_castle(rook)
             if can_castle and new_king_xpos:
                 valid_moves.add((new_king_xpos, self.y))
