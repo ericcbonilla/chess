@@ -206,6 +206,7 @@ class Piece:
             "disambiguation": "",
             "check": False,
             "game_result": None,
+            "symbol": self.symbol,
         }
 
         if (x, y) in self.opponent.positions:  # capture

@@ -71,7 +71,7 @@ class BoardBuilder:
         self, scaffold: AgentScaffold, datum: PieceScaffold, x1: str, x2: str, name: str
     ) -> str:
         if scaffold[f"{x1}_{name}"] and scaffold[f"{x2}_{name}"]:
-            return self._get_promotion_slot(scaffold, datum)
+            return self._get_file_slot(scaffold, datum)
         elif datum["x"] in (x1, x2) and scaffold[f"{datum['x']}_{name}"] is None:
             return f"{datum['x']}_{name}"
         elif scaffold[f"{x1}_{name}"] is None:
@@ -80,13 +80,13 @@ class BoardBuilder:
             return f"{x2}_{name}"
 
     @staticmethod
-    def _get_file_slot(scaffold: AgentScaffold, datum: PieceScaffold, name: str) -> str:
+    def _get_file_slot(scaffold: AgentScaffold, datum: PieceScaffold) -> str:
         x = XPosition(datum["x"], wrap=True)
         slot = None
 
         while not slot:
-            if scaffold[f"{x}_{name}"] is None:
-                slot = f"{x}_{name}"
+            if scaffold[f"{x}_slot"] is None:
+                slot = f"{x}_slot"
             else:
                 x += 1
                 if x == datum["x"]:
@@ -96,14 +96,6 @@ class BoardBuilder:
                     )
 
         return slot
-
-    def _get_promotion_slot(self, scaffold: AgentScaffold, datum: PieceScaffold) -> str:
-        return self._get_file_slot(scaffold, datum, "prom")
-
-    def _get_pawn_slot(self, scaffold: AgentScaffold, datum: PieceScaffold) -> str:
-        if datum["y"] in (1, 8):
-            raise BuildError("Pawns cannot be on back ranks")
-        return self._get_file_slot(scaffold, datum, "pawn")
 
     def _get_scaffold(self, piece_data: List[PieceScaffold]):
         scaffold = EMPTY_SCAFFOLD.copy()
@@ -115,7 +107,7 @@ class BoardBuilder:
                 if scaffold["queen"] is None:
                     slot = "queen"
                 else:
-                    slot = self._get_promotion_slot(scaffold, datum)
+                    slot = self._get_file_slot(scaffold, datum)
             elif datum["piece_type"] is Rook:
                 slot = self._get_slot(scaffold, datum, "a", "h", "rook")
             elif datum["piece_type"] is Knight:
@@ -123,7 +115,9 @@ class BoardBuilder:
             elif datum["piece_type"] is Bishop:
                 slot = self._get_slot(scaffold, datum, "c", "f", "bishop")
             else:
-                slot = self._get_pawn_slot(scaffold, datum)
+                if datum["y"] in (1, 8):
+                    raise BuildError("Pawns cannot be on back ranks")
+                slot = self._get_file_slot(scaffold, datum)
 
             scaffold[slot] = datum
 

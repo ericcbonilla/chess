@@ -8,7 +8,7 @@ from main.pieces import Bishop, King, Knight, Queen, Rook, WhitePawn
 class TestCastling:
     def test_white_kingside_castle(self, default_board):
         default_board.white.g_knight.manual_move("f", 3)
-        default_board.white.e_pawn.manual_move("e", 4)
+        default_board.white.e_slot.manual_move("e", 4)
         default_board.white.f_bishop.manual_move("d", 3)
         default_board.white.king.manual_move("g", 1)
 
@@ -19,7 +19,7 @@ class TestCastling:
 
     def test_rollback_castle_results_in_expected_state(self, default_board):
         default_board.white.g_knight.manual_move("f", 3)
-        default_board.white.e_pawn.manual_move("e", 4)
+        default_board.white.e_slot.manual_move("e", 4)
         default_board.white.f_bishop.manual_move("d", 3)
         default_board.white.king.manual_move("g", 1)
 
@@ -52,16 +52,16 @@ class TestCastling:
             board.white.king.manual_move("g", 1)
 
     def test_cant_castle_through_check(self, default_board):
-        default_board.white.f_pawn.manual_move("f", 4)
-        default_board.black.g_pawn.manual_move("g", 5)
-        default_board.white.g_pawn.manual_move("g", 3)
-        default_board.black.e_pawn.manual_move("e", 6)
-        default_board.white.f_pawn.manual_move("g", 5)
+        default_board.white.f_slot.manual_move("f", 4)
+        default_board.black.g_slot.manual_move("g", 5)
+        default_board.white.g_slot.manual_move("g", 3)
+        default_board.black.e_slot.manual_move("e", 6)
+        default_board.white.f_slot.manual_move("g", 5)
         default_board.black.queen.manual_move("f", 6)
         default_board.white.g_knight.manual_move("h", 3)
-        default_board.black.a_pawn.manual_move("a", 6)
+        default_board.black.a_slot.manual_move("a", 6)
         default_board.white.f_bishop.manual_move("g", 2)
-        default_board.black.b_pawn.manual_move("b", 6)
+        default_board.black.b_slot.manual_move("b", 6)
 
         with pytest.raises(InvalidMoveError):
             default_board.white.king.manual_move("g", 1)  # Can't castle
@@ -158,24 +158,24 @@ class TestKingScenarios:
         assert board.black.king.has_moved
 
     def test_white_king_put_in_check(self, default_board):
-        default_board.white.d_pawn.manual_move("d", 4)
-        default_board.black.e_pawn.manual_move("e", 6)
+        default_board.white.d_slot.manual_move("d", 4)
+        default_board.black.e_slot.manual_move("e", 6)
         default_board.white.g_knight.manual_move("f", 3)
         default_board.black.f_bishop.manual_move("b", 4)
 
         assert default_board.white.king.is_in_check()
 
     def test_cant_move_into_check(self, default_board):
-        default_board.white.f_pawn.manual_move("f", 4)
-        default_board.black.g_pawn.manual_move("g", 5)
-        default_board.white.g_pawn.manual_move("g", 3)
-        default_board.black.e_pawn.manual_move("e", 6)
-        default_board.white.f_pawn.manual_move("g", 5)
+        default_board.white.f_slot.manual_move("f", 4)
+        default_board.black.g_slot.manual_move("g", 5)
+        default_board.white.g_slot.manual_move("g", 3)
+        default_board.black.e_slot.manual_move("e", 6)
+        default_board.white.f_slot.manual_move("g", 5)
         default_board.black.queen.manual_move("f", 6)
         default_board.white.g_knight.manual_move("h", 3)
-        default_board.black.a_pawn.manual_move("a", 6)
+        default_board.black.a_slot.manual_move("a", 6)
         default_board.white.f_bishop.manual_move("g", 2)
-        default_board.black.b_pawn.manual_move("b", 6)
+        default_board.black.b_slot.manual_move("b", 6)
 
         with pytest.raises(InvalidMoveError):
             default_board.white.king.manual_move("f", 2)  # Can't move
@@ -200,9 +200,9 @@ class TestKingScenarios:
             board.black.king.manual_move("d", 4)
 
     def test_cant_leave_king_in_check(self, default_board):
-        default_board.white.d_pawn.manual_move("d", 4)
-        default_board.black.c_pawn.manual_move("c", 6)
-        default_board.white.h_pawn.manual_move("h", 3)
+        default_board.white.d_slot.manual_move("d", 4)
+        default_board.black.c_slot.manual_move("c", 6)
+        default_board.white.h_slot.manual_move("h", 3)
         default_board.black.queen.manual_move("a", 5)  # Check!
 
         with pytest.raises(InvalidMoveError):
@@ -245,7 +245,7 @@ class TestKingScenarios:
             ],
         )
 
-        board.white.f_pawn.manual_move("f", 4)
+        board.white.f_slot.manual_move("f", 4)
 
         with pytest.raises(InvalidMoveError):
             board.black.queen.manual_move("h", 4)
@@ -285,7 +285,7 @@ class TestKingScenarios:
         )
 
         with pytest.raises(InvalidMoveError):
-            board.white.b_pawn.manual_move("b", 4)
+            board.white.b_slot.manual_move("b", 4)
 
     def test_cant_move_into_check_from_knight(self, builder):
         board = builder.from_data(

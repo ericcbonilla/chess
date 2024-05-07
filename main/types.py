@@ -34,6 +34,7 @@ class Change(TypedDict):
     disambiguation: NotRequired[str]
     check: NotRequired[bool]
     game_result: NotRequired[GameResult]
+    symbol: str | None
 
 
 class PieceScaffold(TypedDict):

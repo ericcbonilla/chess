@@ -1,3 +1,5 @@
+from copy import deepcopy
+
 import pytest
 
 from main import constants
@@ -30,7 +32,7 @@ def three_fullmove_tree():
             color=constants.WHITE,
             change={
                 "WHITE": {
-                    "e_pawn": {
+                    "e_slot": {
                         "old_position": ("e", 2),
                         "new_position": ("e", 4),
                     },
@@ -39,6 +41,7 @@ def three_fullmove_tree():
                 "disambiguation": "",
                 "check": False,
                 "game_result": None,
+                "symbol": "",
             },
         ),
         black=HalfMove(
@@ -46,7 +49,7 @@ def three_fullmove_tree():
             change={
                 "WHITE": {},
                 "BLACK": {
-                    "e_pawn": {
+                    "e_slot": {
                         "old_position": ("e", 7),
                         "new_position": ("e", 5),
                     }
@@ -54,6 +57,7 @@ def three_fullmove_tree():
                 "disambiguation": "",
                 "check": False,
                 "game_result": None,
+                "symbol": "",
             },
         ),
         child=FullMove(
@@ -70,6 +74,7 @@ def three_fullmove_tree():
                     "disambiguation": "",
                     "check": False,
                     "game_result": None,
+                    "symbol": "N",
                 },
             ),
             black=HalfMove(
@@ -85,6 +90,7 @@ def three_fullmove_tree():
                     "disambiguation": "",
                     "check": False,
                     "game_result": None,
+                    "symbol": "N",
                 },
             ),
             child=FullMove(
@@ -101,6 +107,7 @@ def three_fullmove_tree():
                         "disambiguation": "",
                         "check": False,
                         "game_result": None,
+                        "symbol": "B",
                     },
                 ),
                 black=HalfMove(
@@ -108,7 +115,7 @@ def three_fullmove_tree():
                     change={
                         "WHITE": {},
                         "BLACK": {
-                            "a_pawn": {
+                            "a_slot": {
                                 "old_position": ("a", 7),
                                 "new_position": ("a", 6),
                             }
@@ -116,6 +123,7 @@ def three_fullmove_tree():
                         "disambiguation": "",
                         "check": False,
                         "game_result": None,
+                        "symbol": "",
                     },
                 ),
                 child=FullMove(),
@@ -136,7 +144,7 @@ def two_fullmove_tree():
             color=constants.WHITE,
             change={
                 "WHITE": {
-                    "e_pawn": {
+                    "e_slot": {
                         "old_position": ("e", 2),
                         "new_position": ("e", 4),
                     },
@@ -145,6 +153,7 @@ def two_fullmove_tree():
                 "disambiguation": "",
                 "check": False,
                 "game_result": None,
+                "symbol": "",
             },
         ),
         black=HalfMove(
@@ -152,7 +161,7 @@ def two_fullmove_tree():
             change={
                 "WHITE": {},
                 "BLACK": {
-                    "e_pawn": {
+                    "e_slot": {
                         "old_position": ("e", 7),
                         "new_position": ("e", 5),
                     }
@@ -160,6 +169,7 @@ def two_fullmove_tree():
                 "disambiguation": "",
                 "check": False,
                 "game_result": None,
+                "symbol": "",
             },
         ),
         child=FullMove(
@@ -176,6 +186,7 @@ def two_fullmove_tree():
                     "disambiguation": "",
                     "check": False,
                     "game_result": None,
+                    "symbol": "N",
                 },
             ),
             black=HalfMove(
@@ -191,6 +202,7 @@ def two_fullmove_tree():
                     "disambiguation": "",
                     "check": False,
                     "game_result": None,
+                    "symbol": "N",
                 },
             ),
             child=FullMove(),
@@ -210,7 +222,7 @@ def one_and_a_half_fullmove_tree():
             color=constants.WHITE,
             change={
                 "WHITE": {
-                    "e_pawn": {
+                    "e_slot": {
                         "old_position": ("e", 2),
                         "new_position": ("e", 4),
                     },
@@ -219,6 +231,7 @@ def one_and_a_half_fullmove_tree():
                 "disambiguation": "",
                 "check": False,
                 "game_result": None,
+                "symbol": "",
             },
         ),
         black=HalfMove(
@@ -226,7 +239,7 @@ def one_and_a_half_fullmove_tree():
             change={
                 "WHITE": {},
                 "BLACK": {
-                    "e_pawn": {
+                    "e_slot": {
                         "old_position": ("e", 7),
                         "new_position": ("e", 5),
                     }
@@ -234,6 +247,7 @@ def one_and_a_half_fullmove_tree():
                 "disambiguation": "",
                 "check": False,
                 "game_result": None,
+                "symbol": "",
             },
         ),
         child=FullMove(
@@ -250,6 +264,7 @@ def one_and_a_half_fullmove_tree():
                     "disambiguation": "",
                     "check": False,
                     "game_result": None,
+                    "symbol": "N",
                 },
             ),
             black=None,
@@ -269,7 +284,7 @@ def one_fullmove_tree():
             color=constants.WHITE,
             change={
                 "WHITE": {
-                    "e_pawn": {
+                    "e_slot": {
                         "old_position": ("e", 2),
                         "new_position": ("e", 4),
                     },
@@ -278,6 +293,7 @@ def one_fullmove_tree():
                 "disambiguation": "",
                 "check": False,
                 "game_result": None,
+                "symbol": "",
             },
         ),
         black=HalfMove(
@@ -285,7 +301,7 @@ def one_fullmove_tree():
             change={
                 "WHITE": {},
                 "BLACK": {
-                    "e_pawn": {
+                    "e_slot": {
                         "old_position": ("e", 7),
                         "new_position": ("e", 5),
                     }
@@ -293,6 +309,7 @@ def one_fullmove_tree():
                 "disambiguation": "",
                 "check": False,
                 "game_result": None,
+                "symbol": "",
             },
         ),
         child=FullMove(),
@@ -310,7 +327,7 @@ def half_move_tree():
             color=constants.WHITE,
             change={
                 "WHITE": {
-                    "e_pawn": {
+                    "e_slot": {
                         "old_position": ("e", 2),
                         "new_position": ("e", 4),
                     },
@@ -319,6 +336,7 @@ def half_move_tree():
                 "disambiguation": "",
                 "check": False,
                 "game_result": None,
+                "symbol": "",
             },
         ),
         black=None,
@@ -338,7 +356,7 @@ def one_fullmove_then_capture_tree():
             color=constants.WHITE,
             change={
                 "WHITE": {
-                    "e_pawn": {
+                    "e_slot": {
                         "old_position": ("e", 2),
                         "new_position": ("e", 4),
                     },
@@ -347,6 +365,7 @@ def one_fullmove_then_capture_tree():
                 "disambiguation": "",
                 "check": False,
                 "game_result": None,
+                "symbol": "",
             },
         ),
         black=HalfMove(
@@ -354,7 +373,7 @@ def one_fullmove_then_capture_tree():
             change={
                 "WHITE": {},
                 "BLACK": {
-                    "d_pawn": {
+                    "d_slot": {
                         "old_position": ("d", 7),
                         "new_position": ("d", 5),
                     }
@@ -362,6 +381,7 @@ def one_fullmove_then_capture_tree():
                 "disambiguation": "",
                 "check": False,
                 "game_result": None,
+                "symbol": "",
             },
         ),
         child=FullMove(
@@ -369,13 +389,13 @@ def one_fullmove_then_capture_tree():
                 color=constants.WHITE,
                 change={
                     "WHITE": {
-                        "e_pawn": {
+                        "e_slot": {
                             "old_position": ("e", 4),
                             "new_position": ("d", 5),
                         },
                     },
                     "BLACK": {
-                        "d_pawn": {
+                        "d_slot": {
                             "old_position": ("d", 5),
                             "new_position": None,
                         }
@@ -383,6 +403,7 @@ def one_fullmove_then_capture_tree():
                     "disambiguation": "",
                     "check": False,
                     "game_result": None,
+                    "symbol": "",
                 },
             ),
             black=None,
@@ -400,12 +421,12 @@ def white_kingside_castle():
             color=constants.WHITE,
             change={
                 "WHITE": {
-                    "K": {
+                    "king": {
                         "old_position": ("e", 1),
                         "new_position": ("g", 1),
                         "has_moved": True,
                     },
-                    "R2": {
+                    "h_rook": {
                         "old_position": ("h", 1),
                         "new_position": ("f", 1),
                         "has_moved": True,
@@ -415,6 +436,7 @@ def white_kingside_castle():
                 "disambiguation": "",
                 "check": False,
                 "game_result": None,
+                "symbol": "K",
             },
         ),
         black=None,
@@ -429,13 +451,13 @@ def white_queen_ambiguous_capture():
             color=constants.WHITE,
             change={
                 "WHITE": {
-                    "Q2": {
+                    "queen": {
                         "old_position": ("h", 4),
                         "new_position": ("e", 1),
                     }
                 },
                 "BLACK": {
-                    "Q1": {
+                    "queen": {
                         "old_position": ("e", 1),
                         "new_position": None,
                     }
@@ -445,6 +467,7 @@ def white_queen_ambiguous_capture():
                 # Other possible keywords:
                 "check": True,
                 "game_result": "1-0",
+                "symbol": "Q",
             },
         ),
         black=None,
@@ -461,18 +484,14 @@ def white_pawn_promotion_to_queen():
             color=constants.WHITE,
             change={
                 "WHITE": {
-                    "GP": {
+                    "f_slot": {
                         "old_position": ("f", 7),
-                        "new_position": None,
-                    },
-                    "Q2": {
-                        "old_position": None,
                         "new_position": ("g", 8),
                         "piece_type": Queen,
                     },
                 },
                 "BLACK": {
-                    "R2": {
+                    "a_rook": {
                         "old_position": ("g", 8),
                         "new_position": None,
                     }
@@ -480,6 +499,7 @@ def white_pawn_promotion_to_queen():
                 "disambiguation": "",
                 "check": False,
                 "game_result": None,
+                "symbol": "",
             },
         ),
         black=None,
@@ -489,10 +509,4 @@ def white_pawn_promotion_to_queen():
 
 @pytest.fixture
 def empty_change():
-    return {
-        "WHITE": {},
-        "BLACK": {},
-        "disambiguation": "",
-        "check": False,
-        "game_result": None,
-    }
+    return deepcopy(constants.BLANK_CHANGE)

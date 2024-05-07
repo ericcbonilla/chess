@@ -1,4 +1,5 @@
 import os
+from copy import deepcopy
 from typing import TYPE_CHECKING, Optional
 
 from colorist import yellow
@@ -75,10 +76,10 @@ class Board:
         pass
 
     @staticmethod
-    def set_piece(piece: "Piece", attr: str):
+    def add_piece(piece: "Piece", attr: str, check_graveyard: Optional[bool] = True):
         setattr(piece.agent, attr, piece)
 
-        if hasattr(piece.agent.graveyard, attr):
+        if check_graveyard and hasattr(piece.agent.graveyard, attr):
             setattr(piece.agent.graveyard, attr, None)
 
     @staticmethod
@@ -99,27 +100,40 @@ class Board:
                         agent.en_passant_target = datum[1]
                         continue
 
+                    existing_piece = getattr(agent, key)
                     if datum["new_position"] is None:
-                        piece = getattr(agent, key)
-                        self.destroy_piece(piece, attr=key)
-                    elif datum["old_position"] is None:
-                        # We're either resurrecting a piece, or promoting a pawn
-                        x, y = datum["new_position"]
-                        piece = datum["piece_type"](
+                        self.destroy_piece(existing_piece, attr=key)
+                        continue
+
+                    x, y = datum["new_position"]
+                    new_piece = (
+                        datum["piece_type"](
                             attr=key,
                             agent=agent,
                             opponent=opponent,
                             x=x,
                             y=y,
                         )
-                        self.set_piece(piece, attr=key)
+                        if "piece_type" in datum
+                        else None
+                    )
+                    if datum["old_position"] is None:
+                        # Rolling back a capture
+                        self.add_piece(new_piece, attr=key)
+                    elif "piece_type" in datum and (datum["old_position"][1], y) in (
+                        (1, 2),
+                        (2, 1),
+                        (7, 8),
+                        (8, 7),
+                    ):
+                        # Either promoting or rolling back a promotion
+                        self.destroy_piece(existing_piece, attr=key)
+                        self.add_piece(new_piece, attr=key, check_graveyard=False)
                     else:
-                        x, y = datum["new_position"]
-                        piece = getattr(agent, key)
-                        piece.x, piece.y = XPosition(x), y
+                        existing_piece.x, existing_piece.y = XPosition(x), y
 
                     if "has_moved" in datum:
-                        piece.has_moved = datum["has_moved"]
+                        existing_piece.has_moved = datum["has_moved"]
 
         if "game_result" in change and change["game_result"]:
             self.result = change["game_result"]
@@ -148,10 +162,7 @@ class Board:
 
     def rollback_halfmove(self, halfmove: Optional[HalfMove] = None):
         halfmove = halfmove or self.game_tree.get_latest_halfmove()
-        inverted_change = {
-            constants.WHITE: {},
-            constants.BLACK: {},
-        }
+        inverted_change = deepcopy(constants.BLANK_CHANGE)
 
         for agent in (self.white, self.black):
             if halfmove.change[agent.color]:

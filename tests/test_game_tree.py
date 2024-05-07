@@ -8,7 +8,7 @@ class TestGetLatestHalfmove:
             color=constants.WHITE,
             change={
                 "WHITE": {
-                    "e_pawn": {
+                    "e_slot": {
                         "old_position": ("e", 2),
                         "new_position": ("e", 4),
                     },
@@ -17,6 +17,7 @@ class TestGetLatestHalfmove:
                 "disambiguation": "",
                 "check": False,
                 "game_result": None,
+                "symbol": "",
             },
         )
 
@@ -28,7 +29,7 @@ class TestGetLatestHalfmove:
             change={
                 "WHITE": {},
                 "BLACK": {
-                    "e_pawn": {
+                    "e_slot": {
                         "old_position": ("e", 7),
                         "new_position": ("e", 5),
                     }
@@ -36,6 +37,7 @@ class TestGetLatestHalfmove:
                 "disambiguation": "",
                 "check": False,
                 "game_result": None,
+                "symbol": "",
             },
         )
 
@@ -55,6 +57,7 @@ class TestGetLatestHalfmove:
                 "disambiguation": "",
                 "check": False,
                 "game_result": None,
+                "symbol": "N",
             },
         )
 
@@ -74,6 +77,7 @@ class TestGetLatestHalfmove:
                 "disambiguation": "",
                 "check": False,
                 "game_result": None,
+                "symbol": "N",
             },
         )
 
