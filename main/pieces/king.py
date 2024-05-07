@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Iterator, Optional, Set, Tuple
+from typing import TYPE_CHECKING, Optional, Set, Tuple
 
 from main import constants
 from main.game_tree import HalfMove
