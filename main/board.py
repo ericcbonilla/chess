@@ -67,9 +67,6 @@ class Board:
         self._black = agent
 
     def to_fen(self):
-        # processor = FenProcessor()
-        # processor.from_board()
-
         pass
 
     def to_pgn(self):
@@ -120,12 +117,7 @@ class Board:
                     if datum["old_position"] is None:
                         # Rolling back a capture
                         self.add_piece(new_piece, attr=key)
-                    elif "piece_type" in datum and (datum["old_position"][1], y) in (
-                        (1, 2),
-                        (2, 1),
-                        (7, 8),
-                        (8, 7),
-                    ):
+                    elif "piece_type" in datum:
                         # Either promoting or rolling back a promotion
                         self.destroy_piece(existing_piece, attr=key)
                         self.add_piece(new_piece, attr=key, check_graveyard=False)
@@ -142,7 +134,6 @@ class Board:
         def _apply_next(node: FullMove):
             if node.is_empty():
                 return
-
             elif node.child is None:
                 self.apply_halfmove(node.white)
                 return
