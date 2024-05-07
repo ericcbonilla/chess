@@ -46,6 +46,10 @@ class Piece:
         return self.x, self.y
 
     @property
+    def forbidden_squares(self) -> Set[Position]:
+        return self.agent.positions
+
+    @property
     def king(self) -> "King":
         return self.agent.king
 
@@ -90,7 +94,7 @@ class Piece:
     ) -> bool:
         if (
             new_position not in constants.SQUARES
-            or new_position in self.agent.positions
+            or new_position in self.forbidden_squares
             or not self.is_open_path(new_position)
         ):
             return False

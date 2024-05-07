@@ -18,24 +18,9 @@ class Pawn(Piece):
     capture_movements: Set = NotImplemented
     unicode = "\u2659"
 
-    def is_valid_move(
-        self,
-        new_position: Position,
-        keep_king_safe: Optional[bool] = True,
-    ) -> bool:
-        if (
-            new_position not in constants.SQUARES
-            or new_position in self.agent.positions | self.opponent.positions
-            or not self.is_open_path(new_position)
-        ):
-            return False
-        elif keep_king_safe and self.king_is_in_check(
-            king=self.king,
-            new_position=new_position,
-        ):
-            return False
-
-        return True
+    @property
+    def forbidden_squares(self) -> Set[Position]:
+        return self.agent.positions | self.opponent.positions
 
     def is_valid_capture(
         self,
@@ -87,10 +72,6 @@ class Pawn(Piece):
             raise PromotionError("Invalid promotee value, must be one of B, N, R, or Q")
 
     def get_disambiguation(self, x: XPosition, y: int) -> str:
-        """
-        Algebraic notation disambiguates pawns by default
-        """
-
         return ""
 
     def augment_change(self, x: XPosition, y: int, change: Change, **kwargs) -> Change:
