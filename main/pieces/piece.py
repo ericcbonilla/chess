@@ -62,9 +62,7 @@ class Piece:
 
     def is_open_path(self, target_position: Position) -> bool:
         target_x, target_y = target_position
-        ord_x = ord(self.x)
-        ord_target_x = ord(target_x)
-        x_range = self._get_squares_in_range(ord_x, ord_target_x)
+        x_range = self._get_squares_in_range(ord(self.x), ord(target_x))
         y_range = self._get_squares_in_range(self.y, target_y)
 
         if self.x != target_x and self.y == target_y:  # Horizontal
