@@ -5,6 +5,14 @@ from main.types import AgentColor
 WHITE = "WHITE"
 BLACK = "BLACK"
 COLORS: List[AgentColor] = ["WHITE", "BLACK"]
+BLANK_CHANGE = {
+    WHITE: {},
+    BLACK: {},
+    "disambiguation": "",
+    "check": False,
+    "game_result": None,
+}
+
 
 # fmt: off
 SQUARES_READABLE = [
