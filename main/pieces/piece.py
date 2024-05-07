@@ -25,12 +25,9 @@ class Piece:
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__} ({self.unicode}): {self.position}>"
 
-    def __init__(self, attr: str, agent: "Agent", opponent: "Agent", x: str, y: int):
+    def __init__(self, attr: str, agent: "Agent", x: str, y: int):
         self.attr = attr
         self.agent = agent
-
-        # TODO Might be an antipattern, try self.agent.board.black
-        self.opponent = opponent
         self.x = XPosition(x)
         self.y = y
 
@@ -38,6 +35,11 @@ class Piece:
     symbol: str = NotImplemented
     value: int = NotImplemented
     unicode: str = NotImplemented
+
+    @property
+    def opponent(self) -> "Agent":
+        attr = "black" if self.agent is self.agent.board.white else "white"
+        return getattr(self.agent.board, attr)
 
     @property
     def position(self) -> Position:

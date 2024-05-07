@@ -29,7 +29,7 @@ class BoardBuilder:
         return board
 
     @staticmethod
-    def _set_pieces(agent: "Agent", opponent: "Agent", scaffold: AgentScaffold):
+    def _set_pieces(agent: "Agent", scaffold: AgentScaffold):
         for attr, data in scaffold.items():
             if data is None:
                 continue
@@ -37,7 +37,6 @@ class BoardBuilder:
             piece = data["piece_type"](
                 attr=attr,
                 agent=agent,
-                opponent=opponent,
                 x=data["x"],
                 y=data["y"],
                 **({"has_moved": data["has_moved"]} if "has_moved" in data else {}),
@@ -55,13 +54,11 @@ class BoardBuilder:
 
         self._set_pieces(
             agent=board.white,
-            opponent=board.black,
             scaffold=WHITE_SCAFFOLD,
         )
 
         self._set_pieces(
             agent=board.black,
-            opponent=board.white,
             scaffold=BLACK_SCAFFOLD,
         )
 
@@ -138,13 +135,11 @@ class BoardBuilder:
 
         self._set_pieces(
             agent=board.white,
-            opponent=board.black,
             scaffold=self._get_scaffold(white_data),
         )
 
         self._set_pieces(
             agent=board.black,
-            opponent=board.white,
             scaffold=self._get_scaffold(black_data),
         )
 

@@ -104,7 +104,6 @@ class Board:
                         datum["piece_type"](
                             attr=key,
                             agent=agent,
-                            opponent=opponent,
                             x=x,
                             y=y,
                         )
