@@ -101,12 +101,7 @@ class Board:
 
                     x, y = datum["new_position"]
                     new_piece = (
-                        datum["piece_type"](
-                            attr=key,
-                            agent=agent,
-                            x=x,
-                            y=y,
-                        )
+                        datum["piece_type"](attr=key, agent=agent, x=x, y=y)
                         if "piece_type" in datum
                         else None
                     )

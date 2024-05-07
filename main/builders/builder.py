@@ -51,16 +51,8 @@ class BoardBuilder:
         max_moves: Optional[int] = 50,
     ):
         board = self._get_board(white_agent_cls, black_agent_cls, max_moves)
-
-        self._set_pieces(
-            agent=board.white,
-            scaffold=WHITE_SCAFFOLD,
-        )
-
-        self._set_pieces(
-            agent=board.black,
-            scaffold=BLACK_SCAFFOLD,
-        )
+        self._set_pieces(agent=board.white, scaffold=WHITE_SCAFFOLD)
+        self._set_pieces(agent=board.black, scaffold=BLACK_SCAFFOLD)
 
         return board
 
@@ -132,16 +124,8 @@ class BoardBuilder:
         max_moves: Optional[int] = 50,
     ):
         board = self._get_board(white_agent_cls, black_agent_cls, max_moves)
-
-        self._set_pieces(
-            agent=board.white,
-            scaffold=self._get_scaffold(white_data),
-        )
-
-        self._set_pieces(
-            agent=board.black,
-            scaffold=self._get_scaffold(black_data),
-        )
+        self._set_pieces(agent=board.white, scaffold=self._get_scaffold(white_data))
+        self._set_pieces(agent=board.black, scaffold=self._get_scaffold(black_data))
 
         return board
 
