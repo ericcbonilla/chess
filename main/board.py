@@ -45,10 +45,7 @@ class Board:
         self._black = None
 
     def __repr__(self) -> str:
-        return (
-            f"White:\n{self.white}\nWhite graveyard:\n{self.white.graveyard}\n\n"
-            f"Black:\n{self.black}\nBlack graveyard:\n{self.black.graveyard}"
-        )
+        return f"{self.white}{self.white.graveyard}\n\n{self.black}{self.black.graveyard}\n"
 
     @property
     def white(self) -> "Agent":

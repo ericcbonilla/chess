@@ -48,7 +48,7 @@ class Agent:
     en_passant_target: Optional[Position] = None
 
     def __repr__(self):
-        return "".join(f"  {piece}\n" for piece in self.pieces)
+        return f'{self.color}:\n{"".join(f"  {p}\n" for p in self.pieces)}'
 
     @property
     def pieces(self) -> Iterable["Piece"]:

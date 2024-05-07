@@ -31,7 +31,7 @@ class Graveyard:
     h_slot: Optional[Promotee | WhitePawn | BlackPawn] = None
 
     def __repr__(self):
-        return "".join(f"  {piece}\n" for piece in self.pieces) or "  Empty"
+        return f'Graveyard:\n{"".join(f"  {p}\n" for p in self.pieces) or "  Empty"}'
 
     @property
     def pieces(self) -> Iterable["Piece"]:
