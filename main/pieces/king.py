@@ -57,7 +57,7 @@ class King(Piece):
     ) -> bool:
         if (
             new_position not in constants.SQUARES
-            or new_position in self.agent.positions
+            or new_position in self.forbidden_squares
             or self.is_in_check(new_position)
         ):
             return False
