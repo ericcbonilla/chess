@@ -6,5 +6,5 @@ class InvalidMoveError(Exception):
     pass
 
 
-class InvalidGameError(Exception):
+class BuildError(Exception):
     pass

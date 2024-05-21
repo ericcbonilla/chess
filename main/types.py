@@ -1,18 +1,28 @@
-from typing import Dict, Literal, NotRequired, Tuple, TypedDict, Union
+from typing import (
+    TYPE_CHECKING,
+    Dict,
+    Literal,
+    NotRequired,
+    Tuple,
+    Type,
+    TypedDict,
+    Union,
+)
+
+if TYPE_CHECKING:
+    from main.pieces import Piece
 
 Position = Tuple["XPosition", int]
-PieceType = Union["Bishop", "King", "Knight", "WhitePawn", "BlackPawn", "Queen", "Rook"]
-PromoteeType = Union["Bishop", "Knight", "Queen", "Rook"]
-TeamType = Dict[str, PieceType]
-TeamColor = Literal["WHITE", "BLACK"]
-GameResult = Literal["", "1-0", "0-1", "½-½"]
+Promotee = Union["Bishop", "Knight", "Queen", "Rook"]
+AgentColor = Literal["WHITE", "BLACK"]
+GameResult = Literal[None, "1-0", "0-1", "½-½"]
 
 
 class PieceChange(TypedDict):
     old_position: Position | None
     new_position: Position | None
     has_moved: NotRequired[bool]
-    piece_type: NotRequired[PieceType]
+    piece_type: NotRequired[Type["Piece"]]
 
 
 TeamChange = Dict[str, PieceChange | Tuple[Position, None]]
@@ -23,4 +33,15 @@ class Change(TypedDict):
     BLACK: TeamChange
     disambiguation: NotRequired[str]
     check: NotRequired[bool]
-    game_result: NotRequired[str]
+    game_result: NotRequired[GameResult]
+    symbol: str | None
+
+
+class PieceScaffold(TypedDict):
+    piece_type: Type["Piece"]
+    x: str
+    y: int
+    has_moved: NotRequired[bool]
+
+
+AgentScaffold = Dict[str, PieceScaffold | None]

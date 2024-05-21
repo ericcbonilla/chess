@@ -20,12 +20,8 @@ class Knight(Piece):
     ) -> bool:
         if (
             new_position not in constants.SQUARES
-            or new_position in self.team.positions
-            or self.king_is_in_check(
-                king=self.king,
-                new_position=new_position,
-            )
+            or new_position in self.forbidden_squares
+            or self.king_is_in_check(king=self.king, new_position=new_position)
         ):
             return False
-
         return True

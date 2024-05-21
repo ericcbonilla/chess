@@ -1,8 +1,7 @@
-from typing import TYPE_CHECKING, Iterator, Optional, Set, Tuple
+from typing import TYPE_CHECKING, Optional, Set, Tuple
 
 from main import constants
 from main.game_tree import HalfMove
-from main.team import Team
 from main.types import Change, Position
 from main.xposition import XPosition
 
@@ -12,7 +11,7 @@ from .piece import Piece
 from .rook import Rook
 
 if TYPE_CHECKING:
-    from main.board import Board
+    from main.agents import Agent
 
 
 class King(Piece):
@@ -24,27 +23,22 @@ class King(Piece):
 
     def __init__(
         self,
-        board: "Board",
-        team: Team,
+        attr: str,
+        agent: "Agent",
         x: str,
         y: int,
         has_moved: Optional[bool] = None,
     ):
-        super().__init__(board, team, x, y)
+        super().__init__(attr, agent, x, y)
 
         if has_moved is None:
-            initial_y = 1 if self.team.color == constants.WHITE else 8
+            initial_y = 1 if self.agent.color == constants.WHITE else 8
             self.has_moved = self.position != ("e", initial_y)
         else:
             self.has_moved = has_moved
 
-    def _get_rooks(self) -> Iterator[Rook]:
-        for piece in self.team.values():
-            if isinstance(piece, Rook):
-                yield piece
-
-    def _can_castle(self, rook: Rook) -> Tuple[str | None, bool]:
-        if rook.has_moved or self.has_moved or self.is_in_check():
+    def _can_castle(self, rook: Rook | None) -> Tuple[str | None, bool]:
+        if rook is None or rook.has_moved or self.has_moved or self.is_in_check():
             return None, False
 
         if rook.x == "a":  # Queenside
@@ -58,16 +52,12 @@ class King(Piece):
             not castle_through_check and self.is_open_path(rook.position)
         )
 
-    @property
-    def king(self) -> "King":
-        return self
-
     def is_valid_move(
         self, new_position: Position, keep_king_safe: Optional[bool] = True
     ) -> bool:
         if (
             new_position not in constants.SQUARES
-            or new_position in self.team.positions
+            or new_position in self.forbidden_squares
             or self.is_in_check(new_position)
         ):
             return False
@@ -86,7 +76,7 @@ class King(Piece):
             if lazy:
                 return valid_moves
 
-        for rook in self._get_rooks():
+        for rook in (self.agent.a_rook, self.agent.h_rook):
             new_king_xpos, can_castle = self._can_castle(rook)
             if can_castle and new_king_xpos:
                 valid_moves.add((new_king_xpos, self.y))
@@ -96,9 +86,9 @@ class King(Piece):
     def is_in_check(self, target_position: Optional[Position] = None) -> bool:
         """
         This is used in several different ways:
-        1. To ensure a move from this team would not leave this King in check
+        1. To ensure a move from this King's agent would not leave this King in check
         (direct checks, pins)
-        2. By the opponent team to see if they've checked this King
+        2. By the opponent agent to see if they've checked this King
         (direct checks, discoveries)
         3. To prevent castling out of check
         4. To prevent castling through check
@@ -115,11 +105,11 @@ class King(Piece):
 
         if target_position:
             change = self.construct_change(*target_position, augment=False)
-            halfmove = HalfMove(color=self.team.color, change=change)
+            halfmove = HalfMove(color=self.agent.color, change=change)
 
-            self.board.apply_halfmove(halfmove)
+            self.agent.board.apply_halfmove(halfmove)
             is_capturable = self._is_capturable()
-            self.board.rollback_halfmove(halfmove)
+            self.agent.board.rollback_halfmove(halfmove)
         else:
             is_capturable = self._is_capturable()
 
@@ -128,9 +118,10 @@ class King(Piece):
     def _is_capturable(self) -> bool:
         # TODO: Think of a way to ~avoid~ calling this for every single move
         # Or at least try to reduce the number of opponent pieces that we evaluate
-        # Maybe only loop over movable pieces?
+        # Maybe only loop over movable pieces? Maybe there's some piece of this
+        # we could memoize?
 
-        for piece in self.opponent_team.values():
+        for _, piece in self.opponent.pieces:
             if isinstance(piece, (WhitePawn, BlackPawn, Knight, King)):
                 for x_d, y_d in piece.capture_movements:
                     new_position = piece.x + x_d, piece.y + y_d
@@ -152,17 +143,16 @@ class King(Piece):
 
     def augment_change(self, x: XPosition, y: int, change: Change, **kwargs) -> Change:
         if not self.has_moved:
-            change[self.team.color][self.name]["has_moved"] = True
+            change[self.agent.color][self.attr]["has_moved"] = True
 
             if (x, y) == ("c", self.y):  # queenside
-                change[self.team.color]["R1"] = {
+                change[self.agent.color]["a_rook"] = {
                     "old_position": ("a", self.y),
                     "new_position": ("d", self.y),
                     "has_moved": True,
                 }
             elif (x, y) == ("g", self.y):  # kingside
-                rook_name = "R1" if "R2" not in self.team else "R2"
-                change[self.team.color][rook_name] = {
+                change[self.agent.color]["h_rook"] = {
                     "old_position": ("h", self.y),
                     "new_position": ("f", self.y),
                     "has_moved": True,
