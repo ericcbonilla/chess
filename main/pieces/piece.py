@@ -137,7 +137,7 @@ class Piece:
         disambiguation = ""
         siblings = [
             piece
-            for piece in self.agent.pieces
+            for _, piece in self.agent.pieces
             if piece is not self and isinstance(piece, type(self))
         ]
 
