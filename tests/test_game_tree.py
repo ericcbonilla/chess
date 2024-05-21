@@ -8,7 +8,7 @@ class TestGetLatestHalfmove:
             color=constants.WHITE,
             change={
                 "WHITE": {
-                    "e_slot": {
+                    "e_pawn": {
                         "old_position": ("e", 2),
                         "new_position": ("e", 4),
                     },
@@ -29,7 +29,7 @@ class TestGetLatestHalfmove:
             change={
                 "WHITE": {},
                 "BLACK": {
-                    "e_slot": {
+                    "e_pawn": {
                         "old_position": ("e", 7),
                         "new_position": ("e", 5),
                     }

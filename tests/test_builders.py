@@ -32,7 +32,7 @@ class TestBoardBuilder:
             ],
         )
 
-        assert board.white.f_slot
+        assert board.white.f_pawn
 
     def test_multiple_pawns_on_same_file_added_to_correct_slots(self, builder):
         board = builder.from_data(
@@ -49,9 +49,9 @@ class TestBoardBuilder:
             ],
         )
 
-        assert board.white.g_slot.position == ("g", 2)
-        assert board.white.h_slot.position == ("g", 3)
-        assert board.white.a_slot.position == ("g", 4)
+        assert board.white.g_pawn.position == ("g", 2)
+        assert board.white.h_pawn.position == ("g", 3)
+        assert board.white.a_pawn.position == ("g", 4)
 
     def test_too_many_pawns_raises_build_error(self, builder):
         with pytest.raises(BuildError):
@@ -105,5 +105,5 @@ class TestBoardBuilder:
         )
 
         assert board.white.queen.position == ("g", 5)
-        assert board.white.g_slot.position == ("g", 4)
-        assert board.white.h_slot.position == ("g", 3)
+        assert board.white.g_prom.position == ("g", 4)
+        assert board.white.h_prom.position == ("g", 3)

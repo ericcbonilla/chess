@@ -247,4 +247,4 @@ class TestGetDisambiguation:
             ],
         )
 
-        assert board.white.c_slot.get_disambiguation("e", 4) == "c3"
+        assert board.white.c_prom.get_disambiguation("e", 4) == "c3"

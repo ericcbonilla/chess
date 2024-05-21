@@ -1,5 +1,3 @@
-from copy import deepcopy
-
 import pytest
 
 from main import constants
@@ -32,7 +30,7 @@ def three_fullmove_tree():
             color=constants.WHITE,
             change={
                 "WHITE": {
-                    "e_slot": {
+                    "e_pawn": {
                         "old_position": ("e", 2),
                         "new_position": ("e", 4),
                     },
@@ -49,7 +47,7 @@ def three_fullmove_tree():
             change={
                 "WHITE": {},
                 "BLACK": {
-                    "e_slot": {
+                    "e_pawn": {
                         "old_position": ("e", 7),
                         "new_position": ("e", 5),
                     }
@@ -115,7 +113,7 @@ def three_fullmove_tree():
                     change={
                         "WHITE": {},
                         "BLACK": {
-                            "a_slot": {
+                            "a_pawn": {
                                 "old_position": ("a", 7),
                                 "new_position": ("a", 6),
                             }
@@ -144,7 +142,7 @@ def two_fullmove_tree():
             color=constants.WHITE,
             change={
                 "WHITE": {
-                    "e_slot": {
+                    "e_pawn": {
                         "old_position": ("e", 2),
                         "new_position": ("e", 4),
                     },
@@ -161,7 +159,7 @@ def two_fullmove_tree():
             change={
                 "WHITE": {},
                 "BLACK": {
-                    "e_slot": {
+                    "e_pawn": {
                         "old_position": ("e", 7),
                         "new_position": ("e", 5),
                     }
@@ -222,7 +220,7 @@ def one_and_a_half_fullmove_tree():
             color=constants.WHITE,
             change={
                 "WHITE": {
-                    "e_slot": {
+                    "e_pawn": {
                         "old_position": ("e", 2),
                         "new_position": ("e", 4),
                     },
@@ -239,7 +237,7 @@ def one_and_a_half_fullmove_tree():
             change={
                 "WHITE": {},
                 "BLACK": {
-                    "e_slot": {
+                    "e_pawn": {
                         "old_position": ("e", 7),
                         "new_position": ("e", 5),
                     }
@@ -284,7 +282,7 @@ def one_fullmove_tree():
             color=constants.WHITE,
             change={
                 "WHITE": {
-                    "e_slot": {
+                    "e_pawn": {
                         "old_position": ("e", 2),
                         "new_position": ("e", 4),
                     },
@@ -301,7 +299,7 @@ def one_fullmove_tree():
             change={
                 "WHITE": {},
                 "BLACK": {
-                    "e_slot": {
+                    "e_pawn": {
                         "old_position": ("e", 7),
                         "new_position": ("e", 5),
                     }
@@ -327,7 +325,7 @@ def half_move_tree():
             color=constants.WHITE,
             change={
                 "WHITE": {
-                    "e_slot": {
+                    "e_pawn": {
                         "old_position": ("e", 2),
                         "new_position": ("e", 4),
                     },
@@ -356,7 +354,7 @@ def one_fullmove_then_capture_tree():
             color=constants.WHITE,
             change={
                 "WHITE": {
-                    "e_slot": {
+                    "e_pawn": {
                         "old_position": ("e", 2),
                         "new_position": ("e", 4),
                     },
@@ -373,7 +371,7 @@ def one_fullmove_then_capture_tree():
             change={
                 "WHITE": {},
                 "BLACK": {
-                    "d_slot": {
+                    "d_pawn": {
                         "old_position": ("d", 7),
                         "new_position": ("d", 5),
                     }
@@ -389,13 +387,13 @@ def one_fullmove_then_capture_tree():
                 color=constants.WHITE,
                 change={
                     "WHITE": {
-                        "e_slot": {
+                        "e_pawn": {
                             "old_position": ("e", 4),
                             "new_position": ("d", 5),
                         },
                     },
                     "BLACK": {
-                        "d_slot": {
+                        "d_pawn": {
                             "old_position": ("d", 5),
                             "new_position": None,
                         }
@@ -484,14 +482,18 @@ def white_pawn_promotion_to_queen():
             color=constants.WHITE,
             change={
                 "WHITE": {
-                    "f_slot": {
+                    "g_pawn": {
                         "old_position": ("f", 7),
+                        "new_position": None,
+                    },
+                    "g_prom": {
+                        "old_position": None,
                         "new_position": ("g", 8),
                         "piece_type": Queen,
                     },
                 },
                 "BLACK": {
-                    "a_rook": {
+                    "h_rook": {
                         "old_position": ("g", 8),
                         "new_position": None,
                     }
@@ -509,4 +511,10 @@ def white_pawn_promotion_to_queen():
 
 @pytest.fixture
 def empty_change():
-    return deepcopy(constants.BLANK_CHANGE)
+    return {
+        "WHITE": {},
+        "BLACK": {},
+        "disambiguation": "",
+        "check": False,
+        "game_result": None,
+    }

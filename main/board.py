@@ -70,10 +70,10 @@ class Board:
         pass
 
     @staticmethod
-    def add_piece(piece: "Piece", attr: str, check_graveyard: Optional[bool] = True):
+    def add_piece(piece: "Piece", attr: str):
         setattr(piece.agent, attr, piece)
 
-        if check_graveyard and hasattr(piece.agent.graveyard, attr):
+        if hasattr(piece.agent.graveyard, attr):
             setattr(piece.agent.graveyard, attr, None)
 
     @staticmethod
@@ -87,32 +87,27 @@ class Board:
         here. State should never be changed from anywhere else.
         """
 
-        for agent, opponent in ((self.white, self.black), (self.black, self.white)):
+        for agent in (self.white, self.black):
             if change[agent.color]:
                 for key, datum in change[agent.color].items():
+                    existing_piece = getattr(agent, key)
+
                     if key == "en_passant_target":
                         agent.en_passant_target = datum[1]
-                        continue
-
-                    existing_piece = getattr(agent, key)
-                    if datum["new_position"] is None:
+                    elif datum["new_position"] is None:
                         self.destroy_piece(existing_piece, attr=key)
-                        continue
-
-                    x, y = datum["new_position"]
-                    new_piece = (
-                        datum["piece_type"](attr=key, agent=agent, x=x, y=y)
-                        if "piece_type" in datum
-                        else None
-                    )
-                    if datum["old_position"] is None:
-                        # Rolling back a capture
-                        self.add_piece(new_piece, attr=key)
-                    elif "piece_type" in datum:
-                        # Either promoting or rolling back a promotion
-                        self.destroy_piece(existing_piece, attr=key)
-                        self.add_piece(new_piece, attr=key, check_graveyard=False)
+                    elif datum["old_position"] is None:
+                        # We're either resurrecting a piece, or adding a promotee
+                        x, y = datum["new_position"]
+                        piece = datum["piece_type"](
+                            attr=key,
+                            agent=agent,
+                            x=x,
+                            y=y,
+                        )
+                        self.add_piece(piece, attr=key)
                     else:
+                        x, y = datum["new_position"]
                         existing_piece.x, existing_piece.y = XPosition(x), y
 
                     if "has_moved" in datum:

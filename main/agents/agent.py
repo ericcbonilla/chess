@@ -35,14 +35,23 @@ class Agent:
     c_bishop: Optional[Bishop] = None
     f_bishop: Optional[Bishop] = None
 
-    a_slot: Optional[Promotee | WhitePawn | BlackPawn] = None
-    b_slot: Optional[Promotee | WhitePawn | BlackPawn] = None
-    c_slot: Optional[Promotee | WhitePawn | BlackPawn] = None
-    d_slot: Optional[Promotee | WhitePawn | BlackPawn] = None
-    e_slot: Optional[Promotee | WhitePawn | BlackPawn] = None
-    f_slot: Optional[Promotee | WhitePawn | BlackPawn] = None
-    g_slot: Optional[Promotee | WhitePawn | BlackPawn] = None
-    h_slot: Optional[Promotee | WhitePawn | BlackPawn] = None
+    a_pawn: Optional[WhitePawn | BlackPawn] = None
+    b_pawn: Optional[WhitePawn | BlackPawn] = None
+    c_pawn: Optional[WhitePawn | BlackPawn] = None
+    d_pawn: Optional[WhitePawn | BlackPawn] = None
+    e_pawn: Optional[WhitePawn | BlackPawn] = None
+    f_pawn: Optional[WhitePawn | BlackPawn] = None
+    g_pawn: Optional[WhitePawn | BlackPawn] = None
+    h_pawn: Optional[WhitePawn | BlackPawn] = None
+
+    a_prom: Optional[Promotee] = None
+    b_prom: Optional[Promotee] = None
+    c_prom: Optional[Promotee] = None
+    d_prom: Optional[Promotee] = None
+    e_prom: Optional[Promotee] = None
+    f_prom: Optional[Promotee] = None
+    g_prom: Optional[Promotee] = None
+    h_prom: Optional[Promotee] = None
 
     en_passant_target: Optional[Position] = None
 

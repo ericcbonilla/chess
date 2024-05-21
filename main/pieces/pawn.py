@@ -97,8 +97,13 @@ class Pawn(Piece):
             # when it needs to supply a promotee_value
             promotee_value = kwargs["promotee_value"]
 
-        promotee_type = self.get_promotee_type(promotee_value)
-        change[self.agent.color][self.attr]["piece_type"] = promotee_type
+        promotion_piece_type = self.get_promotee_type(promotee_value)
+        change[self.agent.color][self.attr]["new_position"] = None
+        change[self.agent.color][f"{self.attr[0]}_prom"] = {
+            "old_position": None,
+            "new_position": (x, y),
+            "piece_type": promotion_piece_type,
+        }
 
         return change
 

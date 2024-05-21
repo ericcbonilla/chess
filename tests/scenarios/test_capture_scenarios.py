@@ -4,11 +4,11 @@ from main.pieces import Bishop, King, Knight, Queen, Rook
 
 class TestCaptureScenarios:
     def test_capture_removes_piece_from_team(self, default_board):
-        default_board.white.d_slot.manual_move("d", 4)
-        default_board.black.e_slot.manual_move("e", 6)
+        default_board.white.d_pawn.manual_move("d", 4)
+        default_board.black.e_pawn.manual_move("e", 6)
         default_board.white.g_knight.manual_move("f", 3)
         default_board.black.f_bishop.manual_move("a", 3)
-        default_board.white.g_slot.manual_move("g", 3)
+        default_board.white.g_pawn.manual_move("g", 3)
         assert ("b", 2) in default_board.white.positions
 
         # Black bishop captures B pawn
