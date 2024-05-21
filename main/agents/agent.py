@@ -25,7 +25,6 @@ class Agent:
     color: AgentColor
     board: "Board"
     graveyard: Graveyard = field(default_factory=Graveyard)
-    piece_attrs = constants.PIECE_ATTRS
 
     king: Optional[King] = None
     queen: Optional[Queen] = None
@@ -52,7 +51,7 @@ class Agent:
 
     @property
     def pieces(self) -> Iterable["Piece"]:
-        for name in self.piece_attrs:
+        for name in constants.PIECE_ATTRS:
             piece = getattr(self, name)
             if piece is not None:
                 yield piece

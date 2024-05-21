@@ -11,7 +11,6 @@ if TYPE_CHECKING:
 
 @dataclass
 class Graveyard:
-    piece_attrs = constants.PIECE_ATTRS
     king: Optional[King] = None
     queen: Optional[Queen] = None
     a_rook: Optional[Rook] = None
@@ -35,7 +34,7 @@ class Graveyard:
 
     @property
     def pieces(self) -> Iterable["Piece"]:
-        for name in self.piece_attrs:
+        for name in constants.PIECE_ATTRS:
             piece = getattr(self, name)
             if piece is not None:
                 yield piece
