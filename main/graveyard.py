@@ -39,11 +39,11 @@ class Graveyard:
     h_prom: Optional[Promotee] = None
 
     def __repr__(self):
-        return f'Graveyard:\n{"".join(f"  {p}\n" for p in self.pieces) or "  Empty"}'
+        return f'Graveyard:\n{"".join(f"  {a}: {p}\n" for a, p in self.pieces) or "  Empty"}'
 
     @property
     def pieces(self) -> Iterable["Piece"]:
-        for name in constants.PIECE_ATTRS:
-            piece = getattr(self, name)
+        for attr in constants.PIECE_ATTRS:
+            piece = getattr(self, attr)
             if piece is not None:
-                yield piece
+                yield attr, piece

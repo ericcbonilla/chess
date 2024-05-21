@@ -56,32 +56,32 @@ class Agent:
     en_passant_target: Optional[Position] = None
 
     def __repr__(self):
-        return f'{self.color}:\n{"".join(f"  {p}\n" for p in self.pieces)}'
+        return f'{self.color}:\n{"".join(f"  {a}: {p}\n" for a, p in self.pieces)}'
 
     @property
     def pieces(self) -> Iterable["Piece"]:
-        for name in constants.PIECE_ATTRS:
-            piece = getattr(self, name)
+        for attr in constants.PIECE_ATTRS:
+            piece = getattr(self, attr)
             if piece is not None:
-                yield piece
+                yield attr, piece
 
     @property
     def material(self) -> int:
-        return sum([piece.value for piece in self.pieces])
+        return sum([piece.value for _, piece in self.pieces])
 
     @property
     def positions(self) -> Set[Position]:
-        return set(piece.position for piece in self.pieces)
+        return set(piece.position for _, piece in self.pieces)
 
     def get_by_position(self, x: XPosition, y: int) -> "Piece":
-        for piece in self.pieces:
+        for _, piece in self.pieces:
             if piece.position == (x, y):
                 return piece
 
         raise Exception(f"Piece not found on {(x, y)}")
 
     def can_move(self) -> bool:
-        for piece in self.pieces:
+        for _, piece in self.pieces:
             if piece.can_move():
                 return True
 

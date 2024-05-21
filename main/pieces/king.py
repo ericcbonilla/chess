@@ -121,7 +121,7 @@ class King(Piece):
         # Maybe only loop over movable pieces? Maybe there's some piece of this
         # we could memoize?
 
-        for piece in self.opponent.pieces:
+        for _, piece in self.opponent.pieces:
             if isinstance(piece, (WhitePawn, BlackPawn, Knight, King)):
                 for x_d, y_d in piece.capture_movements:
                     new_position = piece.x + x_d, piece.y + y_d

@@ -37,6 +37,8 @@ class Board:
     ):
         self.max_moves = max_moves
         self.game_tree = game_tree or FullMove()
+
+        # TODO increment based on pawn moves and captures, add logic for draw
         self.halfmove_clock = halfmove_clock
         self.fullmove_number = fullmove_number
         self.result: GameResult = None
@@ -175,7 +177,7 @@ class Board:
             num_breaks = term_size.columns - len(str(self.fullmove_number)) - 2
             print(f"\n{self.fullmove_number}. {'=' * num_breaks}")
 
-            # TODO determine who goes first based on halfmove_clock or whatever
+            # TODO determine who goes first based on FEN active color
             print(f"Turn: {constants.WHITE}")
             self.white.move()
 
