@@ -121,7 +121,7 @@ class TestHasInsufficientMaterial:
         board.black.king.manual_move("d", 3)
 
         halfmove = board.game_tree.get_latest_halfmove()
-        assert halfmove.change["game_result"] == "½-½"
+        assert halfmove.change["game_result"] == "½-½ Insufficient material"
 
     def test_kbk_yields_draw(self, builder):
         board = builder.from_data(
@@ -140,7 +140,7 @@ class TestHasInsufficientMaterial:
         board.black.king.manual_move("d", 3)
 
         halfmove = board.game_tree.get_latest_halfmove()
-        assert halfmove.change["game_result"] == "½-½"
+        assert halfmove.change["game_result"] == "½-½ Insufficient material"
 
     def test_kkn_yields_draw(self, builder):
         board = builder.from_data(
@@ -159,7 +159,7 @@ class TestHasInsufficientMaterial:
         board.white.king.manual_move("d", 2)
 
         halfmove = board.game_tree.get_latest_halfmove()
-        assert halfmove.change["game_result"] == "½-½"
+        assert halfmove.change["game_result"] == "½-½ Insufficient material"
 
     def test_kbkn_yields_draw(self, builder):
         board = builder.from_data(
@@ -179,4 +179,4 @@ class TestHasInsufficientMaterial:
         board.black.king.manual_move("d", 3)
 
         halfmove = board.game_tree.get_latest_halfmove()
-        assert halfmove.change["game_result"] == "½-½"
+        assert halfmove.change["game_result"] == "½-½ Insufficient material"

@@ -162,7 +162,7 @@ class Piece:
         change: Optional[Change] = None,
     ) -> bool:
         # If we're constructing a new change, it means we're verifying King
-        # safety for this Team. Skip augmentations in this case - they can't
+        # safety for this Agent. Skip augmentations in this case - they can't
         # affect safety of my own king for this move, which is all we care
         # about here. Without this, it'll recursively call this method infinitely.
         change = change or self.construct_change(*new_position, augment=False)
@@ -175,16 +175,27 @@ class Piece:
         return in_check
 
     def get_game_result(self, change: Change) -> GameResult:
+        # TODO start here decide where to update halfmove_clock
+        # We will need to update halfmove_clock and fullmove_number
+        # the same way we update en_passant_target
+
         halfmove = HalfMove(color=self.agent.color, change=change)
         self.agent.board.apply_halfmove(halfmove)
+
         opponent_can_move = self.opponent.can_move()
         insufficient_material = self.agent.board.has_insufficient_material()
+        halfmove_clock = self.agent.board.halfmove_clock
+
         self.agent.board.rollback_halfmove(halfmove)
 
         if change["check"] and not opponent_can_move:
             return "1-0" if self.agent.color == constants.WHITE else "0-1"
-        elif not opponent_can_move or insufficient_material:
-            return "½-½"
+        elif not opponent_can_move:
+            return "½-½ Stalemate"
+        elif insufficient_material:
+            return "½-½ Insufficient material"
+        elif halfmove_clock == 125:
+            return "½-½ Seventy-five-move rule"
         return None
 
     def augment_change(self, x: XPosition, y: int, change: Change, **kwargs) -> Change:

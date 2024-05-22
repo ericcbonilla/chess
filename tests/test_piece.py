@@ -61,7 +61,7 @@ class TestGetGameResult:
 
         halfmove = board.game_tree.get_latest_halfmove()
         assert not halfmove.change["check"]
-        assert halfmove.change["game_result"] == "½-½"
+        assert halfmove.change["game_result"] == "½-½ Stalemate"
 
     def test_opponent_in_check_but_can_still_move_yields_no_result(self, builder):
         board = builder.from_data(

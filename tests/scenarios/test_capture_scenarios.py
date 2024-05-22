@@ -3,7 +3,7 @@ from main.pieces import Bishop, King, Knight, Queen, Rook
 
 
 class TestCaptureScenarios:
-    def test_capture_removes_piece_from_team(self, default_board):
+    def test_capture_removes_piece_from_agent(self, default_board):
         default_board.white.d_pawn.manual_move("d", 4)
         default_board.black.e_pawn.manual_move("e", 6)
         default_board.white.g_knight.manual_move("f", 3)

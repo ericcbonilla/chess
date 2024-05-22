@@ -86,7 +86,7 @@ class Board:
 
     def apply_change(self, change: Change):
         """
-        All game state changes (i.e. changes to Teams and Pieces) should happen
+        All game state changes (i.e. changes to Board, Agents, and Pieces) should happen
         here. State should never be changed from anywhere else.
         """
 

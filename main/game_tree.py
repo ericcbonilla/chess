@@ -135,8 +135,8 @@ class HalfMove:
     The general shape of the change dict is shown in the example below.
 
     {
-        # We will always have two items, represented as dicts, for each Team. If
-        # no change needs to be made for a Team, the dict will be empty.
+        # We will always have two items, represented as dicts, for each Agent. If
+        # no change needs to be made for a Agent, the dict will be empty.
         constants.WHITE: {
             # Denotes a rook moving
             'R1': {
