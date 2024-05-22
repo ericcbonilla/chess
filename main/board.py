@@ -1,4 +1,5 @@
 import os
+from collections import Counter
 from copy import deepcopy
 from typing import TYPE_CHECKING, Optional
 
@@ -166,6 +167,23 @@ class Board:
 
         self.apply_change(inverted_change)
         self.game_tree.prune()
+
+    def has_insufficient_material(self):
+        scenarios = [
+            ([0], [0]),
+            ([0], [0, 3]),
+            ([0, 3], [0]),
+            ([0, 3], [0, 3]),
+        ]
+
+        if self.white.material_sum > 3 or self.black.material_sum > 3:
+            return False
+        for white_material, black_material in scenarios:
+            white_match = Counter(self.white.material) == Counter(white_material)
+            black_match = Counter(self.black.material) == Counter(black_material)
+            if white_match and black_match:
+                return True
+        return False
 
     def play(self):
         term_size = os.get_terminal_size()

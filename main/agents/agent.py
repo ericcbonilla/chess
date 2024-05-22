@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, Iterable, Optional, Set
+from typing import TYPE_CHECKING, Iterable, List, Optional, Set
 
 from main import constants
 from main.graveyard import Graveyard
@@ -66,8 +66,12 @@ class Agent:
                 yield attr, piece
 
     @property
-    def material(self) -> int:
-        return sum([piece.value for _, piece in self.pieces])
+    def material_sum(self) -> int:
+        return sum(self.material)
+
+    @property
+    def material(self) -> List[int]:
+        return [piece.value for _, piece in self.pieces]
 
     @property
     def positions(self) -> Set[Position]:

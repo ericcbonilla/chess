@@ -89,7 +89,7 @@ class FullMove:
             # The next FullMove is added once the current node is full
             node.child = FullMove()
 
-    def get_latest_halfmove(self) -> Optional["HalfMove"]:
+    def get_latest_halfmove(self) -> "HalfMove":
         if self.child is None:
             return self.white
         elif self.child.is_empty():  # Removing second move

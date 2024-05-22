@@ -1,3 +1,7 @@
+from main.agents import ManualAgent
+from main.pieces import Bishop, BlackPawn, King, Knight, Rook
+
+
 class TestBoard:
     def test_apply_three_fullmove_tree_results_in_expected_state(
         self, default_board, three_fullmove_tree
@@ -58,3 +62,121 @@ class TestBoard:
         assert default_board.white.e_pawn.position == ("e", 4)
         assert default_board.black.d_pawn.position == ("d", 5)
         assert default_board.black.graveyard.d_pawn is None
+
+
+class TestHasInsufficientMaterial:
+    def test_kkp_does_not_yield_draw(self, builder):
+        board = builder.from_data(
+            white_agent_cls=ManualAgent,
+            black_agent_cls=ManualAgent,
+            white_data=[
+                {"piece_type": King, "x": "e", "y": 1},
+            ],
+            black_data=[
+                {"piece_type": King, "x": "e", "y": 8},
+                {"piece_type": BlackPawn, "x": "a", "y": 3},
+                {"piece_type": Rook, "x": "d", "y": 2},
+            ],
+        )
+
+        board.white.king.manual_move("d", 2)
+
+        halfmove = board.game_tree.get_latest_halfmove()
+        assert halfmove.change["game_result"] is None
+
+    def test_kkppp_does_not_yield_draw(self, builder):
+        board = builder.from_data(
+            white_agent_cls=ManualAgent,
+            black_agent_cls=ManualAgent,
+            white_data=[
+                {"piece_type": King, "x": "e", "y": 1},
+            ],
+            black_data=[
+                {"piece_type": King, "x": "e", "y": 8},
+                {"piece_type": BlackPawn, "x": "a", "y": 3},
+                {"piece_type": BlackPawn, "x": "g", "y": 3},
+                {"piece_type": BlackPawn, "x": "h", "y": 3},
+                {"piece_type": Rook, "x": "d", "y": 2},
+            ],
+        )
+
+        board.white.king.manual_move("d", 2)
+
+        halfmove = board.game_tree.get_latest_halfmove()
+        assert halfmove.change["game_result"] is None
+
+    def test_kk_yields_draw(self, builder):
+        board = builder.from_data(
+            white_agent_cls=ManualAgent,
+            black_agent_cls=ManualAgent,
+            white_data=[
+                {"piece_type": King, "x": "e", "y": 1},
+                {"piece_type": Rook, "x": "d", "y": 3},
+            ],
+            black_data=[
+                {"piece_type": King, "x": "c", "y": 4},
+            ],
+        )
+
+        board.black.king.manual_move("d", 3)
+
+        halfmove = board.game_tree.get_latest_halfmove()
+        assert halfmove.change["game_result"] == "½-½"
+
+    def test_kbk_yields_draw(self, builder):
+        board = builder.from_data(
+            white_agent_cls=ManualAgent,
+            black_agent_cls=ManualAgent,
+            white_data=[
+                {"piece_type": King, "x": "e", "y": 1},
+                {"piece_type": Rook, "x": "d", "y": 3},
+                {"piece_type": Bishop, "x": "h", "y": 3},
+            ],
+            black_data=[
+                {"piece_type": King, "x": "c", "y": 4},
+            ],
+        )
+
+        board.black.king.manual_move("d", 3)
+
+        halfmove = board.game_tree.get_latest_halfmove()
+        assert halfmove.change["game_result"] == "½-½"
+
+    def test_kkn_yields_draw(self, builder):
+        board = builder.from_data(
+            white_agent_cls=ManualAgent,
+            black_agent_cls=ManualAgent,
+            white_data=[
+                {"piece_type": King, "x": "e", "y": 1},
+            ],
+            black_data=[
+                {"piece_type": King, "x": "c", "y": 4},
+                {"piece_type": Rook, "x": "d", "y": 2},
+                {"piece_type": Knight, "x": "b", "y": 6},
+            ],
+        )
+
+        board.white.king.manual_move("d", 2)
+
+        halfmove = board.game_tree.get_latest_halfmove()
+        assert halfmove.change["game_result"] == "½-½"
+
+    def test_kbkn_yields_draw(self, builder):
+        board = builder.from_data(
+            white_agent_cls=ManualAgent,
+            black_agent_cls=ManualAgent,
+            white_data=[
+                {"piece_type": King, "x": "e", "y": 1},
+                {"piece_type": Rook, "x": "d", "y": 3},
+                {"piece_type": Bishop, "x": "a", "y": 8},
+            ],
+            black_data=[
+                {"piece_type": King, "x": "c", "y": 4},
+                {"piece_type": Knight, "x": "b", "y": 6},
+            ],
+        )
+
+        board.black.king.manual_move("d", 3)
+
+        halfmove = board.game_tree.get_latest_halfmove()
+        assert halfmove.change["game_result"] == "½-½"

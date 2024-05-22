@@ -178,11 +178,12 @@ class Piece:
         halfmove = HalfMove(color=self.agent.color, change=change)
         self.agent.board.apply_halfmove(halfmove)
         opponent_can_move = self.opponent.can_move()
+        insufficient_material = self.agent.board.has_insufficient_material()
         self.agent.board.rollback_halfmove(halfmove)
 
         if change["check"] and not opponent_can_move:
             return "1-0" if self.agent.color == constants.WHITE else "0-1"
-        elif not opponent_can_move:
+        elif not opponent_can_move or insufficient_material:
             return "½-½"
         return None
 
