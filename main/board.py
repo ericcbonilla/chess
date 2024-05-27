@@ -38,8 +38,6 @@ class Board:
     ):
         self.max_moves = max_moves
         self.game_tree = game_tree or FullMove()
-
-        # TODO increment based on pawn moves and captures, add logic for draw
         self.halfmove_clock = halfmove_clock
         self.fullmove_number = fullmove_number
         self.result: GameResult = None
@@ -119,6 +117,9 @@ class Board:
         if "game_result" in change and change["game_result"]:
             self.result = change["game_result"]
 
+        self.halfmove_clock = change["halfmove_clock"][1]
+        self.fullmove_number = change["fullmove_number"][1]
+
     def apply_gametree(self, tree: FullMove):
         def _apply_next(node: FullMove):
             if node.is_empty():
@@ -165,6 +166,21 @@ class Board:
                             "has_moved"
                         ]
 
+        if (
+            "game_result" in halfmove.change
+            and halfmove.change["game_result"] is not None
+        ):
+            inverted_change["result"] = None
+
+        inverted_change["halfmove_clock"] = (
+            halfmove.change["halfmove_clock"][1],
+            halfmove.change["halfmove_clock"][0],
+        )
+        inverted_change["fullmove_number"] = (
+            halfmove.change["fullmove_number"][1],
+            halfmove.change["fullmove_number"][0],
+        )
+
         self.apply_change(inverted_change)
         self.game_tree.prune()
 
@@ -201,6 +217,5 @@ class Board:
 
             yellow(f"Turn: {constants.BLACK}")
             self.black.move()
-            self.fullmove_number += 1
 
         return f"Moves played: {self.fullmove_number - 1}. Result: {self.result}"

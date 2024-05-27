@@ -80,4 +80,6 @@ class TestCaptureScenarios:
             "check": True,
             "game_result": None,
             "symbol": "Q",
+            "halfmove_clock": (0, 0),
+            "fullmove_number": (1, 2),
         }

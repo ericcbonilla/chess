@@ -166,6 +166,8 @@ class TestPawnScenarios:
             "check": False,
             "game_result": None,
             "symbol": "",
+            "halfmove_clock": (0, 0),
+            "fullmove_number": (1, 1),
         }
 
 
@@ -287,6 +289,8 @@ class TestEnPassant:
             "check": False,
             "game_result": None,
             "symbol": "",
+            "halfmove_clock": (0, 0),
+            "fullmove_number": (3, 3),
         }
 
     def test_rollback_en_passant_results_in_expected_state(self, default_board):

@@ -175,10 +175,6 @@ class Piece:
         return in_check
 
     def get_game_result(self, change: Change) -> GameResult:
-        # TODO start here decide where to update halfmove_clock
-        # We will need to update halfmove_clock and fullmove_number
-        # the same way we update en_passant_target
-
         halfmove = HalfMove(color=self.agent.color, change=change)
         self.agent.board.apply_halfmove(halfmove)
 
@@ -195,6 +191,7 @@ class Piece:
         elif insufficient_material:
             return "½-½ Insufficient material"
         elif halfmove_clock == 125:
+            # https://en.wikipedia.org/wiki/Fifty-move_rule#Seventy-five-move_rule
             return "½-½ Seventy-five-move rule"
         return None
 
@@ -223,6 +220,15 @@ class Piece:
             "check": False,
             "game_result": None,
             "symbol": self.symbol,
+            "halfmove_clock": (
+                self.agent.board.halfmove_clock,
+                self.agent.board.halfmove_clock + 1,
+            ),
+            "fullmove_number": (
+                self.agent.board.fullmove_number,
+                self.agent.board.fullmove_number
+                + (1 if self.agent.color == constants.BLACK else 0),
+            ),
         }
 
         if (x, y) in self.opponent.positions:  # capture
@@ -233,6 +239,7 @@ class Piece:
                     "new_position": None,
                 }
             }
+            change["halfmove_clock"] = (self.agent.board.halfmove_clock, 0)
 
         if augment:
             change = self.augment_change(x, y, change, **kwargs)

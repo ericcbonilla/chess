@@ -42,6 +42,8 @@ class Change(TypedDict):
     check: NotRequired[bool]
     game_result: NotRequired[GameResult]
     symbol: str | None
+    halfmove_clock: Tuple[int, int]
+    fullmove_number: Tuple[int, int]
 
 
 class PieceScaffold(TypedDict):

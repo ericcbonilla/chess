@@ -1,5 +1,5 @@
 from main.agents import ManualAgent
-from main.pieces import Bishop, BlackPawn, King, Knight, Rook
+from main.pieces import Bishop, BlackPawn, King, Knight, Queen, Rook
 
 
 class TestBoard:
@@ -180,3 +180,120 @@ class TestHasInsufficientMaterial:
 
         halfmove = board.game_tree.get_latest_halfmove()
         assert halfmove.change["game_result"] == "½-½ Insufficient material"
+
+
+class TestHalfmoveClock:
+    def test_when_pawn_moves_halfmove_clock_is_reset(
+        self, default_board, two_fullmove_tree
+    ):
+        default_board.apply_gametree(two_fullmove_tree)
+        assert default_board.halfmove_clock == 2
+
+        default_board.white.h_pawn.manual_move("h", 4)
+
+        assert default_board.halfmove_clock == 0
+
+    def test_when_piece_is_captured_halfmove_clock_is_reset(self, default_board):
+        default_board.white.b_knight.manual_move("c", 3)
+        default_board.black.g_knight.manual_move("f", 6)
+        default_board.white.b_knight.manual_move("e", 4)
+        assert default_board.halfmove_clock == 3
+
+        default_board.black.g_knight.manual_move("e", 4)
+
+        assert default_board.halfmove_clock == 0
+
+    def test_when_other_piece_is_moved_halfmove_clock_increments(self, default_board):
+        default_board.white.b_knight.manual_move("c", 3)
+        default_board.black.g_knight.manual_move("f", 6)
+        default_board.white.b_knight.manual_move("e", 4)
+        assert default_board.halfmove_clock == 3
+
+        default_board.black.g_knight.manual_move("d", 5)
+
+        assert default_board.halfmove_clock == 4
+
+    def test_when_75th_move_is_pawn_move_does_not_yield_draw(self, builder):
+        board = builder.from_data(
+            white_agent_cls=ManualAgent,
+            black_agent_cls=ManualAgent,
+            white_data=[
+                {"piece_type": King, "x": "e", "y": 1},
+                {"piece_type": Rook, "x": "d", "y": 3},
+                {"piece_type": Bishop, "x": "a", "y": 8},
+            ],
+            black_data=[
+                {"piece_type": King, "x": "c", "y": 4},
+                {"piece_type": BlackPawn, "x": "a", "y": 6},
+                {"piece_type": Knight, "x": "b", "y": 6},
+            ],
+        )
+        board.halfmove_clock = 124
+        board.black.a_pawn.manual_move("a", 5)
+
+        halfmove = board.game_tree.get_latest_halfmove()
+        assert board.halfmove_clock == 0
+        assert halfmove.change["game_result"] is None
+
+    def test_when_75th_move_is_capture_does_not_yield_draw(self, builder):
+        board = builder.from_data(
+            white_agent_cls=ManualAgent,
+            black_agent_cls=ManualAgent,
+            white_data=[
+                {"piece_type": King, "x": "e", "y": 1},
+                {"piece_type": Rook, "x": "d", "y": 3},
+                {"piece_type": Bishop, "x": "a", "y": 8},
+            ],
+            black_data=[
+                {"piece_type": King, "x": "c", "y": 4},
+                {"piece_type": BlackPawn, "x": "a", "y": 6},
+                {"piece_type": Knight, "x": "b", "y": 6},
+            ],
+        )
+        board.halfmove_clock = 124
+        board.black.king.manual_move("d", 3)
+
+        halfmove = board.game_tree.get_latest_halfmove()
+        assert board.halfmove_clock == 0
+        assert halfmove.change["game_result"] is None
+
+    def test_when_75th_move_is_regular_move_yields_draw(self, builder):
+        board = builder.from_data(
+            white_agent_cls=ManualAgent,
+            black_agent_cls=ManualAgent,
+            white_data=[
+                {"piece_type": King, "x": "e", "y": 1},
+                {"piece_type": Rook, "x": "d", "y": 3},
+                {"piece_type": Bishop, "x": "a", "y": 8},
+            ],
+            black_data=[
+                {"piece_type": King, "x": "c", "y": 4},
+                {"piece_type": BlackPawn, "x": "a", "y": 6},
+                {"piece_type": Knight, "x": "b", "y": 6},
+            ],
+        )
+        board.halfmove_clock = 124
+        board.black.king.manual_move("b", 4)
+
+        halfmove = board.game_tree.get_latest_halfmove()
+        assert board.halfmove_clock == 125
+        assert halfmove.change["game_result"] == "½-½ Seventy-five-move rule"
+
+    def test_when_75th_move_is_checkmate_yields_checkmate(self, builder):
+        board = builder.from_data(
+            white_agent_cls=ManualAgent,
+            black_agent_cls=ManualAgent,
+            white_data=[
+                {"piece_type": King, "x": "e", "y": 1},
+            ],
+            black_data=[
+                {"piece_type": King, "x": "e", "y": 3},
+                {"piece_type": Queen, "x": "a", "y": 2},
+            ],
+        )
+        board.halfmove_clock = 124
+        board.black.queen.manual_move("e", 2)
+
+        halfmove = board.game_tree.get_latest_halfmove()
+        assert board.halfmove_clock == 125
+        assert halfmove.change["game_result"] == "0-1"
