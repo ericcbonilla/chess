@@ -6,27 +6,6 @@ from tabulate import tabulate
 from main import constants
 from main.types import AgentColor, Change
 
-"""
-Game tree
-Want ability to rollback moves
-This should also play well with the FEN/AN factory methods
-
-Should we add ability to rollback? or just look back
-Rollback could replace the current dry_run stuff
-
-3/22/24 ...yes, I think we do need the ability to rollback - we will still need
-to apply and rollback moves to check move legality
-
-A tree is prob the best data structure for this as it allows for the easiest way
-to look ahead. Possible game futures would be represented as branches, which can be
-pruned and stitched together easily. You can also look at multiple futures
-simultaneously, which wouldn't be possible with a linked list.
-
-The game tree will have multiple purposes - a detailed representation of the game
-thus far, a way to compute the best possible move, and probably more things I
-haven't thought of yet.
-"""
-
 
 @dataclass
 class FullMove:
