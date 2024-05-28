@@ -18,6 +18,7 @@ class King(Piece):
     movements = {(1, 0), (0, 1), (-1, 0), (0, -1), (1, 1), (1, -1), (-1, 1), (-1, -1)}
     capture_movements = movements
     symbol = "K"
+    fen_symbol = symbol
     value = 0
     unicode = "\u2654"
 

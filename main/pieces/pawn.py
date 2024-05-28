@@ -13,6 +13,7 @@ from .rook import Rook
 
 class Pawn(Piece):
     symbol = ""
+    fen_symbol = "P"
     value = 1
     capture_movements: Set = NotImplemented
     unicode = "\u2659"

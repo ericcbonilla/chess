@@ -82,4 +82,5 @@ class TestCaptureScenarios:
             "symbol": "Q",
             "halfmove_clock": (0, 0),
             "fullmove_number": (1, 2),
+            "fen": "8/8/8/4k3/2KR4/8/8/6q1 w - - 0 1",
         }

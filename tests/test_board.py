@@ -63,6 +63,13 @@ class TestBoard:
         assert default_board.black.d_pawn.position == ("d", 5)
         assert default_board.black.graveyard.d_pawn is None
 
+    def test_with_single_move_to_fen_returns_expected(self, default_board):
+        default_board.white.e_pawn.manual_move("e", 4)
+
+        assert default_board.to_fen() == (
+            "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1"
+        )
+
 
 class TestHasInsufficientMaterial:
     def test_kkp_does_not_yield_draw(self, builder):

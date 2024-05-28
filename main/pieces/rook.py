@@ -18,6 +18,7 @@ class Rook(Piece):
         *((0, -p) for p in range(1, 9)),
     }
     symbol = "R"
+    fen_symbol = symbol
     value = 5
     unicode = "\u2656"
 

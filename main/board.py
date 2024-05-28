@@ -1,13 +1,13 @@
 import os
 from collections import Counter
 from copy import deepcopy
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Dict, Optional
 
 from colorist import yellow
 
 from main import constants
 from main.game_tree import FullMove, HalfMove
-from main.types import Change, GameResult
+from main.types import Change, GameResult, Position
 from main.xposition import XPosition
 
 if TYPE_CHECKING:
@@ -33,11 +33,13 @@ class Board:
         self,
         max_moves: int,
         game_tree: Optional[FullMove] = None,
+        active_color: Optional[str] = None,
         halfmove_clock: Optional[int] = 0,
         fullmove_number: Optional[int] = 1,
     ):
         self.max_moves = max_moves
         self.game_tree = game_tree or FullMove()
+        self.active_color = active_color or "w"
         self.halfmove_clock = halfmove_clock
         self.fullmove_number = fullmove_number
         self.result: GameResult = None
@@ -64,8 +66,46 @@ class Board:
     def black(self, agent: "Agent"):
         self._black = agent
 
-    def to_fen(self):
-        pass
+    @staticmethod
+    def _get_row(
+        y: int, white_memo: Dict[Position, str], black_memo: Dict[Position, str]
+    ) -> str:
+        row = ""
+        empty_squares_ct = 0
+
+        for x in constants.FILES:
+            if piece := white_memo.get((x, y)) or black_memo.get((x, y)):
+                row += f"{str(empty_squares_ct) if empty_squares_ct else ''}{piece}"
+                empty_squares_ct = 0
+            elif x == "h":
+                row += str(empty_squares_ct + 1)
+            else:
+                empty_squares_ct += 1
+
+        return row if y == 1 else f"{row}/"
+
+    def to_fen(self) -> str:
+        piece_placement = ""
+        white_memo = {p.position: p.fen_symbol for _, p in self.white.pieces}
+        black_memo = {p.position: p.fen_symbol.lower() for _, p in self.black.pieces}
+
+        for y in constants.RANKS:
+            piece_placement += self._get_row(y, white_memo, black_memo)
+
+        castling_rights = (
+            self.white.castling_rights + self.black.castling_rights.lower()
+        ) or "-"
+
+        if target := self.white.en_passant_target or self.black.en_passant_target:
+            x, y = target
+            en_passant_target = f"{x}{str(y)}"
+        else:
+            en_passant_target = "-"
+
+        return (
+            f"{piece_placement} {self.active_color} {castling_rights} "
+            f"{en_passant_target} {self.halfmove_clock} {self.fullmove_number}"
+        )
 
     def to_pgn(self):
         pass
@@ -118,6 +158,7 @@ class Board:
             self.result = change["game_result"]
 
         self.halfmove_clock = change["halfmove_clock"][1]
+        self.active_color = "w" if self.active_color == "b" else "b"
         self.fullmove_number = change["fullmove_number"][1]
 
     def apply_gametree(self, tree: FullMove):

@@ -33,6 +33,7 @@ class Piece:
 
     movements: Set = NotImplemented
     symbol: str = NotImplemented
+    fen_symbol: str = NotImplemented
     value: int = NotImplemented
     unicode: str = NotImplemented
 
@@ -252,6 +253,7 @@ class Piece:
                 change=change,
             )
             change["game_result"] = self.get_game_result(change=change)
+            change["fen"] = self.agent.board.to_fen()
 
             if self.opponent.en_passant_target:
                 change[self.opponent.color]["en_passant_target"] = (

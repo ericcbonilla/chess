@@ -9,5 +9,6 @@ class Bishop(Piece):
         *((-p, -p) for p in range(1, 9)),
     }
     symbol = "B"
+    fen_symbol = symbol
     value = 3
     unicode = "\u2657"

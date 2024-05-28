@@ -44,6 +44,7 @@ class Change(TypedDict):
     symbol: str | None
     halfmove_clock: Tuple[int, int]
     fullmove_number: Tuple[int, int]
+    fen: str
 
 
 class PieceScaffold(TypedDict):

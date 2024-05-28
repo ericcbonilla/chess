@@ -168,6 +168,7 @@ class TestPawnScenarios:
             "symbol": "",
             "halfmove_clock": (0, 0),
             "fullmove_number": (1, 1),
+            "fen": "6r1/5P2/8/4k3/2K5/8/8/8 w - - 0 1",
         }
 
 
@@ -291,6 +292,7 @@ class TestEnPassant:
             "symbol": "",
             "halfmove_clock": (0, 0),
             "fullmove_number": (3, 3),
+            "fen": "rnbqkbnr/pppp1p1p/6p1/3Pp3/8/8/PPP1PPPP/RNBQKBNR w KQkq e6 0 3",
         }
 
     def test_rollback_en_passant_results_in_expected_state(self, default_board):

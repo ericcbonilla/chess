@@ -77,6 +77,17 @@ class Agent:
     def positions(self) -> Set[Position]:
         return set(piece.position for _, piece in self.pieces)
 
+    @property
+    def castling_rights(self) -> str:
+        rights = ""
+        if not self.king.has_moved:
+            if self.h_rook and not self.h_rook.has_moved:
+                rights += "K"
+            if self.a_rook and not self.a_rook.has_moved:
+                rights += "Q"
+
+        return rights
+
     def get_by_position(self, x: XPosition, y: int) -> "Piece":
         for _, piece in self.pieces:
             if piece.position == (x, y):
