@@ -31,8 +31,7 @@ class RandomAgent(Agent):
 
     def move(self):
         for _, piece in sorted(self.pieces, key=lambda x: random.random()):
-            result = self._random_move(piece)
-            if result is None:
+            if result := self._random_move(piece) is None:
                 continue  # Piece is unmovable
             else:
                 return result

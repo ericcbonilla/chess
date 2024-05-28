@@ -44,6 +44,5 @@ class Graveyard:
     @property
     def pieces(self) -> Iterable["Piece"]:
         for attr in constants.PIECE_ATTRS:
-            piece = getattr(self, attr)
-            if piece is not None:
+            if piece := getattr(self, attr):
                 yield attr, piece
