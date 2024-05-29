@@ -5,6 +5,7 @@ from main import constants
 from main.graveyard import Graveyard
 from main.pieces import Bishop, BlackPawn, King, Knight, Queen, Rook, WhitePawn
 from main.types import AgentColor, Position, Promotee
+from main.utils import cprint
 from main.xposition import XPosition
 
 if TYPE_CHECKING:
@@ -106,4 +107,4 @@ class Agent:
         Make a move based on my strategy
         """
 
-        raise NotImplementedError
+        cprint(self.color, f"Turn: {self.color}")

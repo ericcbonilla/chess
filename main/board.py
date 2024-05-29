@@ -3,12 +3,11 @@ from collections import Counter
 from copy import deepcopy
 from typing import TYPE_CHECKING, Dict, Optional
 
-from colorist import yellow
-
 from main import constants
 from main.game_tree import FullMove, HalfMove
 from main.game_tree.utils import get_halfmove
 from main.types import Change, GameResult, Position
+from main.utils import print_move_heading
 from main.xposition import XPosition
 
 if TYPE_CHECKING:
@@ -85,7 +84,7 @@ class Board:
 
         return row if y == 1 else f"{row}/"
 
-    def to_fen(self, idx: Optional[float] = None) -> str:
+    def get_fen(self, idx: Optional[float] = None) -> str:
         if idx:
             halfmove = get_halfmove(idx, self.game_tree)
             return halfmove.change["fen"]
@@ -250,18 +249,17 @@ class Board:
     def play(self):
         term_size = os.get_terminal_size()
 
+        if self.active_color == "b":  # TODO test once we implement from_fen builder
+            print_move_heading(term_size, self.fullmove_number)
+            print(f"Turn: {constants.WHITE}\n...")
+            self.black.move()
+
         while not self.result:
             if (self.fullmove_number - 1) == self.max_moves:
                 break
 
-            num_breaks = term_size.columns - len(str(self.fullmove_number)) - 2
-            print(f"\n{self.fullmove_number}. {'=' * num_breaks}")
-
-            # TODO determine who goes first based on FEN active color
-            print(f"Turn: {constants.WHITE}")
+            print_move_heading(term_size, self.fullmove_number)
             self.white.move()
-
-            yellow(f"Turn: {constants.BLACK}")
             self.black.move()
 
         return f"Moves played: {self.fullmove_number - 1}. Result: {self.result}"

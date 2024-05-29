@@ -63,11 +63,22 @@ class TestBoard:
         assert default_board.black.d_pawn.position == ("d", 5)
         assert default_board.black.graveyard.d_pawn is None
 
-    def test_with_single_move_to_fen_returns_expected(self, default_board):
+    def test_with_single_move_get_fen_returns_expected(self, default_board):
         default_board.white.e_pawn.manual_move("e", 4)
 
-        assert default_board.to_fen() == (
+        assert default_board.get_fen() == (
             "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1"
+        )
+
+    def test_get_fen_for_specific_move_returns_expected(self, default_board):
+        default_board.white.d_pawn.manual_move("d", 4)
+        default_board.black.e_pawn.manual_move("e", 6)
+        default_board.white.g_knight.manual_move("f", 3)
+        default_board.black.f_bishop.manual_move("a", 3)
+        default_board.white.g_pawn.manual_move("g", 3)
+
+        assert default_board.get_fen(2.5) == (
+            "rnbqk1nr/pppp1ppp/4p3/8/3P4/b4N2/PPP1PPPP/RNBQKB1R w KQkq - 2 3"
         )
 
 
