@@ -7,6 +7,7 @@ from colorist import yellow
 
 from main import constants
 from main.game_tree import FullMove, HalfMove
+from main.game_tree.utils import get_halfmove
 from main.types import Change, GameResult, Position
 from main.xposition import XPosition
 
@@ -86,7 +87,7 @@ class Board:
 
     def to_fen(self, idx: Optional[float] = None) -> str:
         if idx:
-            halfmove = self.get_halfmove(idx, self.game_tree)
+            halfmove = get_halfmove(idx, self.game_tree)
             return halfmove.change["fen"]
 
         piece_placement = ""
@@ -110,17 +111,6 @@ class Board:
             f"{piece_placement} {self.active_color} {castling_rights} "
             f"{en_passant_target} {self.halfmove_clock} {self.fullmove_number}"
         )
-
-    def get_halfmove(self, idx: float, node: FullMove | None) -> HalfMove:
-        # TODO put in game_tree utils
-
-        if node is None or node.is_empty():
-            raise Exception(f"Halfmove {idx} not found")
-        elif halfmove := node.black if str(idx).endswith(".5") else node.white:
-            if halfmove.change["fullmove_number"][0] == int(idx):
-                return halfmove
-
-        return self.get_halfmove(idx, node.child)
 
     def to_pgn(self):
         pass
