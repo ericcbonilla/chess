@@ -1,5 +1,8 @@
+import pytest
+
 from main import constants
 from main.game_tree import FullMove, HalfMove
+from main.game_tree.utils import get_halfmove
 
 
 class TestGetLatestHalfmove:
@@ -185,3 +188,9 @@ class TestGameTreeMutations:
             black=HalfMove(color=constants.BLACK, change=empty_change),
             child=FullMove(),
         )
+
+
+class TestUtils:
+    def test_when_get_halfmove_called_out_of_range_raises_error(self, default_board):
+        with pytest.raises(Exception):
+            get_halfmove(1, default_board.game_tree)

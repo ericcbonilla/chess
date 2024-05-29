@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Dict, Optional
 
 from main import constants
 from main.game_tree import FullMove, HalfMove
-from main.game_tree.utils import get_halfmove
+from main.game_tree.utils import get_halfmove, traverse
 from main.types import Change, GameResult, Position
 from main.utils import print_move_heading
 from main.xposition import XPosition
@@ -166,19 +166,11 @@ class Board:
         self.fullmove_number = change["fullmove_number"][1]
 
     def apply_gametree(self, tree: FullMove):
-        def _apply_next(node: FullMove):
-            if node.is_empty():
-                return
-            elif node.child is None:
+        for node in traverse(tree):
+            if node.white:
                 self.apply_halfmove(node.white)
-                return
-
-            self.apply_halfmove(node.white)
-            self.apply_halfmove(node.black)
-
-            _apply_next(node.child)
-
-        _apply_next(tree)
+            if node.black:
+                self.apply_halfmove(node.black)
 
     def apply_halfmove(self, halfmove: HalfMove):
         # TODO We should convert to AN/PGN at this level or check Halfmove.to_an
