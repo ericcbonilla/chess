@@ -35,16 +35,19 @@ class PieceChange(TypedDict):
 AgentChange = Dict[str, PieceChange | Tuple[Position, None]]
 
 
-class Change(TypedDict):
+class LookaheadResults(TypedDict):
+    check: NotRequired[bool]
+    game_result: NotRequired[GameResult]
+    fen: NotRequired[str]
+
+
+class Change(LookaheadResults):
     WHITE: AgentChange
     BLACK: AgentChange
     disambiguation: NotRequired[str]
-    check: NotRequired[bool]
-    game_result: NotRequired[GameResult]
     symbol: str | None
     halfmove_clock: Tuple[int, int]
     fullmove_number: Tuple[int, int]
-    fen: str
 
 
 class PieceScaffold(TypedDict):

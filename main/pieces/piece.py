@@ -5,7 +5,7 @@ from colorist import red
 from main import constants
 from main.exceptions import InvalidMoveError
 from main.game_tree import HalfMove
-from main.types import Change, GameResult, Position
+from main.types import Change, GameResult, LookaheadResults, Position
 from main.utils import cprint
 from main.xposition import XPosition
 
@@ -175,26 +175,29 @@ class Piece:
 
         return in_check
 
-    def get_game_result(self, change: Change) -> GameResult:
-        halfmove = HalfMove(color=self.agent.color, change=change)
-        self.agent.board.apply_halfmove(halfmove)
-
-        opponent_can_move = self.opponent.can_move()
-        insufficient_material = self.agent.board.has_insufficient_material()
-        halfmove_clock = self.agent.board.halfmove_clock
-
-        self.agent.board.rollback_halfmove(halfmove)
-
-        if change["check"] and not opponent_can_move:
+    def get_game_result(self, check: bool) -> GameResult:
+        if check and not self.opponent.can_move():
             return "1-0" if self.agent.color == constants.WHITE else "0-1"
-        elif not opponent_can_move:
+        elif not self.opponent.can_move():
             return "½-½ Stalemate"
-        elif insufficient_material:
+        elif self.agent.board.has_insufficient_material():
             return "½-½ Insufficient material"
-        elif halfmove_clock == 125:
+        elif self.agent.board.halfmove_clock == 125:
             # https://en.wikipedia.org/wiki/Fifty-move_rule#Seventy-five-move_rule
             return "½-½ Seventy-five-move rule"
         return None
+
+    def get_lookahead_results(self, change: Change) -> LookaheadResults:
+        halfmove = HalfMove(color=self.agent.color, change=change)
+        self.agent.board.apply_halfmove(halfmove)
+
+        check = self.opponent.king.is_in_check()
+        fen = self.agent.board.to_fen()
+        game_result = self.get_game_result(check=check)
+
+        self.agent.board.rollback_halfmove(halfmove)
+
+        return {"check": check, "fen": fen, "game_result": game_result}
 
     def augment_change(self, x: XPosition, y: int, change: Change, **kwargs) -> Change:
         """
@@ -248,12 +251,7 @@ class Piece:
 
             # These must be computed after the piece-specific augmentations in
             # augment_change because castling and promotion create new possibilities
-            change["check"] = self.king_is_in_check(
-                king=self.opponent.king,
-                change=change,
-            )
-            change["game_result"] = self.get_game_result(change=change)
-            change["fen"] = self.agent.board.to_fen()
+            change = change | self.get_lookahead_results(change=change)
 
             if self.opponent.en_passant_target:
                 change[self.opponent.color]["en_passant_target"] = (

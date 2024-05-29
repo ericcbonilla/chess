@@ -84,7 +84,11 @@ class Board:
 
         return row if y == 1 else f"{row}/"
 
-    def to_fen(self) -> str:
+    def to_fen(self, idx: Optional[float] = None) -> str:
+        if idx:
+            halfmove = self.get_halfmove(idx, self.game_tree)
+            return halfmove.change["fen"]
+
         piece_placement = ""
         white_memo = {p.position: p.fen_symbol for _, p in self.white.pieces}
         black_memo = {p.position: p.fen_symbol.lower() for _, p in self.black.pieces}
@@ -106,6 +110,17 @@ class Board:
             f"{piece_placement} {self.active_color} {castling_rights} "
             f"{en_passant_target} {self.halfmove_clock} {self.fullmove_number}"
         )
+
+    def get_halfmove(self, idx: float, node: FullMove | None) -> HalfMove:
+        # TODO put in game_tree utils
+
+        if node is None or node.is_empty():
+            raise Exception(f"Halfmove {idx} not found")
+        elif halfmove := node.black if str(idx).endswith(".5") else node.white:
+            if halfmove.change["fullmove_number"][0] == int(idx):
+                return halfmove
+
+        return self.get_halfmove(idx, node.child)
 
     def to_pgn(self):
         pass

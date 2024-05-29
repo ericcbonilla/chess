@@ -71,7 +71,7 @@ class FullMove:
     def get_latest_halfmove(self) -> "HalfMove":
         if self.child is None:
             return self.white
-        elif self.child.is_empty():  # Removing second move
+        elif self.child.is_empty():
             return self.black
 
         fullmove = self._get_node_at_height(1)
