@@ -4,7 +4,6 @@ from typing import Optional
 from main import constants
 
 from .halfmove import HalfMove
-from .utils import traverse
 
 
 @dataclass
@@ -12,6 +11,11 @@ class FullMove:
     white: Optional["HalfMove"] = None
     black: Optional["HalfMove"] = None
     child: Optional["FullMove"] = None
+
+    def __iter__(self):
+        yield self
+        if self.child:
+            yield from self.child
 
     def is_empty(self) -> bool:
         return self.white is None and self.black is None and self.child is None
@@ -21,8 +25,7 @@ class FullMove:
         height of 0 yields a leaf, height of 1 yields second to last node, etc.
         """
 
-        nodes = [node for node in traverse(self)]
-        return nodes[-1 - height]
+        return [*self][-1 - height]
 
     def append(self, halfmove: "HalfMove"):
         node = self._get_node_at_height(0)

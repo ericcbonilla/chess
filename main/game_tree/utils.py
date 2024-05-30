@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Iterator
+from typing import TYPE_CHECKING
 
 from tabulate import tabulate
 
@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 def pprint(root: "FullMove"):
     data = []
 
-    for node in traverse(root):
+    for node in root:
         if node.is_empty():
             return
 
@@ -32,14 +32,8 @@ def pprint(root: "FullMove"):
     print(table)
 
 
-def traverse(node: "FullMove") -> Iterator["FullMove"]:
-    if node is not None:
-        yield node
-        yield from traverse(node.child)
-
-
 def get_halfmove(idx: float, root: "FullMove") -> "HalfMove":
-    for node in traverse(root):
+    for node in root:
         if halfmove := node.black if str(idx).endswith(".5") else node.white:
             if halfmove.change["fullmove_number"][0] == int(idx):
                 return halfmove

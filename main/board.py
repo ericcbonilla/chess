@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Dict, Optional
 
 from main import constants
 from main.game_tree import FullMove, HalfMove
-from main.game_tree.utils import get_halfmove, traverse
+from main.game_tree.utils import get_halfmove
 from main.types import Change, GameResult, Position
 from main.utils import print_move_heading
 from main.xposition import XPosition
@@ -166,7 +166,7 @@ class Board:
         self.fullmove_number = change["fullmove_number"][1]
 
     def apply_gametree(self, tree: FullMove):
-        for node in traverse(tree):
+        for node in tree:
             if node.white:
                 self.apply_halfmove(node.white)
             if node.black:
