@@ -59,6 +59,10 @@ class HalfMove:
     change: Change
 
     @property
+    def opponent_color(self) -> AgentColor:
+        return "BLACK" if self.color == "WHITE" else "WHITE"
+
+    @property
     def new_position(self) -> str:
         pc = [pc for pc in self.change[self.color].values() if pc["new_position"]][0]
         x, y = pc["new_position"]
@@ -92,7 +96,11 @@ class HalfMove:
 
     @property
     def capture_notation(self) -> str:
-        return "x" if self.change["WHITE"] and self.change["BLACK"] else ""
+        piece_death = self.change[self.opponent_color] and not (
+            "en_passant_target" in self.change[self.opponent_color]
+            and len(self.change[self.opponent_color]) == 1
+        )
+        return "x" if self.change[self.color] and piece_death else ""
 
     @property
     def symbol(self) -> str:

@@ -1,6 +1,7 @@
 import os
 from collections import Counter
 from copy import deepcopy
+from datetime import date
 from typing import TYPE_CHECKING, Dict, Optional
 
 from main import constants
@@ -85,6 +86,7 @@ class Board:
         return row if y == 1 else f"{row}/"
 
     def get_fen(self, idx: Optional[float] = None) -> str:
+        # TODO consider moving this and the PGN stuff to another class
         if idx:
             halfmove = get_halfmove(idx, self.game_tree)
             return halfmove.change["fen"]
@@ -111,8 +113,37 @@ class Board:
             f"{en_passant_target} {self.halfmove_clock} {self.fullmove_number}"
         )
 
-    def to_pgn(self):
-        pass
+    def _get_movetext(self, pretty: Optional[bool] = False) -> str:
+        movetext = ""
+        move_break = "\n" if pretty else " "
+        for node in self.game_tree:
+            if node.is_empty():
+                break
+
+            number, _ = node.white.change["fullmove_number"]
+            white_an = node.white.to_an() if node.white else "..."
+            black_an = node.black.to_an() if node.black else ""
+            movetext += f"{number}. {white_an} {black_an}{move_break}"
+
+        if self.result:
+            movetext += self.result[0:3]
+
+        return movetext
+
+    def get_pgn(self, pretty: Optional[bool] = False) -> str:
+        return (
+            f'[Event "?"]\n'
+            f'[Site "?"]\n'
+            f"[Date {date.today().strftime('%Y.%m.%d')}]\n"
+            f'[Round "?"]\n'
+            f"[Result \"{self.result[0:3] if self.result else ''}\"]\n"
+            f"[White {self.white.__class__.__name__}]\n"
+            f"[Black {self.black.__class__.__name__}]\n\n"
+            f"{self._get_movetext(pretty=pretty)}"
+        )
+
+    def print_pgn(self):
+        print(self.get_pgn(pretty=True))
 
     @staticmethod
     def add_piece(piece: "Piece", attr: str):
@@ -165,8 +196,8 @@ class Board:
         self.active_color = "w" if self.active_color == "b" else "b"
         self.fullmove_number = change["fullmove_number"][1]
 
-    def apply_gametree(self, tree: FullMove):
-        for node in tree:
+    def apply_gametree(self, root: FullMove):
+        for node in root:
             if node.white:
                 self.apply_halfmove(node.white)
             if node.black:
@@ -240,6 +271,7 @@ class Board:
         term_size = os.get_terminal_size()
 
         if self.active_color == "b":  # TODO test once we implement from_fen builder
+            # Gametree should also be able to handle a FullMove with no white move
             # Also should block agent from making manual moves?
             print_move_heading(term_size, self.fullmove_number)
             print(f"Turn: {constants.WHITE}\n...")

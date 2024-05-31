@@ -4,7 +4,7 @@ from main import constants
 from main.agents import ManualAgent
 from main.game_tree import FullMove, HalfMove
 from main.game_tree.utils import get_halfmove
-from main.pieces import Bishop, King, Knight, Queen, Rook, WhitePawn
+from main.pieces import King, Knight, Queen, Rook, WhitePawn
 
 
 class TestGetLatestHalfmove:
@@ -204,8 +204,9 @@ class TestHalfMove:
         assert halfmove.to_an() == "Nf3"
 
     def test_when_pawn_moves_to_an_returns_expected(self, default_board):
-        halfmove = default_board.white.e_pawn.manual_move("e", 4)
-        assert halfmove.to_an() == "e4"
+        default_board.white.e_pawn.manual_move("e", 4)
+        halfmove = default_board.black.c_pawn.manual_move("c", 5)
+        assert halfmove.to_an() == "c5"
 
     def test_when_piece_captures_to_an_returns_expected(self, default_board):
         default_board.white.g_knight.manual_move("f", 3)

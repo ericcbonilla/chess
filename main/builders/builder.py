@@ -169,7 +169,7 @@ class BoardBuilder:
     #     white_agent_cls: Type['Agent'],
     #     black_agent_cls: Type['Agent'],
     #     pgn: str,
-    #     max_moves: Optional[int] = 50,
+    #     max_moves: Optional[int] = 300,
     # ):
     #     processor = PGNProcessor(pgn=pgn)
     #

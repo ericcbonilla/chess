@@ -81,6 +81,14 @@ class TestBoard:
             "rnbqk1nr/pppp1ppp/4p3/8/3P4/b4N2/PPP1PPPP/RNBQKB1R w KQkq - 2 3"
         )
 
+    def test_get_fen_for_last_move_returns_expected(self, default_board):
+        default_board.white.d_pawn.manual_move("d", 4)
+        default_board.black.e_pawn.manual_move("e", 6)
+
+        assert default_board.get_fen(1.5) == (
+            "rnbqkbnr/pppp1ppp/4p3/8/3P4/8/PPP1PPPP/RNBQKBNR w KQkq d3 0 2"
+        )
+
 
 class TestHasInsufficientMaterial:
     def test_kkp_does_not_yield_draw(self, builder):
