@@ -28,7 +28,7 @@ class Pawn(Piece):
         new_position: Position,
         keep_king_safe: Optional[bool] = True,
     ) -> bool:
-        if keep_king_safe and self.king_is_in_check(
+        if keep_king_safe and self.king_would_be_in_check(
             king=self.king,
             new_position=new_position,
         ):
@@ -91,7 +91,7 @@ class Pawn(Piece):
             return change
 
         if "promotee_value" not in kwargs:
-            # If king_is_in_check is testing a promotion move, we must provide a piece type.
+            # If king_would_be_in_check is testing a promotion move, we must provide a piece type.
             # Just assume Queen in this case. Or, if a promotee_value is not provided,
             # also just assume Queen. You could play a decade of chess and never find a
             # situation where you need a Knight. This is fine for our purposes.

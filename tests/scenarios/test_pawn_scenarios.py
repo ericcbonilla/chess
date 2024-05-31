@@ -123,7 +123,7 @@ class TestPawnScenarios:
             board.white.f_pawn.manual_move("f", 8, promotee_value="Q")
 
         # Also check that the pawn is left unchanged - we want to ensure
-        # the king_is_in_check method has no side effects
+        # the king_would_be_in_check method has no side effects
         assert board.white.f_pawn.position == ("f", 7)
         assert board.white.queen is None
 

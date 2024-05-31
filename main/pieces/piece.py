@@ -97,7 +97,7 @@ class Piece:
             or not self.is_open_path(new_position)
         ):
             return False
-        elif keep_king_safe and self.king_is_in_check(
+        elif keep_king_safe and self.king_would_be_in_check(
             king=self.king,
             new_position=new_position,
         ):
@@ -156,7 +156,7 @@ class Piece:
         # Remove duplicate characters, then sort them (e.g. 3c -> c3)
         return "".join(sorted(set(disambiguation), reverse=True))
 
-    def king_is_in_check(
+    def king_would_be_in_check(
         self,
         king: "King",
         new_position: Optional[Position] = None,
