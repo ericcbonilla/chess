@@ -240,6 +240,7 @@ class Board:
         term_size = os.get_terminal_size()
 
         if self.active_color == "b":  # TODO test once we implement from_fen builder
+            # Also should block agent from making manual moves?
             print_move_heading(term_size, self.fullmove_number)
             print(f"Turn: {constants.WHITE}\n...")
             self.black.move()

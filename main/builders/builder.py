@@ -17,9 +17,12 @@ if TYPE_CHECKING:
 class BoardBuilder:
     @staticmethod
     def _get_board(
-        white_agent_cls: Type["Agent"], black_agent_cls: Type["Agent"], max_moves: int
+        white_agent_cls: Type["Agent"],
+        black_agent_cls: Type["Agent"],
+        max_moves: int,
+        active_color: Optional[str] = None,
     ):
-        board = Board(max_moves=max_moves)
+        board = Board(max_moves=max_moves, active_color=active_color)
         # TODO https://youtrack.jetbrains.com/issue/PY-36375/Unexpected-argument-false-positive-when-reassigning-a-dataclass-PEP-557
         # noinspection PyArgumentList
         board.white = white_agent_cls(color=constants.WHITE, board=board)
@@ -128,8 +131,11 @@ class BoardBuilder:
         white_data: List[PieceScaffold],
         black_data: List[PieceScaffold],
         max_moves: Optional[int] = 50,
+        active_color: Optional[str] = None,
     ):
-        board = self._get_board(white_agent_cls, black_agent_cls, max_moves)
+        board = self._get_board(
+            white_agent_cls, black_agent_cls, max_moves, active_color
+        )
         self._set_pieces(agent=board.white, scaffold=self._get_scaffold(white_data))
         self._set_pieces(agent=board.black, scaffold=self._get_scaffold(black_data))
 

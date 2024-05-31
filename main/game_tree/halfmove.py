@@ -60,7 +60,9 @@ class HalfMove:
 
     @property
     def new_position(self) -> str:
-        x, y = self.change[self.color].values()[0]["new_position"]
+        pc = [pc for pc in self.change[self.color].values() if pc["new_position"]][0]
+        x, y = pc["new_position"]
+
         return f"{x}{str(y)}"
 
     @property
@@ -80,14 +82,36 @@ class HalfMove:
                 return "O-O-O"
         return ""
 
+    @property
+    def promotion_notation(self) -> str:
+        if self.change["symbol"] == "":
+            if slots := [sl for sl in iter(self.change[self.color]) if "prom" in sl]:
+                return f"={self.change[self.color][slots[0]]['piece_type'].symbol}"
+
+        return ""
+
+    @property
+    def capture_notation(self) -> str:
+        return "x" if self.change["WHITE"] and self.change["BLACK"] else ""
+
+    @property
+    def symbol(self) -> str:
+        if self.capture_notation and self.change["symbol"] == "":
+            pawn_slot = [sl for sl in iter(self.change[self.color]) if "pawn" in sl][0]
+            x, _ = self.change[self.color][pawn_slot]["old_position"]
+            return x
+
+        return self.change["symbol"]
+
     def to_an(self) -> str:
         if self.castle_notation:
             return f"{self.castle_notation}{self.mate_notation}"
 
         return (
-            f"{self.change['symbol']}"
+            f"{self.symbol}"
             f"{self.change['disambiguation']}"
-            f"{'x' if self.change['WHITE'] and self.change['BLACK'] else ''}"
+            f"{self.capture_notation}"
             f"{self.new_position}"
+            f"{self.promotion_notation}"
             f"{self.mate_notation}"
         )
