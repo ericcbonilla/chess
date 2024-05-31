@@ -4,6 +4,8 @@ from copy import deepcopy
 from datetime import date
 from typing import TYPE_CHECKING, Dict, Optional
 
+from colorist import Color
+
 from main import constants
 from main.game_tree import FullMove, HalfMove
 from main.game_tree.utils import get_halfmove
@@ -67,6 +69,10 @@ class Board:
     def black(self, agent: "Agent"):
         self._black = agent
 
+    @property
+    def truncated_result(self):
+        return self.result[0:3] if self.result else ""
+
     @staticmethod
     def _get_row(
         y: int, white_memo: Dict[Position, str], black_memo: Dict[Position, str]
@@ -122,23 +128,25 @@ class Board:
 
             number, _ = node.white.change["fullmove_number"]
             white_an = node.white.to_an() if node.white else "..."
+            white_color = Color.RED if "x" in white_an else Color.WHITE
             black_an = node.black.to_an() if node.black else ""
-            movetext += f"{number}. {white_an} {black_an}{move_break}"
+            black_color = Color.RED if "x" in black_an else Color.YELLOW
+            movetext += (
+                f"{number}. {white_color}{white_an}{Color.OFF} "
+                f"{black_color}{black_an}{Color.OFF}{move_break}"
+            )
 
-        if self.result:
-            movetext += self.result[0:3]
-
-        return movetext
+        return movetext + self.truncated_result
 
     def get_pgn(self, pretty: Optional[bool] = False) -> str:
         return (
             f'[Event "?"]\n'
             f'[Site "?"]\n'
-            f"[Date {date.today().strftime('%Y.%m.%d')}]\n"
+            f"[Date \"{date.today().strftime('%Y.%m.%d')}\"]\n"
             f'[Round "?"]\n'
-            f"[Result \"{self.result[0:3] if self.result else ''}\"]\n"
-            f"[White {self.white.__class__.__name__}]\n"
-            f"[Black {self.black.__class__.__name__}]\n\n"
+            f'[Result "{self.truncated_result}"]\n'
+            f'[White "{self.white.__class__.__name__}"]\n'
+            f'[Black "{self.black.__class__.__name__}"]\n\n'
             f"{self._get_movetext(pretty=pretty)}"
         )
 
