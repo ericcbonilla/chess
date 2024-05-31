@@ -2,10 +2,10 @@ from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Iterable, List, Optional, Set
 
 from main import constants
+from main.game_tree import HalfMove
 from main.graveyard import Graveyard
 from main.pieces import Bishop, BlackPawn, King, Knight, Queen, Rook, WhitePawn
 from main.types import AgentColor, Position, Promotee
-from main.utils import cprint
 from main.xposition import XPosition
 
 if TYPE_CHECKING:
@@ -102,9 +102,9 @@ class Agent:
 
         return False
 
-    def move(self):
+    def move(self) -> Optional[HalfMove]:
         """
         Make a move based on my strategy
         """
 
-        cprint(self.color, f"Turn: {self.color}")
+        raise NotImplementedError

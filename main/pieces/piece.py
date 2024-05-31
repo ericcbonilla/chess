@@ -261,15 +261,15 @@ class Piece:
 
         return change
 
-    def move(self, x: XPosition, y: int, **kwargs) -> Change:
+    def move(self, x: XPosition, y: int, **kwargs) -> HalfMove:
         change = self.construct_change(x, y, **kwargs)
         halfmove = HalfMove(color=self.agent.color, change=change)
         self.agent.board.apply_halfmove(halfmove)
 
-        return change
+        return halfmove
 
     # TODO manual_move should be part of ManualAgent
-    def manual_move(self, x: str, y: int, **kwargs) -> Change:
+    def manual_move(self, x: str, y: int, **kwargs) -> HalfMove:
         x = XPosition(x)
         valid_moves = self.get_valid_moves()
         captures = self.get_captures(valid_moves)

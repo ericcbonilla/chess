@@ -223,10 +223,8 @@ class TestKingScenarios:
                 {"piece_type": King, "x": "d", "y": 1},
             ],
         )
+        halfmove = board.white.king.manual_move("c", 3)
 
-        board.white.king.manual_move("c", 3)
-
-        halfmove = board.game_tree.get_latest_halfmove()
         assert halfmove.change["check"]
         assert board.white.a_rook.position == ("d", 8)
         assert board.black.king.is_in_check()

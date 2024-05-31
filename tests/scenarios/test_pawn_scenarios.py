@@ -140,10 +140,8 @@ class TestPawnScenarios:
                 {"piece_type": Rook, "x": "g", "y": 8},
             ],
         )
+        halfmove = board.white.f_pawn.manual_move("g", 8, promotee_value="Q")
 
-        board.white.f_pawn.manual_move("g", 8, promotee_value="Q")
-
-        halfmove = board.game_tree.get_latest_halfmove()
         assert halfmove.change == {
             "WHITE": {
                 "f_pawn": {
@@ -265,13 +263,11 @@ class TestEnPassant:
         default_board.black.e_pawn.manual_move("e", 5)
 
         # En passant
-        default_board.white.d_pawn.manual_move("e", 6)
+        halfmove = default_board.white.d_pawn.manual_move("e", 6)
 
         assert default_board.white.d_pawn.position == ("e", 6)
         assert default_board.black.graveyard.e_pawn
         assert default_board.black.en_passant_target is None
-
-        halfmove = default_board.game_tree.get_latest_halfmove()
         assert halfmove.change == {
             "WHITE": {
                 "d_pawn": {

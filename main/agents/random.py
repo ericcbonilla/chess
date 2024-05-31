@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING, Optional
 
 from colorist import red
 
-from main.types import Change
+from main.game_tree import HalfMove
 from main.utils import cprint
 
 from .agent import Agent
@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
 
 class RandomAgent(Agent):
-    def _random_move(self, piece: "Piece") -> Optional[Change]:
+    def _random_move(self, piece: "Piece") -> Optional[HalfMove]:
         valid_moves = piece.get_valid_moves()
         captures = piece.get_captures(valid_moves)
         legal_moves = list(valid_moves | captures)
@@ -29,8 +29,8 @@ class RandomAgent(Agent):
 
         return piece.move(*pick)
 
-    def move(self):
-        super().move()
+    def move(self) -> Optional[HalfMove]:
+        cprint(self.color, f"Turn: {self.color}")
 
         for _, piece in sorted(self.pieces, key=lambda x: random.random()):
             if result := self._random_move(piece) is None:

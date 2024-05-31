@@ -96,10 +96,8 @@ class TestHasInsufficientMaterial:
                 {"piece_type": Rook, "x": "d", "y": 2},
             ],
         )
+        halfmove = board.white.king.manual_move("d", 2)
 
-        board.white.king.manual_move("d", 2)
-
-        halfmove = board.game_tree.get_latest_halfmove()
         assert halfmove.change["game_result"] is None
 
     def test_kkppp_does_not_yield_draw(self, builder):
@@ -117,10 +115,8 @@ class TestHasInsufficientMaterial:
                 {"piece_type": Rook, "x": "d", "y": 2},
             ],
         )
+        halfmove = board.white.king.manual_move("d", 2)
 
-        board.white.king.manual_move("d", 2)
-
-        halfmove = board.game_tree.get_latest_halfmove()
         assert halfmove.change["game_result"] is None
 
     def test_kk_yields_draw(self, builder):
@@ -135,10 +131,8 @@ class TestHasInsufficientMaterial:
                 {"piece_type": King, "x": "c", "y": 4},
             ],
         )
+        halfmove = board.black.king.manual_move("d", 3)
 
-        board.black.king.manual_move("d", 3)
-
-        halfmove = board.game_tree.get_latest_halfmove()
         assert halfmove.change["game_result"] == "½-½ Insufficient material"
 
     def test_kbk_yields_draw(self, builder):
@@ -154,10 +148,8 @@ class TestHasInsufficientMaterial:
                 {"piece_type": King, "x": "c", "y": 4},
             ],
         )
+        halfmove = board.black.king.manual_move("d", 3)
 
-        board.black.king.manual_move("d", 3)
-
-        halfmove = board.game_tree.get_latest_halfmove()
         assert halfmove.change["game_result"] == "½-½ Insufficient material"
 
     def test_kkn_yields_draw(self, builder):
@@ -173,10 +165,8 @@ class TestHasInsufficientMaterial:
                 {"piece_type": Knight, "x": "b", "y": 6},
             ],
         )
+        halfmove = board.white.king.manual_move("d", 2)
 
-        board.white.king.manual_move("d", 2)
-
-        halfmove = board.game_tree.get_latest_halfmove()
         assert halfmove.change["game_result"] == "½-½ Insufficient material"
 
     def test_kbkn_yields_draw(self, builder):
@@ -193,10 +183,8 @@ class TestHasInsufficientMaterial:
                 {"piece_type": Knight, "x": "b", "y": 6},
             ],
         )
+        halfmove = board.black.king.manual_move("d", 3)
 
-        board.black.king.manual_move("d", 3)
-
-        halfmove = board.game_tree.get_latest_halfmove()
         assert halfmove.change["game_result"] == "½-½ Insufficient material"
 
 
@@ -247,9 +235,8 @@ class TestHalfmoveClock:
             ],
         )
         board.halfmove_clock = 124
-        board.black.a_pawn.manual_move("a", 5)
+        halfmove = board.black.a_pawn.manual_move("a", 5)
 
-        halfmove = board.game_tree.get_latest_halfmove()
         assert board.halfmove_clock == 0
         assert halfmove.change["game_result"] is None
 
@@ -269,9 +256,8 @@ class TestHalfmoveClock:
             ],
         )
         board.halfmove_clock = 124
-        board.black.king.manual_move("d", 3)
+        halfmove = board.black.king.manual_move("d", 3)
 
-        halfmove = board.game_tree.get_latest_halfmove()
         assert board.halfmove_clock == 0
         assert halfmove.change["game_result"] is None
 
@@ -291,9 +277,8 @@ class TestHalfmoveClock:
             ],
         )
         board.halfmove_clock = 124
-        board.black.king.manual_move("b", 4)
+        halfmove = board.black.king.manual_move("b", 4)
 
-        halfmove = board.game_tree.get_latest_halfmove()
         assert board.halfmove_clock == 125
         assert halfmove.change["game_result"] == "½-½ Seventy-five-move rule"
 
@@ -310,8 +295,7 @@ class TestHalfmoveClock:
             ],
         )
         board.halfmove_clock = 124
-        board.black.queen.manual_move("e", 2)
+        halfmove = board.black.queen.manual_move("e", 2)
 
-        halfmove = board.game_tree.get_latest_halfmove()
         assert board.halfmove_clock == 125
         assert halfmove.change["game_result"] == "0-1"

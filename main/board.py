@@ -173,8 +173,6 @@ class Board:
                 self.apply_halfmove(node.black)
 
     def apply_halfmove(self, halfmove: HalfMove):
-        # TODO We should convert to AN/PGN at this level or check Halfmove.to_an
-
         self.apply_change(halfmove.change)
         self.game_tree.append(halfmove)
 

@@ -58,9 +58,7 @@ class TestCaptureScenarios:
                 {"piece_type": Queen, "x": "g", "y": 1},
             ],
         )
-
-        board.black.queen.manual_move("d", 4)
-        halfmove = board.game_tree.get_latest_halfmove()
+        halfmove = board.black.queen.manual_move("d", 4)
 
         assert board.white.graveyard.a_rook
         assert halfmove.change == {

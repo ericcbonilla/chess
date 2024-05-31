@@ -1,6 +1,7 @@
 from typing import Optional, Set, Type
 
 from main.exceptions import PromotionError
+from main.game_tree import HalfMove
 from main.types import Change, Position, Promotee
 from main.xposition import XPosition
 
@@ -110,7 +111,7 @@ class Pawn(Piece):
 
         return change
 
-    def move(self, x: XPosition, y: int, **kwargs) -> Change:
+    def move(self, x: XPosition, y: int, **kwargs) -> HalfMove:
         if abs(self.y - y) == 2:
             target_y = int((self.y + y) / 2)
             self.agent.en_passant_target = (self.x, target_y)

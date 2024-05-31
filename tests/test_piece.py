@@ -16,10 +16,8 @@ class TestGetGameResult:
                 {"piece_type": Queen, "x": "b", "y": 7},
             ],
         )
+        halfmove = board.black.queen.manual_move("a", 8)
 
-        board.black.queen.manual_move("a", 8)
-
-        halfmove = board.game_tree.get_latest_halfmove()
         assert halfmove.change["check"]
         assert halfmove.change["game_result"] == "0-1"
 
@@ -37,10 +35,8 @@ class TestGetGameResult:
                 {"piece_type": Bishop, "x": "h", "y": 6},
             ],
         )
+        halfmove = board.black.c_bishop.manual_move("g", 7)
 
-        board.black.c_bishop.manual_move("g", 7)
-
-        halfmove = board.game_tree.get_latest_halfmove()
         assert halfmove.change["check"]
         assert halfmove.change["game_result"] == "0-1"
 
@@ -56,10 +52,8 @@ class TestGetGameResult:
                 {"piece_type": King, "x": "a", "y": 8},
             ],
         )
+        halfmove = board.white.h_rook.manual_move("b", 6)
 
-        board.white.h_rook.manual_move("b", 6)
-
-        halfmove = board.game_tree.get_latest_halfmove()
         assert not halfmove.change["check"]
         assert halfmove.change["game_result"] == "½-½ Stalemate"
 
@@ -77,10 +71,8 @@ class TestGetGameResult:
                 {"piece_type": Bishop, "x": "h", "y": 6},
             ],
         )
+        halfmove = board.black.c_bishop.manual_move("g", 7)
 
-        board.black.c_bishop.manual_move("g", 7)
-
-        halfmove = board.game_tree.get_latest_halfmove()
         assert halfmove.change["check"]
         assert halfmove.change["game_result"] is None  # Can still do Nc3
 
@@ -99,10 +91,8 @@ class TestGetGameResult:
                 {"piece_type": Bishop, "x": "h", "y": 6},
             ],
         )
+        halfmove = board.black.c_bishop.manual_move("g", 7)
 
-        board.black.c_bishop.manual_move("g", 7)
-
-        halfmove = board.game_tree.get_latest_halfmove()
         assert halfmove.change["check"]
         assert halfmove.change["game_result"] is None  # Can still do d4
 
