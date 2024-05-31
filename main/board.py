@@ -92,7 +92,7 @@ class Board:
         return row if y == 1 else f"{row}/"
 
     def get_fen(self, idx: Optional[float] = None) -> str:
-        # TODO consider moving this and the PGN stuff to another class
+        # TODO consider moving this and the PGN stuff to another class NotationUtil?
         if idx:
             halfmove = get_halfmove(idx, self.game_tree)
             return halfmove.change["fen"]
@@ -119,9 +119,8 @@ class Board:
             f"{en_passant_target} {self.halfmove_clock} {self.fullmove_number}"
         )
 
-    def _get_movetext(self, pretty: Optional[bool] = False) -> str:
+    def _get_movetext(self, compact: Optional[bool] = True) -> str:
         movetext = ""
-        move_break = "\n" if pretty else " "
         for node in self.game_tree:
             if node.is_empty():
                 break
@@ -133,12 +132,12 @@ class Board:
             black_color = Color.RED if "x" in black_an else Color.YELLOW
             movetext += (
                 f"{number}. {white_color}{white_an}{Color.OFF} "
-                f"{black_color}{black_an}{Color.OFF}{move_break}"
+                f"{black_color}{black_an}{Color.OFF}{" " if compact else "\n"}"
             )
 
         return movetext + self.truncated_result
 
-    def get_pgn(self, pretty: Optional[bool] = False) -> str:
+    def get_pgn(self, compact: Optional[bool] = True) -> str:
         return (
             f'[Event "?"]\n'
             f'[Site "?"]\n'
@@ -147,11 +146,11 @@ class Board:
             f'[Result "{self.truncated_result}"]\n'
             f'[White "{self.white.__class__.__name__}"]\n'
             f'[Black "{self.black.__class__.__name__}"]\n\n'
-            f"{self._get_movetext(pretty=pretty)}"
+            f"{self._get_movetext(compact=compact)}"
         )
 
-    def print_pgn(self):
-        print(self.get_pgn(pretty=True))
+    def print_pgn(self, compact: Optional[bool] = True):
+        print(self.get_pgn(compact=compact))
 
     @staticmethod
     def add_piece(piece: "Piece", attr: str):
