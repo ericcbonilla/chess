@@ -129,7 +129,7 @@ class Board:
             if node.is_empty():
                 break
 
-            number, _ = node.white.change["fullmove_number"]
+            number, _ = (node.white or node.black).change["fullmove_number"]
             white_an = node.white.to_an() if node.white else "..."
             white_color = Color.RED if "x" in white_an else Color.WHITE
             black_an = node.black.to_an() if node.black else ""
@@ -284,7 +284,6 @@ class Board:
         # TODO test once we implement from_fen builder
         if self.active_agent is self.black:
             # Gametree should also be able to handle a FullMove with no white move
-            # Also should block agent from making manual moves?
             print_move_heading(term_size, self.fullmove_number)
             print(f"Turn: {constants.WHITE}\n...")
             self.black.move()
