@@ -138,6 +138,7 @@ class TestHasInsufficientMaterial:
             black_data=[
                 {"piece_type": King, "x": "c", "y": 4},
             ],
+            active_color="b",
         )
         halfmove = board.black.king.manual_move("d", 3)
 
@@ -155,6 +156,7 @@ class TestHasInsufficientMaterial:
             black_data=[
                 {"piece_type": King, "x": "c", "y": 4},
             ],
+            active_color="b",
         )
         halfmove = board.black.king.manual_move("d", 3)
 
@@ -190,6 +192,7 @@ class TestHasInsufficientMaterial:
                 {"piece_type": King, "x": "c", "y": 4},
                 {"piece_type": Knight, "x": "b", "y": 6},
             ],
+            active_color="b",
         )
         halfmove = board.black.king.manual_move("d", 3)
 
@@ -241,6 +244,7 @@ class TestHalfmoveClock:
                 {"piece_type": BlackPawn, "x": "a", "y": 6},
                 {"piece_type": Knight, "x": "b", "y": 6},
             ],
+            active_color="b",
         )
         board.halfmove_clock = 124
         halfmove = board.black.a_pawn.manual_move("a", 5)
@@ -262,6 +266,7 @@ class TestHalfmoveClock:
                 {"piece_type": BlackPawn, "x": "a", "y": 6},
                 {"piece_type": Knight, "x": "b", "y": 6},
             ],
+            active_color="b",
         )
         board.halfmove_clock = 124
         halfmove = board.black.king.manual_move("d", 3)
@@ -283,6 +288,7 @@ class TestHalfmoveClock:
                 {"piece_type": BlackPawn, "x": "a", "y": 6},
                 {"piece_type": Knight, "x": "b", "y": 6},
             ],
+            active_color="b",
         )
         board.halfmove_clock = 124
         halfmove = board.black.king.manual_move("b", 4)
@@ -301,6 +307,7 @@ class TestHalfmoveClock:
                 {"piece_type": King, "x": "e", "y": 3},
                 {"piece_type": Queen, "x": "a", "y": 2},
             ],
+            active_color="b",
         )
         board.halfmove_clock = 124
         halfmove = board.black.queen.manual_move("e", 2)

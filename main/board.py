@@ -73,6 +73,10 @@ class Board:
     def truncated_result(self) -> str:
         return self.result[0:3] if self.result else ""
 
+    @property
+    def active_agent(self) -> "Agent":
+        return self.white if self.active_color == "w" else self.black
+
     @staticmethod
     def _get_row(
         y: int, white_memo: Dict[Position, str], black_memo: Dict[Position, str]
@@ -277,7 +281,8 @@ class Board:
     def play(self):
         term_size = os.get_terminal_size()
 
-        if self.active_color == "b":  # TODO test once we implement from_fen builder
+        # TODO test once we implement from_fen builder
+        if self.active_agent is self.black:
             # Gametree should also be able to handle a FullMove with no white move
             # Also should block agent from making manual moves?
             print_move_heading(term_size, self.fullmove_number)

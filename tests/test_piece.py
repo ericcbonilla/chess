@@ -15,6 +15,7 @@ class TestGetGameResult:
                 {"piece_type": Queen, "x": "f", "y": 8},
                 {"piece_type": Queen, "x": "b", "y": 7},
             ],
+            active_color="b",
         )
         halfmove = board.black.queen.manual_move("a", 8)
 
@@ -34,6 +35,7 @@ class TestGetGameResult:
                 {"piece_type": King, "x": "h", "y": 8},
                 {"piece_type": Bishop, "x": "h", "y": 6},
             ],
+            active_color="b",
         )
         halfmove = board.black.c_bishop.manual_move("g", 7)
 
@@ -70,6 +72,7 @@ class TestGetGameResult:
                 {"piece_type": King, "x": "h", "y": 8},
                 {"piece_type": Bishop, "x": "h", "y": 6},
             ],
+            active_color="b",
         )
         halfmove = board.black.c_bishop.manual_move("g", 7)
 
@@ -90,6 +93,7 @@ class TestGetGameResult:
                 {"piece_type": King, "x": "h", "y": 8},
                 {"piece_type": Bishop, "x": "h", "y": 6},
             ],
+            active_color="b",
         )
         halfmove = board.black.c_bishop.manual_move("g", 7)
 

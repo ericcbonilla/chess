@@ -57,6 +57,7 @@ class TestCaptureScenarios:
                 {"piece_type": King, "x": "e", "y": 5},
                 {"piece_type": Queen, "x": "g", "y": 1},
             ],
+            active_color="b",
         )
         halfmove = board.black.queen.manual_move("d", 4)
 
@@ -80,5 +81,5 @@ class TestCaptureScenarios:
             "symbol": "Q",
             "halfmove_clock": (0, 0),
             "fullmove_number": (1, 2),
-            "fen": "8/8/8/4k3/2Kq4/8/8/8 b - - 0 2",
+            "fen": "8/8/8/4k3/2Kq4/8/8/8 w - - 0 2",
         }

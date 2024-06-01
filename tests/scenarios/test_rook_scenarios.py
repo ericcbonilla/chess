@@ -52,10 +52,13 @@ class TestRookScenarios:
                 {"piece_type": Rook, "x": "a", "y": 8},
                 {"piece_type": Rook, "x": "h", "y": 8},
             ],
+            active_color="b",
         )
 
         board.black.h_rook.manual_move("h", 7)
+        board.white.king.manual_move("d", 1)
         board.black.h_rook.manual_move("h", 8)
+        board.white.king.manual_move("e", 1)
 
         with pytest.raises(InvalidMoveError):
             board.black.king.manual_move("g", 8)
@@ -71,6 +74,7 @@ class TestRookScenarios:
                 {"piece_type": King, "x": "e", "y": 8},
                 {"piece_type": Rook, "x": "h", "y": 8},
             ],
+            active_color="b",
         )
 
         board.black.king.manual_move("g", 8)

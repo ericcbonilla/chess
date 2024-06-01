@@ -199,6 +199,7 @@ class TestEnPassant:
                 {"piece_type": King, "x": "e", "y": 8},
                 {"piece_type": BlackPawn, "x": "d", "y": 7},
             ],
+            active_color="b",
         )
 
         board.black.d_pawn.manual_move("d", 5)

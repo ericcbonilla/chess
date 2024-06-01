@@ -8,8 +8,11 @@ from main.pieces import Bishop, King, Knight, Queen, Rook, WhitePawn
 class TestCastling:
     def test_white_kingside_castle(self, default_board):
         default_board.white.g_knight.manual_move("f", 3)
+        default_board.black.b_knight.manual_move("c", 6)
         default_board.white.e_pawn.manual_move("e", 4)
+        default_board.black.b_knight.manual_move("b", 8)
         default_board.white.f_bishop.manual_move("d", 3)
+        default_board.black.b_knight.manual_move("c", 6)
         default_board.white.king.manual_move("g", 1)
 
         assert default_board.white.king.position == ("g", 1)
@@ -19,8 +22,11 @@ class TestCastling:
 
     def test_rollback_castle_results_in_expected_state(self, default_board):
         default_board.white.g_knight.manual_move("f", 3)
+        default_board.black.b_knight.manual_move("c", 6)
         default_board.white.e_pawn.manual_move("e", 4)
+        default_board.black.b_knight.manual_move("b", 8)
         default_board.white.f_bishop.manual_move("d", 3)
+        default_board.black.b_knight.manual_move("c", 6)
         default_board.white.king.manual_move("g", 1)
 
         default_board.rollback_halfmove()
@@ -47,11 +53,13 @@ class TestCastling:
         board.white.king.manual_move("e", 2)
         board.black.king.manual_move("e", 7)
         board.white.king.manual_move("e", 1)
+        board.black.king.manual_move("e", 8)
 
         with pytest.raises(InvalidMoveError):
             board.white.king.manual_move("g", 1)
 
     def test_cant_castle_through_check(self, default_board):
+        # TODO rewrite these verbose tests
         default_board.white.f_pawn.manual_move("f", 4)
         default_board.black.g_pawn.manual_move("g", 5)
         default_board.white.g_pawn.manual_move("g", 3)
@@ -67,6 +75,7 @@ class TestCastling:
             default_board.white.king.manual_move("g", 1)  # Can't castle
         assert default_board.black.queen.position == ("f", 6)
 
+        default_board.white.a_pawn.manual_move("a", 3)
         default_board.black.queen.manual_move("g", 7)
         default_board.white.king.manual_move("g", 1)  # Now we can castle
         assert default_board.white.king.position == ("g", 1)
@@ -85,6 +94,7 @@ class TestCastling:
                 {"piece_type": Rook, "x": "b", "y": 8},
                 {"piece_type": Rook, "x": "h", "y": 8},
             ],
+            active_color="b",
         )
 
         with pytest.raises(InvalidMoveError):
@@ -103,6 +113,7 @@ class TestCastling:
                 {"piece_type": Rook, "x": "b", "y": 1},
                 {"piece_type": Rook, "x": "h", "y": 8},
             ],
+            active_color="b",
         )
 
         with pytest.raises(InvalidMoveError):
@@ -180,6 +191,7 @@ class TestKingScenarios:
         with pytest.raises(InvalidMoveError):
             default_board.white.king.manual_move("f", 2)  # Can't move
 
+        default_board.white.c_pawn.manual_move("c", 3)
         default_board.black.queen.manual_move("g", 7)
         default_board.white.king.manual_move("f", 2)
         assert default_board.white.king.position == ("f", 2)
@@ -194,6 +206,7 @@ class TestKingScenarios:
             black_data=[
                 {"piece_type": King, "x": "e", "y": 5},
             ],
+            active_color="b",
         )
 
         with pytest.raises(InvalidMoveError):
@@ -262,6 +275,7 @@ class TestKingScenarios:
                 {"piece_type": King, "x": "e", "y": 5},
                 {"piece_type": Queen, "x": "h", "y": 5},
             ],
+            active_color="b",
         )
 
         # Would be discovered check if not for the pawn
@@ -330,6 +344,7 @@ class TestKingScenarios:
                 {"piece_type": King, "x": "h", "y": 8},
                 {"piece_type": Bishop, "x": "h", "y": 6},
             ],
+            active_color="b",
         )
 
         board.black.c_bishop.manual_move("g", 7)

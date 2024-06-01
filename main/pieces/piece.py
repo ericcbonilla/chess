@@ -270,6 +270,9 @@ class Piece:
 
     # TODO manual_move should be part of ManualAgent
     def manual_move(self, x: str, y: int, **kwargs) -> HalfMove:
+        if self.agent is not self.agent.board.active_agent:
+            raise Exception("Agent is not active")
+
         x = XPosition(x)
         valid_moves = self.get_valid_moves()
         captures = self.get_captures(valid_moves)
