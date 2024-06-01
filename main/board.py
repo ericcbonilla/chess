@@ -70,7 +70,7 @@ class Board:
         self._black = agent
 
     @property
-    def truncated_result(self):
+    def truncated_result(self) -> str:
         return self.result[0:3] if self.result else ""
 
     @staticmethod

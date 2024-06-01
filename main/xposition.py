@@ -12,7 +12,7 @@ class XPosition(str):
     def __init__(self, _, wrap: Optional[bool] = False):
         self.wrap = wrap
 
-    def _operate(self, operation: Callable, other: int):
+    def _operate(self, operation: Callable, other: int) -> "XPosition":
         new_value = self.to_number_map[self] + operation(other)
 
         if new_value not in self.to_letter_map:
