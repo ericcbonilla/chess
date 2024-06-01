@@ -14,9 +14,7 @@ def pprint(root: "FullMove"):
         if node.is_empty():
             return
 
-        first_halfmove = node.white or node.black
-        row = [first_halfmove.change["fullmove_number"][0]]
-
+        row = [(node.white or node.black).change["fullmove_number"][0]]
         if node.white:
             row.append(node.white.change)
         if node.black:
