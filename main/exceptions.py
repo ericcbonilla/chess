@@ -8,3 +8,7 @@ class InvalidMoveError(Exception):
 
 class BuildError(Exception):
     pass
+
+
+class GameplayError(Exception):
+    pass

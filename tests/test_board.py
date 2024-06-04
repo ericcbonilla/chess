@@ -86,7 +86,7 @@ class TestBoard:
         default_board.black.e_pawn.manual_move("e", 6)
 
         assert default_board.get_fen(1.5) == (
-            "rnbqkbnr/pppp1ppp/4p3/8/3P4/8/PPP1PPPP/RNBQKBNR w KQkq d3 0 2"
+            "rnbqkbnr/pppp1ppp/4p3/8/3P4/8/PPP1PPPP/RNBQKBNR w KQkq - 0 2"
         )
 
 

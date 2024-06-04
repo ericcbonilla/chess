@@ -1,8 +1,11 @@
+import itertools
+import re
 from typing import TYPE_CHECKING, List, Optional, Type
 
 from main import constants
 from main.board import Board
 from main.exceptions import BuildError
+from main.fen import FEN
 from main.pieces import Bishop, King, Knight, Queen, Rook
 from main.types import AgentScaffold, PieceScaffold
 from main.xposition import XPosition
@@ -21,8 +24,15 @@ class BoardBuilder:
         black_agent_cls: Type["Agent"],
         max_moves: int,
         active_color: Optional[str] = None,
+        halfmove_clock: Optional[int] = 0,
+        fullmove_number: Optional[int] = 1,
     ) -> Board:
-        board = Board(max_moves=max_moves, active_color=active_color)
+        board = Board(
+            max_moves=max_moves,
+            active_color=active_color,
+            halfmove_clock=halfmove_clock,
+            fullmove_number=fullmove_number,
+        )
         # TODO https://youtrack.jetbrains.com/issue/PY-36375/Unexpected-argument-false-positive-when-reassigning-a-dataclass-PEP-557
         # noinspection PyArgumentList
         board.white = white_agent_cls(color=constants.WHITE, board=board)
@@ -126,6 +136,7 @@ class BoardBuilder:
 
     def from_data(
         self,
+        # TODO add default to lessen boilerplate
         white_agent_cls: Type["Agent"],
         black_agent_cls: Type["Agent"],
         white_data: List[PieceScaffold],
@@ -141,33 +152,55 @@ class BoardBuilder:
 
         return board
 
-    # def from_fen(
-    #     self,
-    #     white_agent_cls: Type['Agent'],
-    #     black_agent_cls: Type['Agent'],
-    #     fen: str,
-    #     max_moves: Optional[int] = 300,
-    # ) -> Board:
-    #
-    #     return cls(
-    #         max_moves=max_moves,
-    #         white=white_agent_cls.from_collection(
-    #             color=constants.WHITE, coll=processor.white
-    #         ),
-    #         black=black_agent_cls.from_collection(
-    #             color=constants.BLACK, coll=processor.black
-    #         ),
-    #         halfmove_clock=processor.halfmove_clock,
-    #         fullmove_number=processor.fullmove_number,
-    #     )
-    #
-    #     board = self._get_board(
-    #         white_agent_cls, black_agent_cls, max_moves, active_color
-    #     )
-    #     self._set_pieces(agent=board.white, scaffold=self._get_scaffold(white_data))
-    #     self._set_pieces(agent=board.black, scaffold=self._get_scaffold(black_data))
-    #
-    #     return board
+    def from_fen(
+        self,
+        white_agent_cls: Type["Agent"],
+        black_agent_cls: Type["Agent"],
+        text: str,
+        max_moves: Optional[int] = 300,
+    ) -> Board:
+        fen = FEN(text=text)
+        iter_squares = iter(constants.SQUARES_LIST)
+        white_data = []
+        black_data = []
+
+        for ch in fen.piece_placement:
+            if ch == "/":
+                continue
+            elif re.match(r"\d", ch):
+                next(itertools.islice(iter_squares, int(ch) - 1, None))
+                continue
+
+            x, y = next(iter_squares)
+            scaffold = {
+                "piece_type": constants.SYMBOLS_MAP[ch],
+                "x": x,
+                "y": y,
+            }
+
+            if scaffold["piece_type"] in (Rook, King) and (x, y) in fen.castling_rights:
+                scaffold["has_moved"] = not fen.castling_rights[x, y]
+            if ch.islower():
+                black_data.append(scaffold)
+            else:
+                white_data.append(scaffold)
+
+        board = self._get_board(
+            white_agent_cls,
+            black_agent_cls,
+            max_moves,
+            active_color=fen.active_color,
+            halfmove_clock=fen.halfmove_clock,
+            fullmove_number=fen.fullmove_number,
+        )
+        if fen.en_passant_target:
+            inactive_agent = board.white if fen.active_color == "b" else board.black
+            inactive_agent.en_passant_target = fen.en_passant_target
+
+        self._set_pieces(agent=board.white, scaffold=self._get_scaffold(white_data))
+        self._set_pieces(agent=board.black, scaffold=self._get_scaffold(black_data))
+
+        return board
 
     # @classmethod
     # def from_pgn(

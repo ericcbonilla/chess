@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING, Iterable, Optional, Reversible, Set
 from colorist import red
 
 from main import constants
-from main.exceptions import InvalidMoveError
+from main.exceptions import GameplayError, InvalidMoveError
 from main.game_tree import HalfMove
 from main.types import Change, GameResult, LookaheadResults, Position
 from main.utils import cprint
@@ -249,15 +249,15 @@ class Piece:
             change = self.augment_change(x, y, change, **kwargs)
             change["disambiguation"] = self.get_disambiguation(x, y)
 
-            # These must be computed after the piece-specific augmentations in
-            # augment_change because castling and promotion create new possibilities
-            change = change | self.get_lookahead_results(change=change)
-
             if self.opponent.en_passant_target:
                 change[self.opponent.color]["en_passant_target"] = (
                     self.opponent.en_passant_target,
                     None,
                 )
+
+            # These must be computed after the piece-specific augmentations in
+            # augment_change because castling and promotion create new possibilities
+            change = change | self.get_lookahead_results(change=change)
 
         return change
 
@@ -271,7 +271,7 @@ class Piece:
     # TODO manual_move should be part of ManualAgent
     def manual_move(self, x: str, y: int, **kwargs) -> HalfMove:
         if self.agent is not self.agent.board.active_agent:
-            raise Exception("Agent is not active")
+            raise GameplayError("Agent is not active")
 
         x = XPosition(x)
         valid_moves = self.get_valid_moves()

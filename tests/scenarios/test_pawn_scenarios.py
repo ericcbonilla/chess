@@ -289,7 +289,7 @@ class TestEnPassant:
             "symbol": "",
             "halfmove_clock": (0, 0),
             "fullmove_number": (3, 3),
-            "fen": "rnbqkbnr/pppp1p1p/4P1p1/8/8/8/PPP1PPPP/RNBQKBNR b KQkq e6 0 3",
+            "fen": "rnbqkbnr/pppp1p1p/4P1p1/8/8/8/PPP1PPPP/RNBQKBNR b KQkq - 0 3",
         }
 
     def test_rollback_en_passant_results_in_expected_state(self, default_board):

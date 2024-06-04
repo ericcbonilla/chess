@@ -281,9 +281,7 @@ class Board:
     def play(self):
         term_size = os.get_terminal_size()
 
-        # TODO test once we implement from_fen builder
         if self.active_agent is self.black:
-            # Gametree should also be able to handle a FullMove with no white move
             print_move_heading(term_size, self.fullmove_number)
             print(f"Turn: {constants.WHITE}\n...")
             self.black.move()

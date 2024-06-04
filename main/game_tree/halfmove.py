@@ -51,7 +51,7 @@ class HalfMove:
         "fullmove_number": (1, 2),
 
         # Stored with each Halfmove so we can jump into the game at any point
-        "fen": "rnbqkbnr/pppp1p1p/4P1p1/8/8/8/PPP1PPPP/RNBQKBNR b KQkq e6 0 3",
+        "fen": "rnbqkbnr/pppp1p1p/4P1p1/8/8/8/PPP1PPPP/RNBQKBNR b KQkq - 0 3",
     }
     """
 

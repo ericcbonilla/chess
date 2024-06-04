@@ -1,5 +1,6 @@
 from typing import List
 
+from main.pieces import Bishop, BlackPawn, King, Knight, Queen, Rook, WhitePawn
 from main.types import AgentColor
 
 WHITE = "WHITE"
@@ -17,7 +18,8 @@ BLANK_CHANGE = {
 
 RANKS = [8, 7, 6, 5, 4, 3, 2, 1]
 FILES = ["a", "b", "c", "d", "e", "f", "g", "h"]
-SQUARES = {(f, r) for f in FILES for r in RANKS}
+SQUARES_LIST = [(f, r) for r in RANKS for f in FILES]
+SQUARES = set(SQUARES_LIST)
 
 
 PIECE_ATTRS = (
@@ -46,3 +48,19 @@ PIECE_ATTRS = (
     "g_prom",
     "h_prom",
 )
+
+
+SYMBOLS_MAP = {
+    "P": WhitePawn,
+    "p": BlackPawn,
+    "r": Rook,
+    "R": Rook,
+    "n": Knight,
+    "N": Knight,
+    "b": Bishop,
+    "B": Bishop,
+    "k": King,
+    "K": King,
+    "q": Queen,
+    "Q": Queen,
+}
