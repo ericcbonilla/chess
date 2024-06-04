@@ -24,7 +24,7 @@ class BoardBuilder:
         white_agent_cls: Type["Agent"],
         black_agent_cls: Type["Agent"],
         max_moves: int,
-        active_color: Optional[str] = None,
+        active_color: str,
         halfmove_clock: Optional[int] = 0,
         fullmove_number: Optional[int] = 1,
     ) -> Board:
@@ -62,12 +62,11 @@ class BoardBuilder:
         self,
         white_agent_cls: Optional[Type["Agent"]] = ManualAgent,
         black_agent_cls: Optional[Type["Agent"]] = ManualAgent,
-        max_moves: Optional[int] = 50,
+        max_moves: Optional[int] = 300,
     ) -> Board:
-        board = self._get_board(white_agent_cls, black_agent_cls, max_moves)
+        board = self._get_board(white_agent_cls, black_agent_cls, max_moves, "w")
         self._set_pieces(agent=board.white, scaffold=WHITE_SCAFFOLD)
         self._set_pieces(agent=board.black, scaffold=BLACK_SCAFFOLD)
-
         return board
 
     def _get_slot(
@@ -195,7 +194,8 @@ class BoardBuilder:
         )
         if fen.en_passant_target:
             inactive_agent = board.white if fen.active_color == "b" else board.black
-            inactive_agent.en_passant_target = fen.en_passant_target
+            x, y = fen.en_passant_target
+            inactive_agent.en_passant_target = XPosition(x), int(y)
 
         self._set_pieces(agent=board.white, scaffold=self._get_scaffold(white_data))
         self._set_pieces(agent=board.black, scaffold=self._get_scaffold(black_data))

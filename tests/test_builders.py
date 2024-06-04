@@ -102,7 +102,11 @@ class TestBoardBuilder:
 
         assert board.active_color == "w"
         assert not board.white.king.has_moved
+        assert not board.white.a_rook.has_moved
+        assert not board.white.h_rook.has_moved
+        assert not board.black.king.has_moved
         assert not board.black.a_rook.has_moved
+        assert not board.black.h_rook.has_moved
         assert board.get_fen() == (
             "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
         )
@@ -133,3 +137,10 @@ class TestBoardBuilder:
 
         assert board.result == "1-0"
         assert board.get_fen() == "3Q2k1/3R4/8/8/p3N3/1P4P1/P1P2P1K/8 b - - 1 39"
+
+    def test_from_fen_correct_en_passant_target_is_set(self, builder):
+        board = builder.from_fen(
+            text="rnbqkbnr/pppppppp/8/8/3P4/8/PPP1PPPP/RNBQKBNR b KQkq d3 0 1",
+        )
+
+        assert board.white.en_passant_target == ("d", 3)
