@@ -1,6 +1,5 @@
 import pytest
 
-from main.agents import ManualAgent
 from main.exceptions import BuildError, GameplayError
 from main.pieces import King, Queen, WhitePawn
 
@@ -9,8 +8,6 @@ class TestBoardBuilder:
     def test_no_king_raises_build_error(self, builder):
         with pytest.raises(BuildError):
             builder.from_data(
-                white_agent_cls=ManualAgent,
-                black_agent_cls=ManualAgent,
                 white_data=[
                     {"piece_type": WhitePawn, "x": "a", "y": 2},
                 ],
@@ -21,8 +18,6 @@ class TestBoardBuilder:
 
     def test_pawn_added_to_correct_slot(self, builder):
         board = builder.from_data(
-            white_agent_cls=ManualAgent,
-            black_agent_cls=ManualAgent,
             white_data=[
                 {"piece_type": King, "x": "c", "y": 4},
                 {"piece_type": WhitePawn, "x": "f", "y": 2},
@@ -36,8 +31,6 @@ class TestBoardBuilder:
 
     def test_multiple_pawns_on_same_file_added_to_correct_slots(self, builder):
         board = builder.from_data(
-            white_agent_cls=ManualAgent,
-            black_agent_cls=ManualAgent,
             white_data=[
                 {"piece_type": King, "x": "c", "y": 4},
                 {"piece_type": WhitePawn, "x": "g", "y": 2},
@@ -56,8 +49,6 @@ class TestBoardBuilder:
     def test_too_many_pawns_raises_build_error(self, builder):
         with pytest.raises(BuildError):
             builder.from_data(
-                white_agent_cls=ManualAgent,
-                black_agent_cls=ManualAgent,
                 white_data=[
                     {"piece_type": King, "x": "e", "y": 1},
                     {"piece_type": WhitePawn, "x": "a", "y": 2},
@@ -78,8 +69,6 @@ class TestBoardBuilder:
     def test_pawn_on_back_rank_raises_build_error(self, builder):
         with pytest.raises(BuildError):
             builder.from_data(
-                white_agent_cls=ManualAgent,
-                black_agent_cls=ManualAgent,
                 white_data=[
                     {"piece_type": King, "x": "e", "y": 1},
                     {"piece_type": WhitePawn, "x": "a", "y": 1},
@@ -91,8 +80,6 @@ class TestBoardBuilder:
 
     def test_second_added_queen_has_correct_name(self, builder):
         board = builder.from_data(
-            white_agent_cls=ManualAgent,
-            black_agent_cls=ManualAgent,
             white_data=[
                 {"piece_type": King, "x": "c", "y": 4},
                 {"piece_type": Queen, "x": "g", "y": 5},
@@ -110,8 +97,6 @@ class TestBoardBuilder:
 
     def test_from_fen_starting_position_returns_expected_board(self, builder):
         board = builder.from_fen(
-            white_agent_cls=ManualAgent,
-            black_agent_cls=ManualAgent,
             text="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
         )
 
@@ -124,8 +109,6 @@ class TestBoardBuilder:
 
     def test_from_fen_midgame_returns_expected_board(self, builder):
         board = builder.from_fen(
-            white_agent_cls=ManualAgent,
-            black_agent_cls=ManualAgent,
             text="rnb1k2r/1p1pnpp1/p1p4p/8/3BP3/1PNB1QP1/P1P2P1K/R4R2 w - - 0 14",
         )
 
@@ -143,8 +126,6 @@ class TestBoardBuilder:
 
     def test_from_fen_endgame_returns_expected_board(self, builder):
         board = builder.from_fen(
-            white_agent_cls=ManualAgent,
-            black_agent_cls=ManualAgent,
             text="6k1/3R4/5Q2/8/p3N3/1P4P1/P1P2P1K/8 w - - 0 39",
         )
 

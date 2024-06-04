@@ -1,4 +1,3 @@
-from main.agents import ManualAgent
 from main.pieces import Bishop, BlackPawn, King, Knight, Queen, Rook
 
 
@@ -93,8 +92,6 @@ class TestBoard:
 class TestHasInsufficientMaterial:
     def test_kkp_does_not_yield_draw(self, builder):
         board = builder.from_data(
-            white_agent_cls=ManualAgent,
-            black_agent_cls=ManualAgent,
             white_data=[
                 {"piece_type": King, "x": "e", "y": 1},
             ],
@@ -110,8 +107,6 @@ class TestHasInsufficientMaterial:
 
     def test_kkppp_does_not_yield_draw(self, builder):
         board = builder.from_data(
-            white_agent_cls=ManualAgent,
-            black_agent_cls=ManualAgent,
             white_data=[
                 {"piece_type": King, "x": "e", "y": 1},
             ],
@@ -129,8 +124,6 @@ class TestHasInsufficientMaterial:
 
     def test_kk_yields_draw(self, builder):
         board = builder.from_data(
-            white_agent_cls=ManualAgent,
-            black_agent_cls=ManualAgent,
             white_data=[
                 {"piece_type": King, "x": "e", "y": 1},
                 {"piece_type": Rook, "x": "d", "y": 3},
@@ -146,8 +139,6 @@ class TestHasInsufficientMaterial:
 
     def test_kbk_yields_draw(self, builder):
         board = builder.from_data(
-            white_agent_cls=ManualAgent,
-            black_agent_cls=ManualAgent,
             white_data=[
                 {"piece_type": King, "x": "e", "y": 1},
                 {"piece_type": Rook, "x": "d", "y": 3},
@@ -164,8 +155,6 @@ class TestHasInsufficientMaterial:
 
     def test_kkn_yields_draw(self, builder):
         board = builder.from_data(
-            white_agent_cls=ManualAgent,
-            black_agent_cls=ManualAgent,
             white_data=[
                 {"piece_type": King, "x": "e", "y": 1},
             ],
@@ -181,8 +170,6 @@ class TestHasInsufficientMaterial:
 
     def test_kbkn_yields_draw(self, builder):
         board = builder.from_data(
-            white_agent_cls=ManualAgent,
-            black_agent_cls=ManualAgent,
             white_data=[
                 {"piece_type": King, "x": "e", "y": 1},
                 {"piece_type": Rook, "x": "d", "y": 3},
@@ -232,8 +219,6 @@ class TestHalfmoveClock:
 
     def test_when_75th_move_is_pawn_move_does_not_yield_draw(self, builder):
         board = builder.from_data(
-            white_agent_cls=ManualAgent,
-            black_agent_cls=ManualAgent,
             white_data=[
                 {"piece_type": King, "x": "e", "y": 1},
                 {"piece_type": Rook, "x": "d", "y": 3},
@@ -254,8 +239,6 @@ class TestHalfmoveClock:
 
     def test_when_75th_move_is_capture_does_not_yield_draw(self, builder):
         board = builder.from_data(
-            white_agent_cls=ManualAgent,
-            black_agent_cls=ManualAgent,
             white_data=[
                 {"piece_type": King, "x": "e", "y": 1},
                 {"piece_type": Rook, "x": "d", "y": 3},
@@ -276,8 +259,6 @@ class TestHalfmoveClock:
 
     def test_when_75th_move_is_regular_move_yields_draw(self, builder):
         board = builder.from_data(
-            white_agent_cls=ManualAgent,
-            black_agent_cls=ManualAgent,
             white_data=[
                 {"piece_type": King, "x": "e", "y": 1},
                 {"piece_type": Rook, "x": "d", "y": 3},
@@ -298,8 +279,6 @@ class TestHalfmoveClock:
 
     def test_when_75th_move_is_checkmate_yields_checkmate(self, builder):
         board = builder.from_data(
-            white_agent_cls=ManualAgent,
-            black_agent_cls=ManualAgent,
             white_data=[
                 {"piece_type": King, "x": "e", "y": 1},
             ],

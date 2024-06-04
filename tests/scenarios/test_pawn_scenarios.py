@@ -1,6 +1,5 @@
 import pytest
 
-from main.agents import ManualAgent
 from main.exceptions import InvalidMoveError
 from main.pieces import BlackPawn, King, Knight, Queen, Rook, WhitePawn
 
@@ -25,8 +24,6 @@ class TestPawnScenarios:
 
     def test_pawn_promotion_capture_results_in_expected_state(self, builder):
         board = builder.from_data(
-            white_agent_cls=ManualAgent,
-            black_agent_cls=ManualAgent,
             white_data=[
                 {"piece_type": King, "x": "c", "y": 4},
                 {"piece_type": WhitePawn, "x": "f", "y": 7},
@@ -45,8 +42,6 @@ class TestPawnScenarios:
 
     def test_rollback_pawn_promotion_capture_results_in_expected_state(self, builder):
         board = builder.from_data(
-            white_agent_cls=ManualAgent,
-            black_agent_cls=ManualAgent,
             white_data=[
                 {"piece_type": King, "x": "c", "y": 4},
                 {"piece_type": WhitePawn, "x": "f", "y": 7},
@@ -67,8 +62,6 @@ class TestPawnScenarios:
 
     def test_pawn_promotion_can_create_third_piece(self, builder):
         board = builder.from_data(
-            white_agent_cls=ManualAgent,
-            black_agent_cls=ManualAgent,
             white_data=[
                 {"piece_type": King, "x": "c", "y": 4},
                 {"piece_type": WhitePawn, "x": "a", "y": 7},
@@ -87,8 +80,6 @@ class TestPawnScenarios:
 
     def test_pawn_promotion_capture_results_in_expected_piece(self, builder):
         board = builder.from_data(
-            white_agent_cls=ManualAgent,
-            black_agent_cls=ManualAgent,
             white_data=[
                 {"piece_type": King, "x": "c", "y": 4},
                 {"piece_type": WhitePawn, "x": "f", "y": 7},
@@ -107,8 +98,6 @@ class TestPawnScenarios:
 
     def test_pawn_promotion_invalid_if_king_is_in_check(self, builder):
         board = builder.from_data(
-            white_agent_cls=ManualAgent,
-            black_agent_cls=ManualAgent,
             white_data=[
                 {"piece_type": King, "x": "h", "y": 7},
                 {"piece_type": WhitePawn, "x": "f", "y": 7},
@@ -129,8 +118,6 @@ class TestPawnScenarios:
 
     def test_pawn_promotion_capture_results_in_expected_change(self, builder):
         board = builder.from_data(
-            white_agent_cls=ManualAgent,
-            black_agent_cls=ManualAgent,
             white_data=[
                 {"piece_type": King, "x": "c", "y": 4},
                 {"piece_type": WhitePawn, "x": "f", "y": 7},
@@ -173,8 +160,6 @@ class TestPawnScenarios:
 class TestEnPassant:
     def test_white_pawn_moving_two_squares_sets_en_passant_target(self, builder):
         board = builder.from_data(
-            white_agent_cls=ManualAgent,
-            black_agent_cls=ManualAgent,
             white_data=[
                 {"piece_type": King, "x": "e", "y": 1},
                 {"piece_type": WhitePawn, "x": "e", "y": 2},
@@ -190,8 +175,6 @@ class TestEnPassant:
 
     def test_black_pawn_moving_two_squares_sets_en_passant_target(self, builder):
         board = builder.from_data(
-            white_agent_cls=ManualAgent,
-            black_agent_cls=ManualAgent,
             white_data=[
                 {"piece_type": King, "x": "e", "y": 1},
             ],
@@ -208,8 +191,6 @@ class TestEnPassant:
 
     def test_pawn_moving_one_square_does_not_set_en_passant_target(self, builder):
         board = builder.from_data(
-            white_agent_cls=ManualAgent,
-            black_agent_cls=ManualAgent,
             white_data=[
                 {"piece_type": King, "x": "e", "y": 1},
                 {"piece_type": WhitePawn, "x": "e", "y": 2},

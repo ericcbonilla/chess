@@ -1,6 +1,5 @@
 import pytest
 
-from main.agents import ManualAgent
 from main.exceptions import InvalidMoveError
 from main.pieces import Bishop, King, Knight, Queen, Rook, WhitePawn
 
@@ -38,8 +37,6 @@ class TestCastling:
 
     def test_cant_castle_if_king_has_moved(self, builder):
         board = builder.from_data(
-            white_agent_cls=ManualAgent,
-            black_agent_cls=ManualAgent,
             white_data=[
                 {"piece_type": King, "x": "e", "y": 1},
                 {"piece_type": Rook, "x": "h", "y": 1},
@@ -83,8 +80,6 @@ class TestCastling:
 
     def test_cant_castle_out_of_check(self, builder):
         board = builder.from_data(
-            white_agent_cls=ManualAgent,
-            black_agent_cls=ManualAgent,
             white_data=[
                 {"piece_type": King, "x": "a", "y": 4},
                 {"piece_type": Queen, "x": "e", "y": 1},
@@ -102,8 +97,6 @@ class TestCastling:
 
     def test_cant_castle_if_skewered(self, builder):
         board = builder.from_data(
-            white_agent_cls=ManualAgent,
-            black_agent_cls=ManualAgent,
             white_data=[
                 {"piece_type": King, "x": "a", "y": 4},
                 {"piece_type": Queen, "x": "a", "y": 8},
@@ -121,8 +114,6 @@ class TestCastling:
 
     def test_doesnt_castle_when_king_is_not_moving_from_starting_square(self, builder):
         board = builder.from_data(
-            white_agent_cls=ManualAgent,
-            black_agent_cls=ManualAgent,
             white_data=[
                 {"piece_type": King, "x": "f", "y": 2},
                 {"piece_type": Rook, "x": "h", "y": 5},
@@ -140,8 +131,6 @@ class TestCastling:
 class TestKingScenarios:
     def test_when_king_added_on_starting_square_has_moved_false(self, builder):
         board = builder.from_data(
-            white_agent_cls=ManualAgent,
-            black_agent_cls=ManualAgent,
             white_data=[
                 {"piece_type": King, "x": "e", "y": 1},
             ],
@@ -155,8 +144,6 @@ class TestKingScenarios:
 
     def test_when_king_added_not_on_starting_square_has_moved_true(self, builder):
         board = builder.from_data(
-            white_agent_cls=ManualAgent,
-            black_agent_cls=ManualAgent,
             white_data=[
                 {"piece_type": King, "x": "e", "y": 2},
             ],
@@ -198,8 +185,6 @@ class TestKingScenarios:
 
     def test_king_cant_move_next_to_king(self, builder):
         board = builder.from_data(
-            white_agent_cls=ManualAgent,
-            black_agent_cls=ManualAgent,
             white_data=[
                 {"piece_type": King, "x": "c", "y": 4},
             ],
@@ -226,8 +211,6 @@ class TestKingScenarios:
 
     def test_discovered_check(self, builder):
         board = builder.from_data(
-            white_agent_cls=ManualAgent,
-            black_agent_cls=ManualAgent,
             white_data=[
                 {"piece_type": King, "x": "d", "y": 4},
                 {"piece_type": Rook, "x": "d", "y": 8},
@@ -244,8 +227,6 @@ class TestKingScenarios:
 
     def test_cant_leave_king_in_check_from_pawn(self, builder):
         board = builder.from_data(
-            white_agent_cls=ManualAgent,
-            black_agent_cls=ManualAgent,
             white_data=[
                 {"piece_type": King, "x": "a", "y": 5},
                 {"piece_type": WhitePawn, "x": "f", "y": 3},
@@ -265,8 +246,6 @@ class TestKingScenarios:
         self, builder
     ):
         board = builder.from_data(
-            white_agent_cls=ManualAgent,
-            black_agent_cls=ManualAgent,
             white_data=[
                 {"piece_type": King, "x": "a", "y": 5},
                 {"piece_type": WhitePawn, "x": "f", "y": 3},
@@ -284,8 +263,6 @@ class TestKingScenarios:
 
     def test_cant_leave_king_in_check_from_knight(self, builder):
         board = builder.from_data(
-            white_agent_cls=ManualAgent,
-            black_agent_cls=ManualAgent,
             white_data=[
                 {"piece_type": King, "x": "e", "y": 3},
                 {"piece_type": WhitePawn, "x": "b", "y": 3},
@@ -301,8 +278,6 @@ class TestKingScenarios:
 
     def test_cant_move_into_check_from_knight(self, builder):
         board = builder.from_data(
-            white_agent_cls=ManualAgent,
-            black_agent_cls=ManualAgent,
             white_data=[
                 {"piece_type": King, "x": "e", "y": 4},
             ],
@@ -317,8 +292,6 @@ class TestKingScenarios:
 
     def test_cant_move_backwards_if_skewered(self, builder):
         board = builder.from_data(
-            white_agent_cls=ManualAgent,
-            black_agent_cls=ManualAgent,
             white_data=[
                 {"piece_type": King, "x": "e", "y": 3},
             ],
@@ -333,8 +306,6 @@ class TestKingScenarios:
 
     def test_cant_move_toward_attacker_when_cornered_on_diagonal(self, builder):
         board = builder.from_data(
-            white_agent_cls=ManualAgent,
-            black_agent_cls=ManualAgent,
             white_data=[
                 {"piece_type": King, "x": "a", "y": 1},
                 {"piece_type": WhitePawn, "x": "a", "y": 2},

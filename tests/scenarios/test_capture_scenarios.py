@@ -1,4 +1,3 @@
-from main.agents import ManualAgent
 from main.pieces import Bishop, King, Knight, Queen, Rook
 
 
@@ -26,8 +25,6 @@ class TestCaptureScenarios:
         """
 
         board = builder.from_data(
-            white_agent_cls=ManualAgent,
-            black_agent_cls=ManualAgent,
             white_data=[
                 {"piece_type": King, "x": "c", "y": 4},
                 {"piece_type": Knight, "x": "g", "y": 4},
@@ -47,8 +44,6 @@ class TestCaptureScenarios:
 
     def test_queen_capture_and_check_results_in_expected_change(self, builder):
         board = builder.from_data(
-            white_agent_cls=ManualAgent,
-            black_agent_cls=ManualAgent,
             white_data=[
                 {"piece_type": King, "x": "c", "y": 4},
                 {"piece_type": Rook, "x": "d", "y": 4},

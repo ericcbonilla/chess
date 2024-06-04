@@ -1,7 +1,6 @@
 import pytest
 
 from main import constants
-from main.agents import ManualAgent
 from main.game_tree import FullMove, HalfMove
 from main.game_tree.utils import get_halfmove
 from main.pieces import King, Knight, Queen, Rook, WhitePawn
@@ -225,8 +224,6 @@ class TestHalfMove:
 
     def test_when_ambiguous_move_to_an_returns_expected(self, builder):
         board = builder.from_data(
-            white_agent_cls=ManualAgent,
-            black_agent_cls=ManualAgent,
             white_data=[
                 {"piece_type": King, "x": "a", "y": 7},
             ],
@@ -244,8 +241,6 @@ class TestHalfMove:
 
     def test_when_check_to_an_returns_expected(self, builder):
         board = builder.from_data(
-            white_agent_cls=ManualAgent,
-            black_agent_cls=ManualAgent,
             white_data=[
                 {"piece_type": King, "x": "a", "y": 7},
             ],
@@ -262,8 +257,6 @@ class TestHalfMove:
 
     def test_when_queenside_castle_to_an_returns_expected(self, builder):
         board = builder.from_data(
-            white_agent_cls=ManualAgent,
-            black_agent_cls=ManualAgent,
             white_data=[
                 {"piece_type": King, "x": "e", "y": 1},
                 {"piece_type": Rook, "x": "a", "y": 1},
@@ -278,8 +271,6 @@ class TestHalfMove:
 
     def test_when_castle_and_check_to_an_returns_expected(self, builder):
         board = builder.from_data(
-            white_agent_cls=ManualAgent,
-            black_agent_cls=ManualAgent,
             white_data=[
                 {"piece_type": King, "x": "e", "y": 1},
                 {"piece_type": Rook, "x": "h", "y": 1},
@@ -294,8 +285,6 @@ class TestHalfMove:
 
     def test_when_pawn_promotion_to_an_returns_expected(self, builder):
         board = builder.from_data(
-            white_agent_cls=ManualAgent,
-            black_agent_cls=ManualAgent,
             white_data=[
                 {"piece_type": King, "x": "e", "y": 1},
                 {"piece_type": WhitePawn, "x": "e", "y": 7},
@@ -310,8 +299,6 @@ class TestHalfMove:
 
     def test_when_pawn_promotion_capture_to_an_returns_expected(self, builder):
         board = builder.from_data(
-            white_agent_cls=ManualAgent,
-            black_agent_cls=ManualAgent,
             white_data=[
                 {"piece_type": King, "x": "e", "y": 1},
                 {"piece_type": WhitePawn, "x": "e", "y": 7},
@@ -327,8 +314,6 @@ class TestHalfMove:
 
     def test_when_checkmate_to_an_returns_expected(self, builder):
         board = builder.from_data(
-            white_agent_cls=ManualAgent,
-            black_agent_cls=ManualAgent,
             white_data=[
                 {"piece_type": King, "x": "a", "y": 1},
             ],

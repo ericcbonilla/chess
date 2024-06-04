@@ -1,7 +1,6 @@
 import pytest
 
 from main import constants
-from main.agents import ManualAgent
 from main.builders import BoardBuilder
 from main.game_tree import FullMove, HalfMove
 from main.pieces import Queen
@@ -14,7 +13,7 @@ def builder():
 
 @pytest.fixture
 def default_board(builder):
-    return builder.from_start(white_agent_cls=ManualAgent, black_agent_cls=ManualAgent)
+    return builder.from_start()
 
 
 @pytest.fixture

@@ -3,6 +3,7 @@ import re
 from typing import TYPE_CHECKING, List, Optional, Type
 
 from main import constants
+from main.agents import ManualAgent
 from main.board import Board
 from main.exceptions import BuildError
 from main.fen import FEN
@@ -59,8 +60,8 @@ class BoardBuilder:
 
     def from_start(
         self,
-        white_agent_cls: Type["Agent"],
-        black_agent_cls: Type["Agent"],
+        white_agent_cls: Optional[Type["Agent"]] = ManualAgent,
+        black_agent_cls: Optional[Type["Agent"]] = ManualAgent,
         max_moves: Optional[int] = 50,
     ) -> Board:
         board = self._get_board(white_agent_cls, black_agent_cls, max_moves)
@@ -136,11 +137,10 @@ class BoardBuilder:
 
     def from_data(
         self,
-        # TODO add default to lessen boilerplate
-        white_agent_cls: Type["Agent"],
-        black_agent_cls: Type["Agent"],
         white_data: List[PieceScaffold],
         black_data: List[PieceScaffold],
+        white_agent_cls: Optional[Type["Agent"]] = ManualAgent,
+        black_agent_cls: Optional[Type["Agent"]] = ManualAgent,
         max_moves: Optional[int] = 300,
         active_color: Optional[str] = None,
     ) -> Board:
@@ -154,9 +154,9 @@ class BoardBuilder:
 
     def from_fen(
         self,
-        white_agent_cls: Type["Agent"],
-        black_agent_cls: Type["Agent"],
         text: str,
+        white_agent_cls: Optional[Type["Agent"]] = ManualAgent,
+        black_agent_cls: Optional[Type["Agent"]] = ManualAgent,
         max_moves: Optional[int] = 300,
     ) -> Board:
         fen = FEN(text=text)

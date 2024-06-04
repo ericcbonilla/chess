@@ -1,12 +1,9 @@
-from main.agents import ManualAgent
 from main.pieces import Bishop, King, Knight, Queen, Rook, WhitePawn
 
 
 class TestGetGameResult:
     def test_white_in_check_and_cant_move_yields_checkmate(self, builder):
         board = builder.from_data(
-            white_agent_cls=ManualAgent,
-            black_agent_cls=ManualAgent,
             white_data=[
                 {"piece_type": King, "x": "a", "y": 1},
             ],
@@ -24,8 +21,6 @@ class TestGetGameResult:
 
     def test_white_in_check_and_cant_move_defenders_yields_checkmate(self, builder):
         board = builder.from_data(
-            white_agent_cls=ManualAgent,
-            black_agent_cls=ManualAgent,
             white_data=[
                 {"piece_type": King, "x": "a", "y": 1},
                 {"piece_type": WhitePawn, "x": "a", "y": 2},
@@ -44,8 +39,6 @@ class TestGetGameResult:
 
     def test_opponent_not_in_check_and_cant_moves_yields_draw(self, builder):
         board = builder.from_data(
-            white_agent_cls=ManualAgent,
-            black_agent_cls=ManualAgent,
             white_data=[
                 {"piece_type": King, "x": "a", "y": 6},
                 {"piece_type": Rook, "x": "h", "y": 6},
@@ -61,8 +54,6 @@ class TestGetGameResult:
 
     def test_opponent_in_check_but_can_still_move_yields_no_result(self, builder):
         board = builder.from_data(
-            white_agent_cls=ManualAgent,
-            black_agent_cls=ManualAgent,
             white_data=[
                 {"piece_type": King, "x": "a", "y": 1},
                 {"piece_type": WhitePawn, "x": "a", "y": 2},
@@ -81,8 +72,6 @@ class TestGetGameResult:
 
     def test_opponent_in_check_but_pawn_can_still_move_yields_no_result(self, builder):
         board = builder.from_data(
-            white_agent_cls=ManualAgent,
-            black_agent_cls=ManualAgent,
             white_data=[
                 {"piece_type": King, "x": "a", "y": 1},
                 {"piece_type": WhitePawn, "x": "a", "y": 2},
@@ -104,8 +93,6 @@ class TestGetGameResult:
 class TestGetDisambiguation:
     def test_knight_disambiguation(self, builder):
         board = builder.from_data(
-            white_agent_cls=ManualAgent,
-            black_agent_cls=ManualAgent,
             white_data=[
                 {"piece_type": King, "x": "a", "y": 1},
                 {"piece_type": Knight, "x": "c", "y": 3},
@@ -120,8 +107,6 @@ class TestGetDisambiguation:
 
     def test_knight_double_disambiguation(self, builder):
         board = builder.from_data(
-            white_agent_cls=ManualAgent,
-            black_agent_cls=ManualAgent,
             white_data=[
                 {"piece_type": King, "x": "a", "y": 1},
                 {"piece_type": Knight, "x": "c", "y": 3},
@@ -137,8 +122,6 @@ class TestGetDisambiguation:
 
     def test_knight_two_knights_but_just_one_disambiguation(self, builder):
         board = builder.from_data(
-            white_agent_cls=ManualAgent,
-            black_agent_cls=ManualAgent,
             white_data=[
                 {"piece_type": King, "x": "a", "y": 1},
                 {"piece_type": Knight, "x": "c", "y": 3},
@@ -154,8 +137,6 @@ class TestGetDisambiguation:
 
     def test_rook_disambiguation(self, builder):
         board = builder.from_data(
-            white_agent_cls=ManualAgent,
-            black_agent_cls=ManualAgent,
             white_data=[
                 {"piece_type": King, "x": "a", "y": 1},
                 {"piece_type": Rook, "x": "g", "y": 1},
@@ -171,8 +152,6 @@ class TestGetDisambiguation:
 
     def test_rook_double_disambiguation(self, builder):
         board = builder.from_data(
-            white_agent_cls=ManualAgent,
-            black_agent_cls=ManualAgent,
             white_data=[
                 {"piece_type": King, "x": "a", "y": 1},
                 {"piece_type": Rook, "x": "g", "y": 1},
@@ -188,8 +167,6 @@ class TestGetDisambiguation:
 
     def test_queen_disambiguation(self, builder):
         board = builder.from_data(
-            white_agent_cls=ManualAgent,
-            black_agent_cls=ManualAgent,
             white_data=[
                 {"piece_type": King, "x": "a", "y": 1},
                 {"piece_type": Queen, "x": "b", "y": 2},
@@ -204,8 +181,6 @@ class TestGetDisambiguation:
 
     def test_queen_double_disambiguation(self, builder):
         board = builder.from_data(
-            white_agent_cls=ManualAgent,
-            black_agent_cls=ManualAgent,
             white_data=[
                 {"piece_type": King, "x": "a", "y": 1},
                 {"piece_type": Queen, "x": "b", "y": 2},
@@ -226,8 +201,6 @@ class TestGetDisambiguation:
         """
 
         board = builder.from_data(
-            white_agent_cls=ManualAgent,
-            black_agent_cls=ManualAgent,
             white_data=[
                 {"piece_type": King, "x": "a", "y": 1},
                 {"piece_type": Knight, "x": "g", "y": 3},
