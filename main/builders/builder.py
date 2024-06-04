@@ -194,8 +194,7 @@ class BoardBuilder:
         )
         if fen.en_passant_target:
             inactive_agent = board.white if fen.active_color == "b" else board.black
-            x, y = fen.en_passant_target
-            inactive_agent.en_passant_target = XPosition(x), int(y)
+            inactive_agent.en_passant_target = fen.en_passant_target
 
         self._set_pieces(agent=board.white, scaffold=self._get_scaffold(white_data))
         self._set_pieces(agent=board.black, scaffold=self._get_scaffold(black_data))

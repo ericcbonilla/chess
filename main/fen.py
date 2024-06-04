@@ -31,7 +31,7 @@ class FEN:
     def en_passant_target(self) -> Position | None:
         try:
             x, y = self._d
-            return XPosition(x), y
+            return XPosition(x), int(y)
         except ValueError:
             return None
 
