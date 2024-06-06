@@ -1,12 +1,11 @@
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, Iterable, List, Optional, Set
+from typing import TYPE_CHECKING, Iterable, List, Optional, Set, Tuple
 
 from main import constants
+from main.agents.graveyard import Graveyard
 from main.game_tree import HalfMove
-from main.graveyard import Graveyard
 from main.pieces import Bishop, BlackPawn, King, Knight, Queen, Rook, WhitePawn
 from main.types import AgentColor, Position, Promotee
-from main.xposition import XPosition
 
 if TYPE_CHECKING:
     from main.board import Board
@@ -60,7 +59,7 @@ class Agent:
         return f'{self.color}:\n{"".join(f"  {a}: {p}\n" for a, p in self.pieces)}'
 
     @property
-    def pieces(self) -> Iterable["Piece"]:
+    def pieces(self) -> Iterable[Tuple[str, "Piece"]]:
         for attr in constants.PIECE_ATTRS:
             if piece := getattr(self, attr):
                 yield attr, piece
@@ -88,7 +87,7 @@ class Agent:
 
         return rights
 
-    def get_by_position(self, x: XPosition, y: int) -> "Piece":
+    def get_by_position(self, x: str, y: int) -> "Piece":
         for _, piece in self.pieces:
             if piece.position == (x, y):
                 return piece
@@ -102,7 +101,12 @@ class Agent:
 
         return False
 
-    def move(self) -> Optional[HalfMove]:
+    def move(
+        self,
+        attr: Optional[str] = None,
+        x: Optional[str] = None,
+        y: Optional[int] = None,
+    ) -> Optional[HalfMove]:
         """
         Make a move based on my strategy
         """

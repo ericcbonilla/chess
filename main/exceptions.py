@@ -1,4 +1,8 @@
-class PromotionError(Exception):
+class BuildError(Exception):
+    pass
+
+
+class GameplayError(Exception):
     pass
 
 
@@ -6,9 +10,9 @@ class InvalidMoveError(Exception):
     pass
 
 
-class BuildError(Exception):
+class NotationError(Exception):
     pass
 
 
-class GameplayError(Exception):
+class PromotionError(Exception):
     pass

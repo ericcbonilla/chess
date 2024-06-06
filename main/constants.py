@@ -1,6 +1,5 @@
 from typing import List
 
-from main.pieces import Bishop, BlackPawn, King, Knight, Queen, Rook, WhitePawn
 from main.types import AgentColor
 
 WHITE = "WHITE"
@@ -48,19 +47,3 @@ PIECE_ATTRS = (
     "g_prom",
     "h_prom",
 )
-
-
-SYMBOLS_MAP = {
-    "P": WhitePawn,
-    "p": BlackPawn,
-    "r": Rook,
-    "R": Rook,
-    "n": Knight,
-    "N": Knight,
-    "b": Bishop,
-    "B": Bishop,
-    "k": King,
-    "K": King,
-    "q": Queen,
-    "Q": Queen,
-}

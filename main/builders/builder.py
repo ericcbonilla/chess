@@ -6,8 +6,8 @@ from main import constants
 from main.agents import ManualAgent
 from main.board import Board
 from main.exceptions import BuildError
-from main.fen import FEN
-from main.pieces import Bishop, King, Knight, Queen, Rook
+from main.notation import FEN
+from main.pieces import SYMBOLS_MAP, Bishop, King, Knight, Queen, Rook
 from main.types import AgentScaffold, PieceScaffold
 from main.xposition import XPosition
 
@@ -28,12 +28,7 @@ class BoardBuilder:
         halfmove_clock: Optional[int] = 0,
         fullmove_number: Optional[int] = 1,
     ) -> Board:
-        board = Board(
-            max_moves=max_moves,
-            active_color=active_color,
-            halfmove_clock=halfmove_clock,
-            fullmove_number=fullmove_number,
-        )
+        board = Board(max_moves, active_color, halfmove_clock, fullmove_number)
         # TODO https://youtrack.jetbrains.com/issue/PY-36375/Unexpected-argument-false-positive-when-reassigning-a-dataclass-PEP-557
         # noinspection PyArgumentList
         board.white = white_agent_cls(color=constants.WHITE, board=board)
@@ -57,17 +52,6 @@ class BoardBuilder:
             )
 
             setattr(agent, attr, piece)
-
-    def from_start(
-        self,
-        white_agent_cls: Optional[Type["Agent"]] = ManualAgent,
-        black_agent_cls: Optional[Type["Agent"]] = ManualAgent,
-        max_moves: Optional[int] = 300,
-    ) -> Board:
-        board = self._get_board(white_agent_cls, black_agent_cls, max_moves, "w")
-        self._set_pieces(agent=board.white, scaffold=WHITE_SCAFFOLD)
-        self._set_pieces(agent=board.black, scaffold=BLACK_SCAFFOLD)
-        return board
 
     def _get_slot(
         self, scaffold: AgentScaffold, datum: PieceScaffold, x1: str, x2: str, name: str
@@ -134,6 +118,17 @@ class BoardBuilder:
 
         return scaffold
 
+    def from_start(
+        self,
+        white_agent_cls: Optional[Type["Agent"]] = ManualAgent,
+        black_agent_cls: Optional[Type["Agent"]] = ManualAgent,
+        max_moves: Optional[int] = 300,
+    ) -> Board:
+        board = self._get_board(white_agent_cls, black_agent_cls, max_moves, "w")
+        self._set_pieces(agent=board.white, scaffold=WHITE_SCAFFOLD)
+        self._set_pieces(agent=board.black, scaffold=BLACK_SCAFFOLD)
+        return board
+
     def from_data(
         self,
         white_data: List[PieceScaffold],
@@ -171,11 +166,7 @@ class BoardBuilder:
                 continue
 
             x, y = next(iter_squares)
-            scaffold = {
-                "piece_type": constants.SYMBOLS_MAP[ch],
-                "x": x,
-                "y": y,
-            }
+            scaffold = {"piece_type": SYMBOLS_MAP[ch], "x": x, "y": y}
 
             if scaffold["piece_type"] in (Rook, King) and (x, y) in fen.castling_rights:
                 scaffold["has_moved"] = not fen.castling_rights[x, y]
@@ -210,6 +201,12 @@ class BoardBuilder:
     #     max_moves: Optional[int] = 300,
     # ):
     #     processor = PGNProcessor(pgn=pgn)
+
+    # TODO what if we want to load a partial game using PGN, then
+    # play it out using RandomAgent? Currently there's no way to do this
+    # We will have to play out the game using a "mock" ManualAgent, then
+    # switch over to the real Agent. Or something like that
+
     #
     #     return cls(
     #         max_moves=max_moves,

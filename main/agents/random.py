@@ -29,10 +29,15 @@ class RandomAgent(Agent):
 
         return piece.move(*pick)
 
-    def move(self) -> Optional[HalfMove]:
+    def move(
+        self,
+        attr: Optional[str] = None,
+        x: Optional[str] = None,
+        y: Optional[int] = None,
+    ) -> Optional[HalfMove]:
         cprint(self.color, f"Turn: {self.color}")
 
-        for _, piece in sorted(self.pieces, key=lambda x: random.random()):
+        for _, piece in sorted(self.pieces, key=lambda _: random.random()):
             if result := self._random_move(piece) is None:
                 continue  # Piece is unmovable
             else:
