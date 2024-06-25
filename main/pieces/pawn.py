@@ -1,15 +1,11 @@
-from typing import Optional, Set, Type
+from typing import Optional, Set
 
-from main.exceptions import PromotionError
 from main.game_tree import HalfMove
-from main.types import Change, Position, Promotee
+from main.types import Change, Position
 from main.xposition import XPosition
 
-from .bishop import Bishop
-from .knight import Knight
 from .piece import Piece
 from .queen import Queen
-from .rook import Rook
 
 
 class Pawn(Piece):
@@ -57,21 +53,6 @@ class Pawn(Piece):
 
         return captures
 
-    @staticmethod
-    def get_promotee_type(
-        promotee_value: str,
-    ) -> Type[Promotee]:
-        if promotee_value == "B":
-            return Bishop
-        elif promotee_value == "N":
-            return Knight
-        elif promotee_value == "R":
-            return Rook
-        elif promotee_value == "Q":
-            return Queen
-        else:
-            raise PromotionError("Invalid promotee value, must be one of B, N, R, or Q")
-
     def get_disambiguation(self, x: XPosition, y: int) -> str:
         return ""
 
@@ -90,23 +71,22 @@ class Pawn(Piece):
         if not self.is_promotion(y):
             return change
 
-        if "promotee_value" not in kwargs:
+        if "promotee_type" not in kwargs:
             # If king_would_be_in_check is testing a promotion move, we must provide a piece type.
             # Just assume Queen in this case. Or, if a promotee_value is not provided,
             # also just assume Queen. You could play a decade of chess and never find a
             # situation where you need a Knight. This is fine for our purposes.
-            promotee_value = "Q"
+            promotee_type = Queen
         else:
             # Let's also assume that whatever client is sending the move knows
             # when it needs to supply a promotee_value
-            promotee_value = kwargs["promotee_value"]
+            promotee_type = kwargs["promotee_type"]
 
-        promotion_piece_type = self.get_promotee_type(promotee_value)
         change[self.agent.color][self.attr]["new_position"] = None
         change[self.agent.color][f"{self.attr[0]}_prom"] = {
             "old_position": None,
             "new_position": (x, y),
-            "piece_type": promotion_piece_type,
+            "piece_type": promotee_type,
         }
 
         return change

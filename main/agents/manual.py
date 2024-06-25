@@ -14,42 +14,54 @@ from .agent import Agent
 
 
 class ManualAgent(Agent):
+    @staticmethod
+    def _get_disamb_search_fn(an: AN) -> Callable[[Piece], bool]:
+        if isinstance(an.disambiguation, XPosition):
+            return lambda p: p.x == an.disambiguation
+        elif isinstance(an.disambiguation, int):
+            return lambda p: p.y == an.disambiguation
+        else:
+            return lambda p: p.position == an.disambiguation
+
     def _get_matching_piece(self, an: AN, pick: Position) -> Piece:
         search_fn: Callable[[Piece], bool] = lambda p: True
+        piece = None
 
         # TODO can we use similar logic to optimize get_valid_moves()?
         if an.piece_type is King:
-            if pick in self.king.get_valid_moves():
-                return self.king
-            else:
-                raise NotationError(f'"{an.text}" is an illegal move')
+            piece = self.king
         elif an.piece_type is Pawn:
-            if an.is_capture:
-                search_fn: Callable[[Piece], bool] = lambda p: p.x == an.pawn_file
-            else:
-                search_fn: Callable[[Piece], bool] = lambda p: p.x == an.x
-
-        matching_pieces = [
-            piece
-            for _, piece in self.pieces
-            if (
-                search_fn(piece)
-                and isinstance(piece, an.piece_type)
-                and (pick in piece.get_valid_moves() or pick in piece.get_captures())
+            search_fn: Callable[[Piece], bool] = lambda p: (
+                p.x == an.pawn_file if an.is_capture else an.x
             )
-        ]
+        elif an.disambiguation:
+            search_fn = self._get_disamb_search_fn(an=an)
 
-        if len(matching_pieces) > 1:
-            raise NotationError(
-                f"More than one {an.piece_type} can move to {an.x}{an.y};"
-                f"disambiguation required"
-            )
-        try:
-            piece = matching_pieces.pop()
-        except IndexError:
-            raise NotationError(f'"{an.text}" is an illegal move')
+        if piece is None:
+            matching_pieces = [
+                piece
+                for _, piece in self.pieces
+                if (
+                    search_fn(piece)
+                    and isinstance(piece, an.piece_type)
+                    and pick in piece.get_valid_moves()
+                    or pick in piece.get_captures()
+                )
+            ]
 
-        # TODO these need to be applied to King moves as well
+            if len(matching_pieces) > 1:
+                raise NotationError(
+                    f"More than one {an.piece_type.__name__} can move to {an.x}{an.y};"
+                    f" disambiguation required"
+                )
+            try:
+                piece = matching_pieces.pop()
+            except IndexError:
+                raise NotationError(f'"{an.text}" is an illegal move')
+        else:
+            if pick not in piece.get_valid_moves():
+                raise NotationError(f'"{an.text}" is an illegal move')
+
         if not an.is_capture and an.pick in piece.opponent.positions:
             raise NotationError(
                 f"Opponent piece on {an.x}{an.y}. "
@@ -90,10 +102,16 @@ class ManualAgent(Agent):
                     piece = self._get_matching_piece(an, pick)
                 except NotationError as e:
                     bright_red(str(e))
+                    if an_text:
+                        an_text = None
+
+            kwargs = {}
+            if an.promotee_type:
+                kwargs = {"promotee_type": an.promotee_type}
 
             if an.is_capture:
                 cprint(self.color, f"{piece} capturing on {pick}", color_fn=red)
             else:
                 cprint(self.color, f"Moving {piece} to {pick}")
 
-            return piece.move(*pick)
+            return piece.move(*pick, **kwargs)

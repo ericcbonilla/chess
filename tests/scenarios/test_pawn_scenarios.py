@@ -34,7 +34,7 @@ class TestPawnScenarios:
             ],
         )
 
-        board.white.f_pawn.manual_move("g", 8, promotee_value="Q")
+        board.white.f_pawn.manual_move("g", 8, promotee_type=Queen)
 
         assert board.white.graveyard.f_pawn
         assert board.black.graveyard.a_rook
@@ -52,7 +52,7 @@ class TestPawnScenarios:
             ],
         )
 
-        board.white.f_pawn.manual_move("g", 8, promotee_value="Q")
+        board.white.f_pawn.manual_move("g", 8, promotee_type=Queen)
         board.rollback_halfmove()
 
         assert board.white.f_pawn.position == ("f", 7)
@@ -73,7 +73,7 @@ class TestPawnScenarios:
             ],
         )
 
-        board.white.a_pawn.manual_move("a", 8, promotee_value="N")
+        board.white.a_pawn.manual_move("a", 8, promotee_type=Knight)
 
         assert isinstance(board.white.a_prom, Knight)
         assert board.white.a_prom.position == ("a", 8)
@@ -90,7 +90,7 @@ class TestPawnScenarios:
             ],
         )
 
-        board.white.f_pawn.manual_move("g", 8, promotee_value="N")
+        board.white.f_pawn.manual_move("g", 8, promotee_type=Knight)
 
         assert isinstance(board.white.f_prom, Knight)
         assert board.white.f_prom.position == ("g", 8)
@@ -109,7 +109,7 @@ class TestPawnScenarios:
         )
 
         with pytest.raises(InvalidMoveError):
-            board.white.f_pawn.manual_move("f", 8, promotee_value="Q")
+            board.white.f_pawn.manual_move("f", 8, promotee_type=Queen)
 
         # Also check that the pawn is left unchanged - we want to ensure
         # the king_would_be_in_check method has no side effects
@@ -127,7 +127,7 @@ class TestPawnScenarios:
                 {"piece_type": Rook, "x": "g", "y": 8},
             ],
         )
-        halfmove = board.white.f_pawn.manual_move("g", 8, promotee_value="Q")
+        halfmove = board.white.f_pawn.manual_move("g", 8, promotee_type=Queen)
 
         assert halfmove.change == {
             "WHITE": {

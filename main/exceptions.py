@@ -12,7 +12,3 @@ class InvalidMoveError(Exception):
 
 class NotationError(Exception):
     pass
-
-
-class PromotionError(Exception):
-    pass

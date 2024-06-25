@@ -29,6 +29,8 @@ class AN:
 
         if self.match is None:
             raise NotationError(f'"{text}" is invalid algebraic notation')
+        elif "=" in self.text and self.promotee_type is None:
+            raise NotationError("Invalid promotee value, must be one of B, N, R, or Q")
 
     @property
     def piece_type(self) -> Type["Piece"]:
@@ -48,7 +50,7 @@ class AN:
     @property
     def disambiguation(self) -> XPosition | int | Position | None:
         disamb = self.match.group("disamb")
-        if disamb is None:
+        if disamb == "" or disamb is None:
             return None
         if re.match(r"[a-h]$", disamb):
             return XPosition(disamb)
