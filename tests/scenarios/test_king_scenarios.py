@@ -55,28 +55,27 @@ class TestCastling:
         with pytest.raises(InvalidMoveError):
             board.white.move("king", "g", 1)
 
-    def test_cant_castle_through_check(self, default_board):
-        # TODO rewrite these verbose tests
-        default_board.white.move("f_pawn", "f", 4)
-        default_board.black.move("g_pawn", "g", 5)
-        default_board.white.move("g_pawn", "g", 3)
-        default_board.black.move("e_pawn", "e", 6)
-        default_board.white.move("f_pawn", "g", 5)
-        default_board.black.move("queen", "f", 6)
-        default_board.white.move("g_knight", "h", 3)
-        default_board.black.move("a_pawn", "a", 6)
-        default_board.white.move("f_bishop", "g", 2)
-        default_board.black.move("b_pawn", "b", 6)
+    def test_cant_castle_through_check(self, builder):
+        board = builder.from_data(
+            white_data=[
+                {"piece_type": King, "x": "e", "y": 1},
+                {"piece_type": Rook, "x": "h", "y": 1},
+                {"piece_type": WhitePawn, "x": "a", "y": 2},
+            ],
+            black_data=[
+                {"piece_type": King, "x": "e", "y": 8},
+                {"piece_type": Queen, "x": "f", "y": 6},
+            ],
+        )
 
         with pytest.raises(InvalidMoveError):
-            default_board.white.move("king", "g", 1)  # Can't castle
-        assert default_board.black.queen.position == ("f", 6)
+            board.white.move("king", "g", 1)  # Can't castle
 
-        default_board.white.move("a_pawn", "a", 3)
-        default_board.black.move("queen", "g", 7)
-        default_board.white.move("king", "g", 1)  # Now we can castle
-        assert default_board.white.king.position == ("g", 1)
-        assert default_board.white.h_rook.position == ("f", 1)
+        board.white.move("a_pawn", "a", 4)
+        board.black.move("queen", "d", 6)
+        board.white.move("king", "g", 1)  # Now we can castle
+        assert board.white.king.position == ("g", 1)
+        assert board.white.h_rook.position == ("f", 1)
 
     def test_cant_castle_out_of_check(self, builder):
         board = builder.from_data(
@@ -163,25 +162,26 @@ class TestKingScenarios:
 
         assert default_board.white.king.is_in_check()
 
-    def test_cant_move_into_check(self, default_board):
-        default_board.white.move("f_pawn", "f", 4)
-        default_board.black.move("g_pawn", "g", 5)
-        default_board.white.move("g_pawn", "g", 3)
-        default_board.black.move("e_pawn", "e", 6)
-        default_board.white.move("f_pawn", "g", 5)
-        default_board.black.move("queen", "f", 6)
-        default_board.white.move("g_knight", "h", 3)
-        default_board.black.move("a_pawn", "a", 6)
-        default_board.white.move("f_bishop", "g", 2)
-        default_board.black.move("b_pawn", "b", 6)
+    def test_cant_move_into_check(self, builder):
+        board = builder.from_data(
+            white_data=[
+                {"piece_type": King, "x": "e", "y": 1},
+                {"piece_type": Rook, "x": "h", "y": 1},
+                {"piece_type": WhitePawn, "x": "a", "y": 2},
+            ],
+            black_data=[
+                {"piece_type": King, "x": "e", "y": 8},
+                {"piece_type": Queen, "x": "f", "y": 6},
+            ],
+        )
 
         with pytest.raises(InvalidMoveError):
-            default_board.white.move("king", "f", 2)  # Can't move
+            board.white.move("king", "f", 2)  # Can't move
+        board.white.move("a_pawn", "a", 4)
 
-        default_board.white.move("c_pawn", "c", 3)
-        default_board.black.move("queen", "g", 7)
-        default_board.white.move("king", "f", 2)
-        assert default_board.white.king.position == ("f", 2)
+        board.black.move("queen", "g", 7)
+        board.white.move("king", "f", 2)  # Now we can move
+        assert board.white.king.position == ("f", 2)
 
     def test_king_cant_move_next_to_king(self, builder):
         board = builder.from_data(
