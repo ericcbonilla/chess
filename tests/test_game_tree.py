@@ -199,26 +199,26 @@ class TestUtils:
 
 class TestHalfMove:
     def test_when_piece_moves_to_an_returns_expected(self, default_board):
-        halfmove = default_board.white.g_knight.manual_move("f", 3)
+        halfmove = default_board.white.move("g_knight", "f", 3)
         assert halfmove.to_an() == "Nf3"
 
     def test_when_pawn_moves_to_an_returns_expected(self, default_board):
-        default_board.white.e_pawn.manual_move("e", 4)
-        halfmove = default_board.black.c_pawn.manual_move("c", 5)
+        default_board.white.move("e_pawn", "e", 4)
+        halfmove = default_board.black.move("c_pawn", "c", 5)
         assert halfmove.to_an() == "c5"
 
     def test_when_piece_captures_to_an_returns_expected(self, default_board):
-        default_board.white.g_knight.manual_move("f", 3)
-        default_board.black.e_pawn.manual_move("e", 5)
-        halfmove = default_board.white.g_knight.manual_move("e", 5)
+        default_board.white.move("g_knight", "f", 3)
+        default_board.black.move("e_pawn", "e", 5)
+        halfmove = default_board.white.move("g_knight", "e", 5)
 
         assert halfmove.to_an() == "Nxe5"
 
     def test_when_pawn_captures_to_an_returns_expected(self, default_board):
-        default_board.white.g_knight.manual_move("f", 3)
-        default_board.black.d_pawn.manual_move("d", 6)
-        default_board.white.g_knight.manual_move("e", 5)
-        halfmove = default_board.black.d_pawn.manual_move("e", 5)
+        default_board.white.move("g_knight", "f", 3)
+        default_board.black.move("d_pawn", "d", 6)
+        default_board.white.move("g_knight", "e", 5)
+        halfmove = default_board.black.move("d_pawn", "e", 5)
 
         assert halfmove.to_an() == "dxe5"
 
@@ -235,7 +235,7 @@ class TestHalfMove:
             ],
             active_color="b",
         )
-        halfmove = board.black.queen.manual_move("h", 4)
+        halfmove = board.black.move("queen", "h", 4)
 
         assert halfmove.to_an() == "Qf6h4"
 
@@ -251,7 +251,7 @@ class TestHalfMove:
             active_color="b",
         )
 
-        halfmove = board.black.queen.manual_move("a", 1)
+        halfmove = board.black.move("queen", "a", 1)
 
         assert halfmove.to_an() == "Qa1+"
 
@@ -265,7 +265,7 @@ class TestHalfMove:
                 {"piece_type": King, "x": "h", "y": 8},
             ],
         )
-        halfmove = board.white.king.manual_move("c", 1)
+        halfmove = board.white.move("king", "c", 1)
 
         assert halfmove.to_an() == "O-O-O"
 
@@ -279,7 +279,7 @@ class TestHalfMove:
                 {"piece_type": King, "x": "f", "y": 8},
             ],
         )
-        halfmove = board.white.king.manual_move("g", 1)
+        halfmove = board.white.move("king", "g", 1)
 
         assert halfmove.to_an() == "O-O+"
 
@@ -293,7 +293,7 @@ class TestHalfMove:
                 {"piece_type": King, "x": "a", "y": 7},
             ],
         )
-        halfmove = board.white.e_pawn.manual_move("e", 8)
+        halfmove = board.white.move("e_pawn", "e", 8)
 
         assert halfmove.to_an() == "e8=Q"
 
@@ -308,7 +308,7 @@ class TestHalfMove:
                 {"piece_type": Rook, "x": "d", "y": 8},
             ],
         )
-        halfmove = board.white.e_pawn.manual_move("d", 8)
+        halfmove = board.white.move("e_pawn", "d", 8)
 
         assert halfmove.to_an() == "exd8=Q+"
 
@@ -324,6 +324,6 @@ class TestHalfMove:
             ],
             active_color="b",
         )
-        halfmove = board.black.b_knight.manual_move("b", 3)
+        halfmove = board.black.move("b_knight", "b", 3)
 
         assert halfmove.to_an() == "Nb3#"

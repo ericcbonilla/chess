@@ -120,9 +120,9 @@ class TestBoardBuilder:
         assert board.black.king.has_moved
 
         with pytest.raises(GameplayError):
-            board.black.a_pawn.manual_move("a", 5)
+            board.black.move("a_pawn", "a", 5)
 
-        board.white.c_bishop.manual_move("g", 7)
+        board.white.move("c_bishop", "g", 7)
 
         assert board.get_fen() == (
             "rnb1k2r/1p1pnpB1/p1p4p/8/4P3/1PNB1QP1/P1P2P1K/R4R2 b - - 0 14"
@@ -133,7 +133,7 @@ class TestBoardBuilder:
             text="6k1/3R4/5Q2/8/p3N3/1P4P1/P1P2P1K/8 w - - 0 39",
         )
 
-        board.white.queen.manual_move("d", 8)
+        board.white.move("queen", "d", 8)
 
         assert board.result == "1-0"
         assert board.get_fen() == "3Q2k1/3R4/8/8/p3N3/1P4P1/P1P2P1K/8 b - - 1 39"

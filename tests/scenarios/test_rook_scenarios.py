@@ -48,13 +48,13 @@ class TestRookScenarios:
             active_color="b",
         )
 
-        board.black.h_rook.manual_move("h", 7)
-        board.white.king.manual_move("d", 1)
-        board.black.h_rook.manual_move("h", 8)
-        board.white.king.manual_move("e", 1)
+        board.black.move("h_rook", "h", 7)
+        board.white.move("king", "d", 1)
+        board.black.move("h_rook", "h", 8)
+        board.white.move("king", "e", 1)
 
         with pytest.raises(InvalidMoveError):
-            board.black.king.manual_move("g", 8)
+            board.black.move("king", "g", 8)
 
     def test_castle_with_only_one_rook_on_board(self, builder):
         board = builder.from_data(
@@ -68,7 +68,7 @@ class TestRookScenarios:
             active_color="b",
         )
 
-        board.black.king.manual_move("g", 8)
+        board.black.move("king", "g", 8)
 
         assert board.black.king.position == ("g", 8)
         assert board.black.h_rook.position == ("f", 8)

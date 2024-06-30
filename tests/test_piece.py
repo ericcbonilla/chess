@@ -14,7 +14,7 @@ class TestGetGameResult:
             ],
             active_color="b",
         )
-        halfmove = board.black.queen.manual_move("a", 8)
+        halfmove = board.black.move("queen", "a", 8)
 
         assert halfmove.change["check"]
         assert halfmove.change["game_result"] == "0-1"
@@ -32,7 +32,7 @@ class TestGetGameResult:
             ],
             active_color="b",
         )
-        halfmove = board.black.c_bishop.manual_move("g", 7)
+        halfmove = board.black.move("c_bishop", "g", 7)
 
         assert halfmove.change["check"]
         assert halfmove.change["game_result"] == "0-1"
@@ -47,7 +47,7 @@ class TestGetGameResult:
                 {"piece_type": King, "x": "a", "y": 8},
             ],
         )
-        halfmove = board.white.h_rook.manual_move("b", 6)
+        halfmove = board.white.move("h_rook", "b", 6)
 
         assert not halfmove.change["check"]
         assert halfmove.change["game_result"] == "½-½ Stalemate"
@@ -65,7 +65,7 @@ class TestGetGameResult:
             ],
             active_color="b",
         )
-        halfmove = board.black.c_bishop.manual_move("g", 7)
+        halfmove = board.black.move("c_bishop", "g", 7)
 
         assert halfmove.change["check"]
         assert halfmove.change["game_result"] is None  # Can still do Nc3
@@ -84,7 +84,7 @@ class TestGetGameResult:
             ],
             active_color="b",
         )
-        halfmove = board.black.c_bishop.manual_move("g", 7)
+        halfmove = board.black.move("c_bishop", "g", 7)
 
         assert halfmove.change["check"]
         assert halfmove.change["game_result"] is None  # Can still do d4

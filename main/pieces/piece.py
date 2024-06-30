@@ -1,12 +1,8 @@
 from typing import TYPE_CHECKING, Iterable, Optional, Reversible, Set
 
-from colorist import red
-
 from main import constants
-from main.exceptions import GameplayError, InvalidMoveError
 from main.game_tree import HalfMove
 from main.types import Change, GameResult, LookaheadResults, Position
-from main.utils import cprint
 from main.xposition import XPosition
 
 if TYPE_CHECKING:
@@ -267,21 +263,3 @@ class Piece:
         self.agent.board.apply_halfmove(halfmove)
 
         return halfmove
-
-    # TODO manual_move should be part of ManualAgent
-    def manual_move(self, x: str, y: int, **kwargs) -> HalfMove:
-        if self.agent is not self.agent.board.active_agent:
-            raise GameplayError("Agent is not active")
-
-        x = XPosition(x)
-        valid_moves = self.get_valid_moves()
-        captures = self.get_captures(valid_moves)
-
-        if (x, y) in captures:
-            cprint(self.agent.color, f"{self} capturing on {(x, y)}", color_fn=red)
-            return self.move(x, y, **kwargs)
-        elif (x, y) in valid_moves:
-            cprint(self.agent.color, f"Moving {self} to {(x, y)}")
-            return self.move(x, y, **kwargs)
-
-        raise InvalidMoveError(f"Moving {self} to {(x, y)} is invalid")

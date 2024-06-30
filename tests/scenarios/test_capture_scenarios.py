@@ -3,15 +3,15 @@ from main.pieces import Bishop, King, Knight, Queen, Rook
 
 class TestCaptureScenarios:
     def test_capture_removes_piece_from_agent(self, default_board):
-        default_board.white.d_pawn.manual_move("d", 4)
-        default_board.black.e_pawn.manual_move("e", 6)
-        default_board.white.g_knight.manual_move("f", 3)
-        default_board.black.f_bishop.manual_move("a", 3)
-        default_board.white.g_pawn.manual_move("g", 3)
+        default_board.white.move("d_pawn", "d", 4)
+        default_board.black.move("e_pawn", "e", 6)
+        default_board.white.move("g_knight", "f", 3)
+        default_board.black.move("f_bishop", "a", 3)
+        default_board.white.move("g_pawn", "g", 3)
         assert ("b", 2) in default_board.white.positions
 
         # Black bishop captures B pawn
-        default_board.black.f_bishop.manual_move("b", 2)
+        default_board.black.move("f_bishop", "b", 2)
         assert default_board.black.f_bishop.position == ("b", 2)
         assert ("b", 2) not in default_board.white.positions
 
@@ -36,7 +36,7 @@ class TestCaptureScenarios:
             ],
         )
 
-        board.white.g_knight.manual_move("h", 6)
+        board.white.move("g_knight", "h", 6)
 
         assert board.black.h_rook is None
         assert board.black.graveyard.h_rook
@@ -54,7 +54,7 @@ class TestCaptureScenarios:
             ],
             active_color="b",
         )
-        halfmove = board.black.queen.manual_move("d", 4)
+        halfmove = board.black.move("queen", "d", 4)
 
         assert board.white.graveyard.a_rook
         assert halfmove.change == {

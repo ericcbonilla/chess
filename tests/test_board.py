@@ -63,26 +63,26 @@ class TestBoard:
         assert default_board.black.graveyard.d_pawn is None
 
     def test_with_single_move_get_fen_returns_expected(self, default_board):
-        default_board.white.e_pawn.manual_move("e", 4)
+        default_board.white.move("e_pawn", "e", 4)
 
         assert default_board.get_fen() == (
             "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1"
         )
 
     def test_get_fen_for_specific_move_returns_expected(self, default_board):
-        default_board.white.d_pawn.manual_move("d", 4)
-        default_board.black.e_pawn.manual_move("e", 6)
-        default_board.white.g_knight.manual_move("f", 3)
-        default_board.black.f_bishop.manual_move("a", 3)
-        default_board.white.g_pawn.manual_move("g", 3)
+        default_board.white.move("d_pawn", "d", 4)
+        default_board.black.move("e_pawn", "e", 6)
+        default_board.white.move("g_knight", "f", 3)
+        default_board.black.move("f_bishop", "a", 3)
+        default_board.white.move("g_pawn", "g", 3)
 
         assert default_board.get_fen(2.5) == (
             "rnbqk1nr/pppp1ppp/4p3/8/3P4/b4N2/PPP1PPPP/RNBQKB1R w KQkq - 2 3"
         )
 
     def test_get_fen_for_last_move_returns_expected(self, default_board):
-        default_board.white.d_pawn.manual_move("d", 4)
-        default_board.black.e_pawn.manual_move("e", 6)
+        default_board.white.move("d_pawn", "d", 4)
+        default_board.black.move("e_pawn", "e", 6)
 
         assert default_board.get_fen(1.5) == (
             "rnbqkbnr/pppp1ppp/4p3/8/3P4/8/PPP1PPPP/RNBQKBNR w KQkq - 0 2"
@@ -101,7 +101,7 @@ class TestHasInsufficientMaterial:
                 {"piece_type": Rook, "x": "d", "y": 2},
             ],
         )
-        halfmove = board.white.king.manual_move("d", 2)
+        halfmove = board.white.move("king", "d", 2)
 
         assert halfmove.change["game_result"] is None
 
@@ -118,7 +118,7 @@ class TestHasInsufficientMaterial:
                 {"piece_type": Rook, "x": "d", "y": 2},
             ],
         )
-        halfmove = board.white.king.manual_move("d", 2)
+        halfmove = board.white.move("king", "d", 2)
 
         assert halfmove.change["game_result"] is None
 
@@ -133,7 +133,7 @@ class TestHasInsufficientMaterial:
             ],
             active_color="b",
         )
-        halfmove = board.black.king.manual_move("d", 3)
+        halfmove = board.black.move("king", "d", 3)
 
         assert halfmove.change["game_result"] == "½-½ Insufficient material"
 
@@ -149,7 +149,7 @@ class TestHasInsufficientMaterial:
             ],
             active_color="b",
         )
-        halfmove = board.black.king.manual_move("d", 3)
+        halfmove = board.black.move("king", "d", 3)
 
         assert halfmove.change["game_result"] == "½-½ Insufficient material"
 
@@ -164,7 +164,7 @@ class TestHasInsufficientMaterial:
                 {"piece_type": Knight, "x": "b", "y": 6},
             ],
         )
-        halfmove = board.white.king.manual_move("d", 2)
+        halfmove = board.white.move("king", "d", 2)
 
         assert halfmove.change["game_result"] == "½-½ Insufficient material"
 
@@ -181,7 +181,7 @@ class TestHasInsufficientMaterial:
             ],
             active_color="b",
         )
-        halfmove = board.black.king.manual_move("d", 3)
+        halfmove = board.black.move("king", "d", 3)
 
         assert halfmove.change["game_result"] == "½-½ Insufficient material"
 
@@ -193,27 +193,27 @@ class TestHalfmoveClock:
         default_board.apply_gametree(two_fullmove_tree)
         assert default_board.halfmove_clock == 2
 
-        default_board.white.h_pawn.manual_move("h", 4)
+        default_board.white.move("h_pawn", "h", 4)
 
         assert default_board.halfmove_clock == 0
 
     def test_when_piece_is_captured_halfmove_clock_is_reset(self, default_board):
-        default_board.white.b_knight.manual_move("c", 3)
-        default_board.black.g_knight.manual_move("f", 6)
-        default_board.white.b_knight.manual_move("e", 4)
+        default_board.white.move("b_knight", "c", 3)
+        default_board.black.move("g_knight", "f", 6)
+        default_board.white.move("b_knight", "e", 4)
         assert default_board.halfmove_clock == 3
 
-        default_board.black.g_knight.manual_move("e", 4)
+        default_board.black.move("g_knight", "e", 4)
 
         assert default_board.halfmove_clock == 0
 
     def test_when_other_piece_is_moved_halfmove_clock_increments(self, default_board):
-        default_board.white.b_knight.manual_move("c", 3)
-        default_board.black.g_knight.manual_move("f", 6)
-        default_board.white.b_knight.manual_move("e", 4)
+        default_board.white.move("b_knight", "c", 3)
+        default_board.black.move("g_knight", "f", 6)
+        default_board.white.move("b_knight", "e", 4)
         assert default_board.halfmove_clock == 3
 
-        default_board.black.g_knight.manual_move("d", 5)
+        default_board.black.move("g_knight", "d", 5)
 
         assert default_board.halfmove_clock == 4
 
@@ -232,7 +232,7 @@ class TestHalfmoveClock:
             active_color="b",
         )
         board.halfmove_clock = 124
-        halfmove = board.black.a_pawn.manual_move("a", 5)
+        halfmove = board.black.move("a_pawn", "a", 5)
 
         assert board.halfmove_clock == 0
         assert halfmove.change["game_result"] is None
@@ -252,7 +252,7 @@ class TestHalfmoveClock:
             active_color="b",
         )
         board.halfmove_clock = 124
-        halfmove = board.black.king.manual_move("d", 3)
+        halfmove = board.black.move("king", "d", 3)
 
         assert board.halfmove_clock == 0
         assert halfmove.change["game_result"] is None
@@ -272,7 +272,7 @@ class TestHalfmoveClock:
             active_color="b",
         )
         board.halfmove_clock = 124
-        halfmove = board.black.king.manual_move("b", 4)
+        halfmove = board.black.move("king", "b", 4)
 
         assert board.halfmove_clock == 125
         assert halfmove.change["game_result"] == "½-½ Seventy-five-move rule"
@@ -289,7 +289,7 @@ class TestHalfmoveClock:
             active_color="b",
         )
         board.halfmove_clock = 124
-        halfmove = board.black.queen.manual_move("e", 2)
+        halfmove = board.black.move("queen", "e", 2)
 
         assert board.halfmove_clock == 125
         assert halfmove.change["game_result"] == "0-1"

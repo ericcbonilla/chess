@@ -2,7 +2,7 @@ from typing import Callable, Optional
 
 from colorist import bright_red, red
 
-from main.exceptions import InvalidMoveError, NotationError
+from main.exceptions import GameplayError, InvalidMoveError, NotationError
 from main.game_tree import HalfMove
 from main.notation import AN
 from main.pieces import King, Pawn, Piece
@@ -81,7 +81,11 @@ class ManualAgent(Agent):
         x: Optional[str | XPosition] = None,
         y: Optional[int] = None,
         an_text: Optional[str] = None,
+        **kwargs,
     ) -> Optional[HalfMove]:
+        if self is not self.board.active_agent:
+            raise GameplayError("Agent is not active")
+
         if attr and x and y:
             piece = getattr(self, attr)
             x = XPosition(x)
@@ -89,7 +93,7 @@ class ManualAgent(Agent):
             captures = piece.get_captures(valid_moves)
 
             if (x, y) in valid_moves | captures:
-                return piece.move(x, y)
+                return piece.move(x, y, **kwargs)
 
             raise InvalidMoveError(f"Moving {piece} to {(x, y)} is invalid")
         else:
@@ -105,7 +109,7 @@ class ManualAgent(Agent):
                     if an_text:
                         an_text = None
 
-            kwargs = {}
+            kwargs = kwargs or {}
             if an.promotee_type:
                 kwargs = {"promotee_type": an.promotee_type}
 
