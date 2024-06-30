@@ -96,7 +96,6 @@ class Board:
         return row if y == 1 else f"{row}/"
 
     def get_fen(self, idx: Optional[float] = None) -> str:
-        # TODO consider moving this and the PGN stuff to another class NotationUtil?
         if idx:
             halfmove = get_halfmove(idx, self.game_tree)
             return halfmove.change["fen"]

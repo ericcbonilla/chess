@@ -29,7 +29,7 @@ class BoardBuilder:
         fullmove_number: Optional[int] = 1,
     ) -> Board:
         board = Board(max_moves, active_color, halfmove_clock, fullmove_number)
-        # TODO https://youtrack.jetbrains.com/issue/PY-36375/Unexpected-argument-false-positive-when-reassigning-a-dataclass-PEP-557
+        # https://youtrack.jetbrains.com/issue/PY-36375/Unexpected-argument-false-positive-when-reassigning-a-dataclass-PEP-557
         # noinspection PyArgumentList
         board.white = white_agent_cls(color=constants.WHITE, board=board)
         # noinspection PyArgumentList
