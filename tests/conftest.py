@@ -148,7 +148,7 @@ def three_fullmove_tree():
 
 
 @pytest.fixture
-def two_fullmove_tree():
+def two_fullmove_root():
     """
     1. e4 d5
     2. Nf3 Nc6
@@ -238,7 +238,7 @@ def two_fullmove_tree():
 
 
 @pytest.fixture
-def one_and_a_half_fullmove_tree():
+def one_and_a_half_fullmove_root():
     """
     1. e4 d5
     2. Nf3
@@ -310,7 +310,7 @@ def one_and_a_half_fullmove_tree():
 
 
 @pytest.fixture
-def one_fullmove_tree():
+def one_fullmove_root():
     """
     1. e4 d5
     """
@@ -359,7 +359,7 @@ def one_fullmove_tree():
 
 
 @pytest.fixture
-def half_move_tree():
+def half_move_root():
     """
     1. e4
     """

@@ -8,7 +8,7 @@ import pyperclip
 from colorist import Color
 
 from main import constants
-from main.game_tree import FullMove, HalfMove
+from main.game_tree import FullMove, GameTree, HalfMove
 from main.game_tree.utils import get_halfmove
 from main.types import Change, GameResult, Position
 from main.utils import print_move_heading
@@ -39,10 +39,10 @@ class Board:
         active_color: Optional[str] = None,
         halfmove_clock: Optional[int] = 0,
         fullmove_number: Optional[int] = 1,
-        game_tree: Optional[FullMove] = None,
+        game_tree: Optional[GameTree] = None,
     ):
         self.max_moves = max_moves
-        self.game_tree = game_tree or FullMove()
+        self.game_tree = game_tree or GameTree()
         self.active_color = active_color or "w"
         self.halfmove_clock = halfmove_clock
         self.fullmove_number = fullmove_number
@@ -98,7 +98,7 @@ class Board:
 
     def get_fen(self, idx: Optional[float] = None) -> str:
         if idx:
-            halfmove = get_halfmove(idx, self.game_tree)
+            halfmove = get_halfmove(idx, self.game_tree.root)
             return halfmove.change["fen"]
 
         piece_placement = ""
@@ -302,4 +302,4 @@ class Board:
             self.white.move()
             self.black.move()
 
-        return f"Moves played: {self.fullmove_number - 1}. Result: {self.result}"
+        print(f"\nMoves played: {self.fullmove_number - 1}. Result: {self.result}")

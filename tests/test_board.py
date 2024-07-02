@@ -15,23 +15,23 @@ class TestBoard:
         assert default_board.black.a_pawn.position == ("a", 6)
 
     def test_rollback_first_move_results_in_expected_state(
-        self, default_board, half_move_tree
+        self, default_board, half_move_root
     ):
-        default_board.apply_gametree(half_move_tree)
+        default_board.apply_gametree(half_move_root)
 
         default_board.rollback_halfmove()
 
         assert default_board.white.e_pawn.position == ("e", 2)
 
     def test_rollback_two_halfmoves_results_in_expected_state(
-        self, default_board, three_fullmove_tree, two_fullmove_tree
+        self, default_board, three_fullmove_tree, two_fullmove_root
     ):
         default_board.apply_gametree(three_fullmove_tree)
 
         default_board.rollback_halfmove()
         default_board.rollback_halfmove()
 
-        assert default_board.game_tree == two_fullmove_tree
+        assert default_board.game_tree.root == two_fullmove_root
 
         # These pieces should be unchanged
         assert default_board.white.e_pawn.position == ("e", 4)
@@ -188,9 +188,9 @@ class TestHasInsufficientMaterial:
 
 class TestHalfmoveClock:
     def test_when_pawn_moves_halfmove_clock_is_reset(
-        self, default_board, two_fullmove_tree
+        self, default_board, two_fullmove_root
     ):
-        default_board.apply_gametree(two_fullmove_tree)
+        default_board.apply_gametree(two_fullmove_root)
         assert default_board.halfmove_clock == 2
 
         default_board.white.move("h_pawn", "h", 4)
