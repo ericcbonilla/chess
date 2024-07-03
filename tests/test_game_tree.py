@@ -1,13 +1,14 @@
 import pytest
 
 from main import constants
-from main.game_tree import FullMove, HalfMove
+from main.game_tree import FullMove, GameTree, HalfMove
 from main.game_tree.utils import get_halfmove
 from main.pieces import King, Knight, Queen, Rook, WhitePawn
 
 
 class TestGetLatestHalfmove:
-    def test_get_latest_halfmove_returns_first_move(self, half_move_tree):
+    def test_get_latest_halfmove_returns_first_move(self, half_move_root):
+        tree = GameTree.backfill(root=half_move_root)
         expected = HalfMove(
             color=constants.WHITE,
             change={
@@ -28,9 +29,10 @@ class TestGetLatestHalfmove:
             },
         )
 
-        assert half_move_tree.get_latest_halfmove() == expected
+        assert tree.get_latest_halfmove() == expected
 
-    def test_get_latest_halfmove_returns_second_move(self, one_fullmove_tree):
+    def test_get_latest_halfmove_returns_second_move(self, one_fullmove_root):
+        tree = GameTree.backfill(root=one_fullmove_root)
         expected = HalfMove(
             color=constants.BLACK,
             change={
@@ -51,9 +53,10 @@ class TestGetLatestHalfmove:
             },
         )
 
-        assert one_fullmove_tree.get_latest_halfmove() == expected
+        assert tree.get_latest_halfmove() == expected
 
-    def test_get_latest_halfmove_returns_third_move(self, one_and_a_half_fullmove_tree):
+    def test_get_latest_halfmove_returns_third_move(self, one_and_a_half_fullmove_root):
+        tree = GameTree.backfill(root=one_and_a_half_fullmove_root)
         expected = HalfMove(
             color=constants.WHITE,
             change={
@@ -74,9 +77,10 @@ class TestGetLatestHalfmove:
             },
         )
 
-        assert one_and_a_half_fullmove_tree.get_latest_halfmove() == expected
+        assert tree.get_latest_halfmove() == expected
 
-    def test_get_latest_halfmove_returns_fourth_move(self, two_fullmove_tree):
+    def test_get_latest_halfmove_returns_fourth_move(self, two_fullmove_root):
+        tree = GameTree.backfill(root=two_fullmove_root)
         expected = HalfMove(
             color=constants.BLACK,
             change={
@@ -97,72 +101,76 @@ class TestGetLatestHalfmove:
             },
         )
 
-        assert two_fullmove_tree.get_latest_halfmove() == expected
+        assert tree.get_latest_halfmove() == expected
 
 
 class TestGameTreeMutations:
     def test_append_white_move_results_in_expected_tree(self, empty_change):
-        tree = FullMove()
-        white_move = HalfMove(color=constants.WHITE, change=empty_change)
-        tree.append(white_move)
+        tree = GameTree()
+        tree.append(HalfMove(color=constants.WHITE, change=empty_change))
 
-        assert tree == FullMove(
+        assert tree.root == FullMove(
             white=HalfMove(color=constants.WHITE, change=empty_change),
             black=None,
             child=None,
         )
+        assert tree.latest_fullmove is tree.root
+        assert tree.second_latest_fullmove is None
+        assert tree.third_latest_fullmove is None
 
     def test_append_black_move_results_in_expected_tree(self, empty_change):
-        tree = FullMove(
-            white=HalfMove(color=constants.WHITE, change=empty_change),
-            black=None,
-        )
-        black_move = HalfMove(color=constants.BLACK, change=empty_change)
-        tree.append(black_move)
+        tree = GameTree()
+        tree.append(HalfMove(color=constants.WHITE, change=empty_change))
+        tree.append(HalfMove(color=constants.BLACK, change=empty_change))
 
-        assert tree == FullMove(
+        assert tree.root == FullMove(
             white=HalfMove(color=constants.WHITE, change=empty_change),
             black=HalfMove(color=constants.BLACK, change=empty_change),
             child=FullMove(),
         )
+        assert tree.latest_fullmove == FullMove()
+        assert tree.second_latest_fullmove is tree.root
+        assert tree.third_latest_fullmove is None
 
     def test_remove_first_move_results_in_expected_tree(self, empty_change):
-        tree = FullMove(
-            white=HalfMove(color=constants.WHITE, change=empty_change),
-            black=None,
-            child=None,
-        )
+        tree = GameTree()
+        tree.append(HalfMove(color=constants.WHITE, change=empty_change))
+
         tree.prune()
 
-        assert tree == FullMove()
+        assert tree.root == FullMove()
+        assert tree.latest_fullmove is tree.root
 
     def test_remove_second_move_results_in_expected_tree(self, empty_change):
-        tree = FullMove(
-            white=HalfMove(color=constants.WHITE, change=empty_change),
-            black=HalfMove(color=constants.BLACK, change=empty_change),
-            child=FullMove(),
-        )
+        tree = GameTree()
+        tree.append(HalfMove(color=constants.WHITE, change=empty_change))
+        tree.append(HalfMove(color=constants.BLACK, change=empty_change))
         tree.prune()
 
-        assert tree == FullMove(
+        assert tree.root == FullMove(
             white=HalfMove(color=constants.WHITE, change=empty_change),
             black=None,
             child=None,
         )
+        assert tree.latest_fullmove is tree.root
+        assert tree.second_latest_fullmove is None
+        assert tree.third_latest_fullmove is None
 
     def test_remove_black_move_results_in_expected_tree(self, empty_change):
-        tree = FullMove(
-            white=HalfMove(color=constants.WHITE, change=empty_change),
-            black=HalfMove(color=constants.BLACK, change=empty_change),
-            child=FullMove(
+        tree = GameTree.backfill(
+            root=FullMove(
                 white=HalfMove(color=constants.WHITE, change=empty_change),
                 black=HalfMove(color=constants.BLACK, change=empty_change),
-                child=FullMove(),
-            ),
+                child=FullMove(
+                    white=HalfMove(color=constants.WHITE, change=empty_change),
+                    black=HalfMove(color=constants.BLACK, change=empty_change),
+                    child=FullMove(),
+                ),
+            )
         )
-        tree.prune()
 
-        assert tree == FullMove(
+        tree.prune()
+        assert tree.root == FullMove(
             white=HalfMove(color=constants.WHITE, change=empty_change),
             black=HalfMove(color=constants.BLACK, change=empty_change),
             child=FullMove(
@@ -171,24 +179,30 @@ class TestGameTreeMutations:
                 child=None,
             ),
         )
+        assert tree.second_latest_fullmove is tree.root
+        assert tree.latest_fullmove is tree.root.child
 
     def test_remove_white_move_results_in_expected_tree(self, empty_change):
-        tree = FullMove(
-            white=HalfMove(color=constants.WHITE, change=empty_change),
-            black=HalfMove(color=constants.BLACK, change=empty_change),
-            child=FullMove(
+        tree = GameTree.backfill(
+            root=FullMove(
                 white=HalfMove(color=constants.WHITE, change=empty_change),
-                black=None,
-                child=None,
-            ),
+                black=HalfMove(color=constants.BLACK, change=empty_change),
+                child=FullMove(
+                    white=HalfMove(color=constants.WHITE, change=empty_change),
+                    black=None,
+                    child=None,
+                ),
+            )
         )
         tree.prune()
 
-        assert tree == FullMove(
+        assert tree.root == FullMove(
             white=HalfMove(color=constants.WHITE, change=empty_change),
             black=HalfMove(color=constants.BLACK, change=empty_change),
             child=FullMove(),
         )
+        assert tree.second_latest_fullmove is tree.root
+        assert tree.latest_fullmove == FullMove()
 
 
 class TestUtils:

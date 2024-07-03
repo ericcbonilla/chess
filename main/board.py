@@ -4,10 +4,11 @@ from copy import deepcopy
 from datetime import date
 from typing import TYPE_CHECKING, Dict, Optional
 
+import pyperclip
 from colorist import Color
 
 from main import constants
-from main.game_tree import FullMove, HalfMove
+from main.game_tree import FullMove, GameTree, HalfMove
 from main.game_tree.utils import get_halfmove
 from main.types import Change, GameResult, Position
 from main.utils import print_move_heading
@@ -38,10 +39,10 @@ class Board:
         active_color: Optional[str] = None,
         halfmove_clock: Optional[int] = 0,
         fullmove_number: Optional[int] = 1,
-        game_tree: Optional[FullMove] = None,
+        game_tree: Optional[GameTree] = None,
     ):
         self.max_moves = max_moves
-        self.game_tree = game_tree or FullMove()
+        self.game_tree = game_tree or GameTree()
         self.active_color = active_color or "w"
         self.halfmove_clock = halfmove_clock
         self.fullmove_number = fullmove_number
@@ -97,7 +98,7 @@ class Board:
 
     def get_fen(self, idx: Optional[float] = None) -> str:
         if idx:
-            halfmove = get_halfmove(idx, self.game_tree)
+            halfmove = get_halfmove(idx, self.game_tree.root)
             return halfmove.change["fen"]
 
         piece_placement = ""
@@ -122,7 +123,9 @@ class Board:
             f"{en_passant_target} {self.halfmove_clock} {self.fullmove_number}"
         )
 
-    def _get_movetext(self, compact: Optional[bool] = True) -> str:
+    def _get_movetext(
+        self, compact: Optional[bool] = True, colored: Optional[bool] = True
+    ) -> str:
         movetext = ""
         for node in self.game_tree:
             if node.is_empty():
@@ -130,18 +133,24 @@ class Board:
 
             number, _ = (node.white or node.black).change["fullmove_number"]
             white_an = node.white.to_an() if node.white else "..."
-            white_color = Color.RED if "x" in white_an else Color.WHITE
             black_an = node.black.to_an() if node.black else ""
-            black_color = Color.RED if "x" in black_an else Color.YELLOW
+
+            if colored:
+                white_color = Color.RED if "x" in white_an else Color.WHITE
+                black_color = Color.RED if "x" in black_an else Color.YELLOW
+                off = Color.OFF
+            else:
+                white_color, black_color, off = "", "", ""
+
             movetext += (
-                f"{number}. {white_color}{white_an}{Color.OFF} "
-                f"{black_color}{black_an}{Color.OFF}{" " if compact else "\n"}"
+                f"{number}. {white_color}{white_an}{off} "
+                f"{black_color}{black_an}{off}{" " if compact else "\n"}"
             )
 
         return movetext + self.truncated_result
 
-    def get_pgn(self, compact: Optional[bool] = True) -> str:
-        return (
+    def get_pgn(self, compact: Optional[bool] = True):
+        pgn = (
             f'[Event "?"]\n'
             f'[Site "?"]\n'
             f"[Date \"{date.today().strftime('%Y.%m.%d')}\"]\n"
@@ -149,11 +158,11 @@ class Board:
             f'[Result "{self.truncated_result}"]\n'
             f'[White "{self.white.__class__.__name__}"]\n'
             f'[Black "{self.black.__class__.__name__}"]\n\n'
-            f"{self._get_movetext(compact=compact)}"
         )
 
-    def print_pgn(self, compact: Optional[bool] = True):
-        print(self.get_pgn(compact=compact))
+        print(f"{pgn}{self._get_movetext(compact=compact)}")
+        pyperclip.copy(f"{pgn}{self._get_movetext(compact=compact, colored=False)}")
+        print("\nCopied to clipboard!")
 
     @staticmethod
     def add_piece(piece: "Piece", attr: str):
@@ -280,7 +289,7 @@ class Board:
     def play(self):
         term_size = os.get_terminal_size()
 
-        if self.active_agent is self.black:
+        if not self.result and self.active_agent is self.black:
             print_move_heading(term_size, self.fullmove_number)
             print(f"Turn: {constants.WHITE}\n...")
             self.black.move()
@@ -293,4 +302,4 @@ class Board:
             self.white.move()
             self.black.move()
 
-        return f"Moves played: {self.fullmove_number - 1}. Result: {self.result}"
+        print(f"\nMoves played: {self.fullmove_number - 1}. Result: {self.result}")

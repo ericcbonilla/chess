@@ -161,7 +161,7 @@ class Piece:
         # If we're constructing a new change, it means we're verifying King
         # safety for this Agent. Skip augmentations in this case - they can't
         # affect safety of my own king for this move, which is all we care
-        # about here. Without this, it'll recursively call this method infinitely.
+        # about here. Otherwise, this method will infinitely recurse.
         change = change or self.construct_change(*new_position, augment=False)
 
         halfmove = HalfMove(color=self.agent.color, change=change)
