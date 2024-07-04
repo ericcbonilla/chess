@@ -114,8 +114,8 @@ class ManualAgent(Agent):
                 kwargs = {"promotee_type": an.promotee_type}
 
             if an.is_capture:
-                cprint(self.color, f"{piece} capturing on {pick}", color_fn=red)
+                cprint(f"{piece} capturing on {pick}", self.color, color_fn=red)
             else:
-                cprint(self.color, f"Moving {piece} to {pick}")
+                cprint(f"Moving {piece} to {pick}", self.color)
 
             return piece.move(*pick, **kwargs)

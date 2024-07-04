@@ -26,19 +26,20 @@ class AggressiveAgent(RandomAgent):
         for _, piece in sorted(self.pieces, key=lambda _: random.random()):
             for move in piece.get_valid_moves():
                 if piece.king_would_be_in_check(piece.opponent.king, move):
+                    cprint(f"Turn: {self.color}", self.color)
                     if move in piece.opponent.positions | {
                         piece.opponent.en_passant_target
                     }:
-                        cprint(self.color, f"{piece} capturing on {move}", color_fn=red)
+                        cprint(f"{piece} capturing on {move}", self.color, color_fn=red)
                     else:
-                        cprint(self.color, f"Moving {piece} to {move}")
+                        cprint(f"Moving {piece} to {move}", self.color)
                     return piece.move(*move)
 
         for _, piece in sorted(self.pieces, key=lambda _: random.random()):
             if captures := piece.get_captures(valid_moves=piece.get_valid_moves()):
                 pick = random.sample(sorted(captures), 1)[0]
-                cprint(self.color, f"Turn: {self.color}")
-                cprint(self.color, f"{piece} capturing on {pick}", color_fn=red)
+                cprint(f"Turn: {self.color}", self.color)
+                cprint(f"{piece} capturing on {pick}", self.color, color_fn=red)
 
                 return piece.move(*pick)
 

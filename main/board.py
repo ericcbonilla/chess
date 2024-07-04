@@ -11,7 +11,7 @@ from main import constants
 from main.game_tree import FullMove, GameTree, HalfMove
 from main.game_tree.utils import get_halfmove
 from main.types import Change, GameResult, Position
-from main.utils import print_move_heading
+from main.utils import cprint, print_move_heading
 from main.xposition import XPosition
 
 if TYPE_CHECKING:
@@ -160,9 +160,9 @@ class Board:
             f'[Black "{self.black.__class__.__name__}"]\n\n'
         )
 
-        print(f"{pgn}{self._get_movetext(compact=compact)}")
+        cprint(f"{pgn}{self._get_movetext(compact=compact)}")
         pyperclip.copy(f"{pgn}{self._get_movetext(compact=compact, colored=False)}")
-        print("\nCopied to clipboard!")
+        cprint("\nCopied to clipboard!")
 
     @staticmethod
     def add_piece(piece: "Piece", attr: str):
@@ -291,7 +291,7 @@ class Board:
 
         if not self.result and self.active_agent is self.black:
             print_move_heading(term_size, self.fullmove_number)
-            print(f"Turn: {constants.WHITE}\n...")
+            cprint(f"Turn: {constants.WHITE}\n...")
             self.black.move()
 
         while not self.result:

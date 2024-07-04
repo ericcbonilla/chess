@@ -23,9 +23,13 @@ class RandomAgent(Agent):
 
         pick = random.sample(legal_moves, 1)[0]
         if pick in piece.opponent.positions | {piece.opponent.en_passant_target}:
-            cprint(self.color, f"{piece} capturing on {pick}", color_fn=red)
+            cprint(
+                f"{piece} capturing on {pick}",
+                self.color,
+                color_fn=red,
+            )
         else:
-            cprint(self.color, f"Moving {piece} to {pick}")
+            cprint(f"Moving {piece} to {pick}", self.color)
 
         return piece.move(*pick)
 
@@ -35,7 +39,7 @@ class RandomAgent(Agent):
         x: Optional[str] = None,
         y: Optional[int] = None,
     ) -> Optional[HalfMove]:
-        cprint(self.color, f"Turn: {self.color}")
+        cprint(f"Turn: {self.color}", self.color)
 
         for _, piece in sorted(self.pieces, key=lambda _: random.random()):
             if result := self._random_move(piece) is None:

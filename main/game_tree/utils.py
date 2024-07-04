@@ -2,6 +2,8 @@ from typing import TYPE_CHECKING
 
 from tabulate import tabulate
 
+from main.utils import cprint
+
 if TYPE_CHECKING:
     from .fullmove import FullMove
     from .halfmove import HalfMove
@@ -27,7 +29,7 @@ def pprint(root: "FullMove"):
         tablefmt="grid",
         maxcolwidths=[None, 60, 60],
     )
-    print(table)
+    cprint(table)
 
 
 def get_halfmove(idx: float, root: "FullMove") -> "HalfMove":
