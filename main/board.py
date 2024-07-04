@@ -127,7 +127,7 @@ class Board:
         self, compact: Optional[bool] = True, colored: Optional[bool] = True
     ) -> str:
         movetext = ""
-        for node in self.game_tree:
+        for node in self.game_tree.root:
             if node.is_empty():
                 break
 
