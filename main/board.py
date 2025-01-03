@@ -122,18 +122,14 @@ class Board:
         if idx:
             halfmove = get_halfmove(idx, self.game_tree.root)
             return halfmove.change["fen"]
-
         piece_placement = ""
         white_memo = {p.position: p.fen_symbol for _, p in self.white.pieces}
         black_memo = {p.position: p.fen_symbol.lower() for _, p in self.black.pieces}
-
         for y in constants.RANKS:
             piece_placement += self._get_row(y, white_memo, black_memo)
-
         castling_rights = (
             self.white.castling_rights + self.black.castling_rights.lower()
         ) or "-"
-
         if target := self.white.en_passant_target or self.black.en_passant_target:
             x, y = target
             en_passant_target = f"{x}{str(y)}"
@@ -162,23 +158,19 @@ class Board:
         for node in self.game_tree.root:
             if node.is_empty():
                 break
-
             number, _ = (node.white or node.black).change["fullmove_number"]
             white_an = node.white.to_an() if node.white else "..."
             black_an = node.black.to_an() if node.black else ""
-
             if colored:
                 white_color = Color.RED if "x" in white_an else Color.WHITE
                 black_color = Color.RED if "x" in black_an else Color.YELLOW
                 off = Color.OFF
             else:
                 white_color, black_color, off = "", "", ""
-
             movetext += (
                 f"{number}. {white_color}{white_an}{off} "
                 f"{black_color}{black_an}{off}{" " if compact else "\n"}"
             )
-
         return movetext + self.truncated_result
 
     def get_pgn(self, compact: Optional[bool] = True):
