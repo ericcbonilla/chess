@@ -42,7 +42,7 @@ class RandomAgent(Agent):
         cprint(f"Turn: {self.color}", self.color)
 
         for _, piece in sorted(self.pieces, key=lambda _: random.random()):
-            if result := self._random_move(piece) is None:
+            if (result := self._random_move(piece)) is None:
                 continue  # Piece is unmovable
             else:
                 return result
