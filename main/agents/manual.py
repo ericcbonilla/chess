@@ -27,7 +27,6 @@ class ManualAgent(Agent):
         search_fn: Callable[[Piece], bool] = lambda p: True
         piece = None
 
-        # TODO can we use similar logic to optimize get_valid_moves()?
         if an.piece_type is King:
             piece = self.king
         elif an.piece_type is Pawn:
@@ -89,6 +88,8 @@ class ManualAgent(Agent):
         if attr and x and y:
             piece = getattr(self, attr)
             x = XPosition(x)
+
+            # TODO change this and get_matching_piece() to just call is_valid_move()
             valid_moves = piece.get_valid_moves()
             captures = piece.get_captures(valid_moves)
 

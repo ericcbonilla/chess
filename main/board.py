@@ -1,8 +1,8 @@
 import os
-from collections import Counter
+from collections import Counter, defaultdict
 from copy import deepcopy
 from datetime import date
-from typing import TYPE_CHECKING, Dict, Optional
+from typing import TYPE_CHECKING, Dict, Optional, Set
 
 import pyperclip
 from colorist import Color
@@ -10,7 +10,7 @@ from colorist import Color
 from main import constants
 from main.game_tree import FullMove, GameTree, HalfMove
 from main.game_tree.utils import get_halfmove
-from main.types import Change, GameResult, Position
+from main.types import CacheChanges, Change, GameResult, Position
 from main.utils import cprint, print_move_heading
 from main.xposition import XPosition
 
@@ -35,18 +35,19 @@ class Board:
 
     def __init__(
         self,
-        max_moves: int,
+        max_fullmoves: int,
         active_color: Optional[str] = None,
         halfmove_clock: Optional[int] = 0,
         fullmove_number: Optional[int] = 1,
         game_tree: Optional[GameTree] = None,
     ):
-        self.max_moves = max_moves
+        self.max_fullmoves = max_fullmoves
         self.game_tree = game_tree or GameTree()
         self.active_color = active_color or "w"
         self.halfmove_clock = halfmove_clock
         self.fullmove_number = fullmove_number
         self.result: GameResult = None
+        self.sight_registry: Dict[Position, Set[Piece]] = defaultdict(set)
 
         self._white = None
         self._black = None
@@ -78,6 +79,25 @@ class Board:
     def active_agent(self) -> "Agent":
         return self.white if self.active_color == "w" else self.black
 
+    # def get_sight(self, position: Position) -> Dict["Piece", Set[Position]]:
+    #     return {piece: piece.sight_cache for piece in self.sight_registry[position]}
+
+    def clear_piece_caches(self, position: Position):
+        to_unregister = set()
+
+        for piece in self.sight_registry[position]:
+            to_unregister.add(piece)
+            piece.clear_cache()
+        for piece in to_unregister:
+            self.sight_registry[position].remove(piece)
+
+    def compute_sight(self):
+        # TODO remove when done?
+        for _, piece in self.white.pieces:
+            piece.sight
+        for _, piece in self.black.pieces:
+            piece.sight
+
     @staticmethod
     def _get_row(
         y: int, white_memo: Dict[Position, str], black_memo: Dict[Position, str]
@@ -96,7 +116,9 @@ class Board:
 
         return row if y == 1 else f"{row}/"
 
-    def get_fen(self, idx: Optional[float] = None) -> str:
+    def get_fen(
+        self, idx: Optional[float] = None, internal: Optional[bool] = False
+    ) -> str | None:
         if idx:
             halfmove = get_halfmove(idx, self.game_tree.root)
             return halfmove.change["fen"]
@@ -118,10 +140,20 @@ class Board:
         else:
             en_passant_target = "-"
 
-        return (
+        fen = (
             f"{piece_placement} {self.active_color} {castling_rights} "
             f"{en_passant_target} {self.halfmove_clock} {self.fullmove_number}"
         )
+
+        if internal:
+            return (
+                f"{piece_placement} {self.active_color} {castling_rights} "
+                f"{en_passant_target} {self.halfmove_clock} {self.fullmove_number}"
+            )
+        else:
+            print(fen)
+            pyperclip.copy(fen)
+            print("\nCopied to clipboard!")
 
     def _get_movetext(
         self, compact: Optional[bool] = True, colored: Optional[bool] = True
@@ -160,9 +192,9 @@ class Board:
             f'[Black "{self.black.__class__.__name__}"]\n\n'
         )
 
-        cprint(f"{pgn}{self._get_movetext(compact=compact)}")
+        print(f"{pgn}{self._get_movetext(compact=compact)}")
         pyperclip.copy(f"{pgn}{self._get_movetext(compact=compact, colored=False)}")
-        cprint("\nCopied to clipboard!")
+        print("\nCopied to clipboard!")
 
     @staticmethod
     def add_piece(piece: "Piece", attr: str):
@@ -175,6 +207,11 @@ class Board:
     def destroy_piece(piece: "Piece", attr: str):
         setattr(piece.agent.graveyard, attr, piece)
         setattr(piece.agent, attr, None)
+
+    @staticmethod
+    def update_caches(cache_changes: CacheChanges):
+        for piece, change in cache_changes.items():
+            piece.sight_cache = change[1]
 
     def apply_change(self, change: Change):
         """
@@ -214,6 +251,7 @@ class Board:
         self.halfmove_clock = change["halfmove_clock"][1]
         self.active_color = "w" if self.active_color == "b" else "b"
         self.fullmove_number = change["fullmove_number"][1]
+        # self.update_caches(change["caches"])
 
     def apply_gametree(self, root: FullMove):
         for node in root:
@@ -228,7 +266,7 @@ class Board:
 
     def rollback_halfmove(self, halfmove: Optional[HalfMove] = None):
         halfmove = halfmove or self.game_tree.get_latest_halfmove()
-        inverted_change = deepcopy(constants.BLANK_CHANGE)
+        inverted_change: Change = deepcopy(constants.BLANK_CHANGE)
 
         for agent in (self.white, self.black):
             if halfmove.change[agent.color]:
@@ -255,7 +293,7 @@ class Board:
             "game_result" in halfmove.change
             and halfmove.change["game_result"] is not None
         ):
-            inverted_change["result"] = None
+            inverted_change["game_result"] = None
 
         inverted_change["halfmove_clock"] = (
             halfmove.change["halfmove_clock"][1],
@@ -265,6 +303,9 @@ class Board:
             halfmove.change["fullmove_number"][1],
             halfmove.change["fullmove_number"][0],
         )
+        # inverted_change["caches"] = {
+        #     piece: (cc[1], cc[0]) for piece, cc in halfmove.change["caches"].items()
+        # }
 
         self.apply_change(inverted_change)
         self.game_tree.prune()
@@ -286,20 +327,25 @@ class Board:
                 return True
         return False
 
-    def play(self):
+    def play(self, num_fullmoves: Optional[int] = None):
         term_size = os.get_terminal_size()
+        elapsed_fullmoves = 0
 
         if not self.result and self.active_agent is self.black:
             print_move_heading(term_size, self.fullmove_number)
             cprint(f"Turn: {constants.WHITE}\n...")
             self.black.move()
+            elapsed_fullmoves += 1
 
         while not self.result:
-            if (self.fullmove_number - 1) == self.max_moves:
+            if (self.fullmove_number - 1) == self.max_fullmoves:
+                break
+            if num_fullmoves is not None and elapsed_fullmoves == num_fullmoves:
                 break
 
             print_move_heading(term_size, self.fullmove_number)
             self.white.move()
             self.black.move()
+            elapsed_fullmoves += 1
 
         print(f"\nMoves played: {self.fullmove_number - 1}. Result: {self.result}")

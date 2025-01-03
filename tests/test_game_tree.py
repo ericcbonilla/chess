@@ -26,6 +26,7 @@ class TestGetLatestHalfmove:
                 "halfmove_clock": (0, 0),
                 "fullmove_number": (1, 1),
                 "fen": "",
+                "caches": {},
             },
         )
 
@@ -50,6 +51,7 @@ class TestGetLatestHalfmove:
                 "halfmove_clock": (0, 0),
                 "fullmove_number": (1, 2),
                 "fen": "",
+                "caches": {},
             },
         )
 
@@ -74,6 +76,7 @@ class TestGetLatestHalfmove:
                 "halfmove_clock": (0, 1),
                 "fullmove_number": (2, 2),
                 "fen": "",
+                "caches": {},
             },
         )
 
@@ -98,6 +101,7 @@ class TestGetLatestHalfmove:
                 "halfmove_clock": (1, 2),
                 "fullmove_number": (2, 3),
                 "fen": "",
+                "caches": {},
             },
         )
 

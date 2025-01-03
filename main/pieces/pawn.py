@@ -1,5 +1,6 @@
 from typing import Optional, Set
 
+from main import constants
 from main.game_tree import HalfMove
 from main.types import Change, Position
 from main.xposition import XPosition
@@ -34,6 +35,25 @@ class Pawn(Piece):
             return True
 
         return new_position in self.opponent.positions
+
+    def is_valid_move(
+        self,
+        new_position: Position,
+        keep_king_safe: Optional[bool] = True,
+    ) -> bool:
+        if (
+            new_position not in constants.SQUARES
+            or new_position in self.forbidden_squares
+            or not self.is_open_path(new_position)
+        ):
+            return False
+        elif keep_king_safe and self.king_would_be_in_check(
+            king=self.king,
+            new_position=new_position,
+        ):
+            return False
+
+        return True
 
     def can_move(self) -> Set[Position]:
         return self.get_valid_moves(lazy=True) or self.get_captures()

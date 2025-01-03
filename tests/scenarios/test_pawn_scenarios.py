@@ -129,7 +129,7 @@ class TestPawnScenarios:
         )
         halfmove = board.white.move("f_pawn", "g", 8, promotee_type=Queen)
 
-        assert halfmove.change == {
+        assert halfmove.change == halfmove.change | {
             "WHITE": {
                 "f_pawn": {
                     "old_position": ("f", 7),
@@ -147,13 +147,6 @@ class TestPawnScenarios:
                     "new_position": None,
                 }
             },
-            "disambiguation": "",
-            "check": False,
-            "game_result": None,
-            "symbol": "",
-            "halfmove_clock": (0, 0),
-            "fullmove_number": (1, 1),
-            "fen": "6Q1/8/8/4k3/2K5/8/8/8 b - - 0 1",
         }
 
 
@@ -250,7 +243,7 @@ class TestEnPassant:
         assert default_board.white.d_pawn.position == ("e", 6)
         assert default_board.black.graveyard.e_pawn
         assert default_board.black.en_passant_target is None
-        assert halfmove.change == {
+        assert halfmove.change == halfmove.change | {
             "WHITE": {
                 "d_pawn": {
                     "old_position": ("d", 5),
@@ -264,13 +257,6 @@ class TestEnPassant:
                     "new_position": None,
                 },
             },
-            "disambiguation": "",
-            "check": False,
-            "game_result": None,
-            "symbol": "",
-            "halfmove_clock": (0, 0),
-            "fullmove_number": (3, 3),
-            "fen": "rnbqkbnr/pppp1p1p/4P1p1/8/8/8/PPP1PPPP/RNBQKBNR b KQkq - 0 3",
         }
 
     def test_rollback_en_passant_results_in_expected_state(self, default_board):

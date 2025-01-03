@@ -65,7 +65,7 @@ class TestBoard:
     def test_with_single_move_get_fen_returns_expected(self, default_board):
         default_board.white.move("e_pawn", "e", 4)
 
-        assert default_board.get_fen() == (
+        assert default_board.get_fen(internal=True) == (
             "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1"
         )
 
@@ -76,7 +76,7 @@ class TestBoard:
         default_board.black.move("f_bishop", "a", 3)
         default_board.white.move("g_pawn", "g", 3)
 
-        assert default_board.get_fen(2.5) == (
+        assert default_board.get_fen(2.5, internal=True) == (
             "rnbqk1nr/pppp1ppp/4p3/8/3P4/b4N2/PPP1PPPP/RNBQKB1R w KQkq - 2 3"
         )
 
@@ -84,7 +84,7 @@ class TestBoard:
         default_board.white.move("d_pawn", "d", 4)
         default_board.black.move("e_pawn", "e", 6)
 
-        assert default_board.get_fen(1.5) == (
+        assert default_board.get_fen(1.5, internal=True) == (
             "rnbqkbnr/pppp1ppp/4p3/8/3P4/8/PPP1PPPP/RNBQKBNR w KQkq - 0 2"
         )
 

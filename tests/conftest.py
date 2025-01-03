@@ -42,6 +42,7 @@ def three_fullmove_tree():
                 "halfmove_clock": (0, 0),
                 "fullmove_number": (1, 1),
                 "fen": "",
+                "caches": {},
             },
         ),
         black=HalfMove(
@@ -61,6 +62,7 @@ def three_fullmove_tree():
                 "halfmove_clock": (0, 0),
                 "fullmove_number": (1, 2),
                 "fen": "",
+                "caches": {},
             },
         ),
         child=FullMove(
@@ -81,6 +83,7 @@ def three_fullmove_tree():
                     "halfmove_clock": (0, 1),
                     "fullmove_number": (2, 2),
                     "fen": "",
+                    "caches": {},
                 },
             ),
             black=HalfMove(
@@ -100,6 +103,7 @@ def three_fullmove_tree():
                     "halfmove_clock": (1, 2),
                     "fullmove_number": (2, 3),
                     "fen": "",
+                    "caches": {},
                 },
             ),
             child=FullMove(
@@ -120,6 +124,7 @@ def three_fullmove_tree():
                         "halfmove_clock": (2, 3),
                         "fullmove_number": (3, 3),
                         "fen": "",
+                        "caches": {},
                     },
                 ),
                 black=HalfMove(
@@ -139,6 +144,7 @@ def three_fullmove_tree():
                         "halfmove_clock": (3, 0),
                         "fullmove_number": (3, 4),
                         "fen": "",
+                        "caches": {},
                     },
                 ),
                 child=FullMove(),
@@ -172,6 +178,7 @@ def two_fullmove_root():
                 "halfmove_clock": (0, 0),
                 "fullmove_number": (1, 1),
                 "fen": "",
+                "caches": {},
             },
         ),
         black=HalfMove(
@@ -191,6 +198,7 @@ def two_fullmove_root():
                 "halfmove_clock": (0, 0),
                 "fullmove_number": (1, 2),
                 "fen": "",
+                "caches": {},
             },
         ),
         child=FullMove(
@@ -211,6 +219,7 @@ def two_fullmove_root():
                     "halfmove_clock": (0, 1),
                     "fullmove_number": (2, 2),
                     "fen": "",
+                    "caches": {},
                 },
             ),
             black=HalfMove(
@@ -230,6 +239,7 @@ def two_fullmove_root():
                     "halfmove_clock": (1, 2),
                     "fullmove_number": (2, 3),
                     "fen": "",
+                    "caches": {},
                 },
             ),
             child=FullMove(),
@@ -262,6 +272,7 @@ def one_and_a_half_fullmove_root():
                 "halfmove_clock": (0, 0),
                 "fullmove_number": (1, 1),
                 "fen": "",
+                "caches": {},
             },
         ),
         black=HalfMove(
@@ -281,6 +292,7 @@ def one_and_a_half_fullmove_root():
                 "halfmove_clock": (0, 0),
                 "fullmove_number": (1, 2),
                 "fen": "",
+                "caches": {},
             },
         ),
         child=FullMove(
@@ -301,6 +313,7 @@ def one_and_a_half_fullmove_root():
                     "halfmove_clock": (0, 1),
                     "fullmove_number": (2, 2),
                     "fen": "",
+                    "caches": {},
                 },
             ),
             black=None,
@@ -333,6 +346,7 @@ def one_fullmove_root():
                 "halfmove_clock": (0, 0),
                 "fullmove_number": (1, 1),
                 "fen": "",
+                "caches": {},
             },
         ),
         black=HalfMove(
@@ -352,6 +366,7 @@ def one_fullmove_root():
                 "halfmove_clock": (0, 0),
                 "fullmove_number": (1, 2),
                 "fen": "",
+                "caches": {},
             },
         ),
         child=FullMove(),
@@ -382,6 +397,7 @@ def half_move_root():
                 "halfmove_clock": (0, 0),
                 "fullmove_number": (1, 1),
                 "fen": "",
+                "caches": {},
             },
         ),
         black=None,
@@ -414,6 +430,7 @@ def one_fullmove_then_capture_tree():
                 "halfmove_clock": (0, 0),
                 "fullmove_number": (1, 1),
                 "fen": "",
+                "caches": {},
             },
         ),
         black=HalfMove(
@@ -433,6 +450,7 @@ def one_fullmove_then_capture_tree():
                 "halfmove_clock": (0, 0),
                 "fullmove_number": (1, 2),
                 "fen": "",
+                "caches": {},
             },
         ),
         child=FullMove(
@@ -458,6 +476,7 @@ def one_fullmove_then_capture_tree():
                     "halfmove_clock": (0, 0),
                     "fullmove_number": (2, 2),
                     "fen": "",
+                    "caches": {},
                 },
             ),
             black=None,
@@ -494,6 +513,7 @@ def white_kingside_castle():
                 "halfmove_clock": (0, 1),
                 "fullmove_number": (1, 1),
                 "fen": "",
+                "caches": {},
             },
         ),
         black=None,
@@ -528,6 +548,7 @@ def white_queen_ambiguous_capture():
                 "halfmove_clock": (0, 0),
                 "fullmove_number": (1, 1),
                 "fen": "",
+                "caches": {},
             },
         ),
         black=None,
@@ -567,6 +588,7 @@ def white_pawn_promotion_to_queen():
                 "halfmove_clock": (0, 0),
                 "fullmove_number": (1, 1),
                 "fen": "",
+                "caches": {},
             },
         ),
         black=None,

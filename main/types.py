@@ -3,6 +3,7 @@ from typing import (
     Dict,
     Literal,
     NotRequired,
+    Set,
     Tuple,
     Type,
     TypedDict,
@@ -33,12 +34,13 @@ class PieceChange(TypedDict):
 
 
 AgentChange = Dict[str, PieceChange | Tuple[Position, None]]
+CacheChanges = Dict["Piece", Tuple[Set, Set]]
 
 
 class LookaheadResults(TypedDict):
     check: NotRequired[bool]
     game_result: NotRequired[GameResult]
-    fen: NotRequired[str]
+    fen: NotRequired[str | None]
 
 
 class Change(LookaheadResults):
@@ -48,6 +50,7 @@ class Change(LookaheadResults):
     symbol: str | None
     halfmove_clock: Tuple[int, int]
     fullmove_number: Tuple[int, int]
+    caches: NotRequired[CacheChanges]
 
 
 class PieceScaffold(TypedDict):

@@ -17,6 +17,7 @@ class Rook(Piece):
         *((0, p) for p in range(1, 9)),
         *((0, -p) for p in range(1, 9)),
     }
+    capture_movements = movements
     symbol = "R"
     fen_symbol = symbol
     value = 5

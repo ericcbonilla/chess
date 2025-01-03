@@ -14,6 +14,9 @@ class TestGetGameResult:
             ],
             active_color="b",
         )
+
+        # TODO problem is that a8 queen is still using old sight. Sight needs to be
+        # updated and rolled back upon lookahead
         halfmove = board.black.move("queen", "a", 8)
 
         assert halfmove.change["check"]

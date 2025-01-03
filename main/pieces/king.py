@@ -57,8 +57,9 @@ class King(Piece):
         self, new_position: Position, keep_king_safe: Optional[bool] = True
     ) -> bool:
         if (
-            new_position not in constants.SQUARES
-            or new_position in self.forbidden_squares
+            # new_position not in constants.SQUARES
+            # or new_position in self.forbidden_squares
+            new_position not in self.sight
             or self.is_in_check(new_position)
         ):
             return False
@@ -122,20 +123,52 @@ class King(Piece):
         # Maybe only loop over movable pieces? Maybe there's some piece of this
         # we could memoize?
 
+        # TODO start here
+        # Maybe let's try memoizing based on the position and return value of this function.
+        # Will have to be a custom memo since the lookup will be by the King's position
+
+        # Maybe introduce this concept of "sight"
+        # When the King moves, he is only capturable by the pieces that can see him.
+        # For slow moving pieces (Knight, Pawn, King), sight has a strict upper bound.
+        # It also can't be affected by movement of distant pieces (e.g. pins, discoveries)
+
+        # For fast moving pieces, I guess just calculate as we're doing here, maybe with
+        # some further optimizations
+        #
+
+        # 7/5 Ok I think I figured it out. A more general solution that could have benefits
+        # beyond just this method. Put the cache on the piece instance itself. Invalid it
+        # when that piece moves, or if another piece moves in a way that can affect the
+        # piece's movements.
+
+        # The cache should be based on "open" moves and not valid moves. All valid moves
+        # are open moves, but not all open moves are valid. But for the purposes of
+        # checking, open moves are all that matters.
+
+        # This should simplify this method a lot. It should also make
+        # forbidden_squares obsolete?
+
         for _, piece in self.opponent.pieces:
-            if isinstance(piece, (WhitePawn, BlackPawn, Knight, King)):
-                for x_d, y_d in piece.capture_movements:
-                    new_position = piece.x + x_d, piece.y + y_d
-                    if new_position == self.position:
-                        return True
-            else:
-                for x_d, y_d in piece.movements:
-                    new_position = piece.x + x_d, piece.y + y_d
-                    if new_position == self.position:
-                        # Don't need to do a full validity check here, since most
-                        # of those checks either don't apply or are redundant
-                        if piece.is_open_path(new_position):
-                            return True
+
+            # if self.agent.color == 'WHITE':
+            #     breakpoint()
+
+            if self.position in piece.sight:
+                return True
+
+            # if isinstance(piece, (WhitePawn, BlackPawn, Knight, King)):
+            #     for x_d, y_d in piece.capture_movements:
+            #         new_position = piece.x + x_d, piece.y + y_d
+            #         if new_position == self.position:
+            #             return True
+            # else:
+            #     for x_d, y_d in piece.movements:
+            #         new_position = piece.x + x_d, piece.y + y_d
+            #         if new_position == self.position:
+            #             # Don't need to do a full validity check here, since most
+            #             # of those checks either don't apply or are redundant
+            #             if piece.is_open_path(new_position):
+            #                 return True
 
         return False
 

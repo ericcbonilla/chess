@@ -26,8 +26,10 @@ class Piece:
         self.agent = agent
         self.x = XPosition(x)
         self.y = y
+        self.sight_cache = set()
 
     movements: Set = NotImplemented
+    capture_movements: Set = NotImplemented
     symbol: str = NotImplemented
     fen_symbol: str = NotImplemented
     value: int = NotImplemented
@@ -82,16 +84,43 @@ class Piece:
             return False
         return True
 
+    @property
+    def sight(self) -> Set[Position | None]:
+        if self.sight_cache:
+            # print(f"{self}: Cache hit!")
+            return self.sight_cache
+
+        # print(f"{self}: Cache miss!")
+        for x_d, y_d in self.capture_movements:
+            new_position = self.x + x_d, self.y + y_d
+            if new_position not in constants.SQUARES:
+                continue
+            elif new_position in self.agent.positions:
+                # Add this piece to the registry for this position, but don't add
+                # this position to the cache (The piece can't actually see it).
+                # This way, if the other piece departs that square, we know to
+                # recalculate sight for this piece.
+                self.agent.board.sight_registry[new_position].add(self)
+            elif self.is_open_path(new_position):
+                self.sight_cache.add(new_position)
+                self.agent.board.sight_registry[new_position].add(self)
+
+            # 12/29 TRYING
+            elif new_position in self.opponent.positions:
+                self.agent.board.sight_registry[new_position].add(self)
+
+        self.sight_cache.add(None)
+        return self.sight_cache
+
+    def clear_cache(self):
+        self.sight_cache = set()
+
     def is_valid_move(
         self,
         new_position: Position,
         keep_king_safe: Optional[bool] = True,
     ) -> bool:
-        if (
-            new_position not in constants.SQUARES
-            or new_position in self.forbidden_squares
-            or not self.is_open_path(new_position)
-        ):
+        if new_position not in self.sight:
             return False
         elif keep_king_safe and self.king_would_be_in_check(
             king=self.king,
@@ -187,8 +216,10 @@ class Piece:
         halfmove = HalfMove(color=self.agent.color, change=change)
         self.agent.board.apply_halfmove(halfmove)
 
+        # breakpoint()
+
         check = self.opponent.king.is_in_check()
-        fen = self.agent.board.get_fen()
+        fen = self.agent.board.get_fen(internal=True)
         game_result = self.get_game_result(check=check)
 
         self.agent.board.rollback_halfmove(halfmove)
@@ -208,7 +239,7 @@ class Piece:
         augment: Optional[bool] = True,
         **kwargs,
     ) -> Change:
-        change = {
+        change: Change = {
             self.agent.color: {
                 self.attr: {
                     "old_position": (self.x, self.y),
@@ -241,6 +272,13 @@ class Piece:
             }
             change["halfmove_clock"] = (self.agent.board.halfmove_clock, 0)
 
+        # piece_caches = self.agent.board.clear_piece_caches(
+        #     (self.x, self.y), dry_run=True
+        # ) | self.agent.board.clear_piece_caches((x, y), dry_run=True)
+        # change["caches"] = {
+        #     piece: (cache, set()) for piece, cache in piece_caches.items()
+        # }
+
         if augment:
             change = self.augment_change(x, y, change, **kwargs)
             change["disambiguation"] = self.get_disambiguation(x, y)
@@ -260,6 +298,9 @@ class Piece:
     def move(self, x: XPosition, y: int, **kwargs) -> HalfMove:
         change = self.construct_change(x, y, **kwargs)
         halfmove = HalfMove(color=self.agent.color, change=change)
+
+        self.agent.board.clear_piece_caches((self.x, self.y))
+        self.agent.board.clear_piece_caches((x, y))
         self.agent.board.apply_halfmove(halfmove)
 
         return halfmove

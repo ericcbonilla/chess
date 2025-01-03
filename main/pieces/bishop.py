@@ -8,6 +8,7 @@ class Bishop(Piece):
         *((-p, p) for p in range(1, 9)),
         *((-p, -p) for p in range(1, 9)),
     }
+    capture_movements = movements
     symbol = "B"
     fen_symbol = symbol
     value = 3
