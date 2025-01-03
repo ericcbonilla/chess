@@ -107,7 +107,7 @@ class TestBoardBuilder:
         assert not board.black.king.has_moved
         assert not board.black.a_rook.has_moved
         assert not board.black.h_rook.has_moved
-        assert board.get_fen() == (
+        assert board.get_fen(internal=True) == (
             "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
         )
 
@@ -124,7 +124,7 @@ class TestBoardBuilder:
 
         board.white.move("c_bishop", "g", 7)
 
-        assert board.get_fen() == (
+        assert board.get_fen(internal=True) == (
             "rnb1k2r/1p1pnpB1/p1p4p/8/4P3/1PNB1QP1/P1P2P1K/R4R2 b - - 0 14"
         )
 
@@ -136,7 +136,10 @@ class TestBoardBuilder:
         board.white.move("queen", "d", 8)
 
         assert board.result == "1-0"
-        assert board.get_fen() == "3Q2k1/3R4/8/8/p3N3/1P4P1/P1P2P1K/8 b - - 1 39"
+        assert (
+            board.get_fen(internal=True)
+            == "3Q2k1/3R4/8/8/p3N3/1P4P1/P1P2P1K/8 b - - 1 39"
+        )
 
     def test_from_fen_correct_en_passant_target_is_set(self, builder):
         board = builder.from_fen(

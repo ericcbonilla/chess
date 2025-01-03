@@ -188,7 +188,7 @@ class Piece:
         self.agent.board.apply_halfmove(halfmove)
 
         check = self.opponent.king.is_in_check()
-        fen = self.agent.board.get_fen()
+        fen = self.agent.board.get_fen(internal=True)
         game_result = self.get_game_result(check=check)
 
         self.agent.board.rollback_halfmove(halfmove)

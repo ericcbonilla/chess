@@ -96,32 +96,40 @@ class Board:
 
         return row if y == 1 else f"{row}/"
 
-    def get_fen(self, idx: Optional[float] = None) -> str:
+    def get_fen(
+        self, idx: Optional[float] = None, internal: Optional[bool] = False
+    ) -> str | None:
         if idx:
             halfmove = get_halfmove(idx, self.game_tree.root)
             return halfmove.change["fen"]
-
         piece_placement = ""
         white_memo = {p.position: p.fen_symbol for _, p in self.white.pieces}
         black_memo = {p.position: p.fen_symbol.lower() for _, p in self.black.pieces}
-
         for y in constants.RANKS:
             piece_placement += self._get_row(y, white_memo, black_memo)
-
         castling_rights = (
             self.white.castling_rights + self.black.castling_rights.lower()
         ) or "-"
-
         if target := self.white.en_passant_target or self.black.en_passant_target:
             x, y = target
             en_passant_target = f"{x}{str(y)}"
         else:
             en_passant_target = "-"
 
-        return (
+        fen = (
             f"{piece_placement} {self.active_color} {castling_rights} "
             f"{en_passant_target} {self.halfmove_clock} {self.fullmove_number}"
         )
+
+        if internal:
+            return (
+                f"{piece_placement} {self.active_color} {castling_rights} "
+                f"{en_passant_target} {self.halfmove_clock} {self.fullmove_number}"
+            )
+        else:
+            print(fen)
+            pyperclip.copy(fen)
+            print("\nCopied to clipboard!")
 
     def _get_movetext(
         self, compact: Optional[bool] = True, colored: Optional[bool] = True
@@ -130,23 +138,19 @@ class Board:
         for node in self.game_tree.root:
             if node.is_empty():
                 break
-
             number, _ = (node.white or node.black).change["fullmove_number"]
             white_an = node.white.to_an() if node.white else "..."
             black_an = node.black.to_an() if node.black else ""
-
             if colored:
                 white_color = Color.RED if "x" in white_an else Color.WHITE
                 black_color = Color.RED if "x" in black_an else Color.YELLOW
                 off = Color.OFF
             else:
                 white_color, black_color, off = "", "", ""
-
             movetext += (
                 f"{number}. {white_color}{white_an}{off} "
                 f"{black_color}{black_an}{off}{" " if compact else "\n"}"
             )
-
         return movetext + self.truncated_result
 
     def get_pgn(self, compact: Optional[bool] = True):
@@ -160,9 +164,9 @@ class Board:
             f'[Black "{self.black.__class__.__name__}"]\n\n'
         )
 
-        cprint(f"{pgn}{self._get_movetext(compact=compact)}")
+        print(f"{pgn}{self._get_movetext(compact=compact)}")
         pyperclip.copy(f"{pgn}{self._get_movetext(compact=compact, colored=False)}")
-        cprint("\nCopied to clipboard!")
+        print("\nCopied to clipboard!")
 
     @staticmethod
     def add_piece(piece: "Piece", attr: str):
@@ -286,20 +290,25 @@ class Board:
                 return True
         return False
 
-    def play(self):
+    def play(self, num_fullmoves: Optional[int] = None):
         term_size = os.get_terminal_size()
+        elapsed_fullmoves = 0
 
         if not self.result and self.active_agent is self.black:
             print_move_heading(term_size, self.fullmove_number)
             cprint(f"Turn: {constants.WHITE}\n...")
             self.black.move()
+            elapsed_fullmoves += 1
 
         while not self.result:
             if (self.fullmove_number - 1) == self.max_fullmoves:
+                break
+            if num_fullmoves is not None and elapsed_fullmoves == num_fullmoves:
                 break
 
             print_move_heading(term_size, self.fullmove_number)
             self.white.move()
             self.black.move()
+            elapsed_fullmoves += 1
 
         print(f"\nMoves played: {self.fullmove_number - 1}. Result: {self.result}")
