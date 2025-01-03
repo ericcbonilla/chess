@@ -23,12 +23,12 @@ class BoardBuilder:
     def _get_board(
         white_agent_cls: Type["Agent"],
         black_agent_cls: Type["Agent"],
-        max_moves: int,
+        max_fullmoves: int,
         active_color: str,
         halfmove_clock: Optional[int] = 0,
         fullmove_number: Optional[int] = 1,
     ) -> Board:
-        board = Board(max_moves, active_color, halfmove_clock, fullmove_number)
+        board = Board(max_fullmoves, active_color, halfmove_clock, fullmove_number)
         # https://youtrack.jetbrains.com/issue/PY-36375/Unexpected-argument-false-positive-when-reassigning-a-dataclass-PEP-557
         # noinspection PyArgumentList
         board.white = white_agent_cls(color=constants.WHITE, board=board)
@@ -122,9 +122,9 @@ class BoardBuilder:
         self,
         white_agent_cls: Optional[Type["Agent"]] = ManualAgent,
         black_agent_cls: Optional[Type["Agent"]] = ManualAgent,
-        max_moves: Optional[int] = 300,
+        max_fullmoves: Optional[int] = 300,
     ) -> Board:
-        board = self._get_board(white_agent_cls, black_agent_cls, max_moves, "w")
+        board = self._get_board(white_agent_cls, black_agent_cls, max_fullmoves, "w")
         self._set_pieces(agent=board.white, scaffold=WHITE_SCAFFOLD)
         self._set_pieces(agent=board.black, scaffold=BLACK_SCAFFOLD)
         return board
@@ -135,11 +135,11 @@ class BoardBuilder:
         black_data: List[PieceScaffold],
         white_agent_cls: Optional[Type["Agent"]] = ManualAgent,
         black_agent_cls: Optional[Type["Agent"]] = ManualAgent,
-        max_moves: Optional[int] = 300,
+        max_fullmoves: Optional[int] = 300,
         active_color: Optional[str] = None,
     ) -> Board:
         board = self._get_board(
-            white_agent_cls, black_agent_cls, max_moves, active_color
+            white_agent_cls, black_agent_cls, max_fullmoves, active_color
         )
         self._set_pieces(agent=board.white, scaffold=self._get_scaffold(white_data))
         self._set_pieces(agent=board.black, scaffold=self._get_scaffold(black_data))
@@ -151,7 +151,7 @@ class BoardBuilder:
         text: str,
         white_agent_cls: Optional[Type["Agent"]] = ManualAgent,
         black_agent_cls: Optional[Type["Agent"]] = ManualAgent,
-        max_moves: Optional[int] = 300,
+        max_fullmoves: Optional[int] = 300,
     ) -> Board:
         fen = FEN(text=text)
         iter_squares = iter(constants.SQUARES_LIST)
@@ -178,7 +178,7 @@ class BoardBuilder:
         board = self._get_board(
             white_agent_cls,
             black_agent_cls,
-            max_moves,
+            max_fullmoves,
             active_color=fen.active_color,
             halfmove_clock=fen.halfmove_clock,
             fullmove_number=fen.fullmove_number,
@@ -198,7 +198,7 @@ class BoardBuilder:
     #     white_agent_cls: Type['Agent'],
     #     black_agent_cls: Type['Agent'],
     #     pgn: str,
-    #     max_moves: Optional[int] = 300,
+    #     max_fullmoves: Optional[int] = 300,
     # ):
     #     processor = PGNProcessor(pgn=pgn)
 
@@ -209,7 +209,7 @@ class BoardBuilder:
 
     #
     #     return cls(
-    #         max_moves=max_moves,
+    #         max_fullmoves=max_fullmoves,
     #         white=white_agent_cls.from_collection(
     #             color=constants.WHITE, coll=processor.white
     #         ),

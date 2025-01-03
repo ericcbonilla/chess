@@ -35,13 +35,13 @@ class Board:
 
     def __init__(
         self,
-        max_moves: int,
+        max_fullmoves: int,
         active_color: Optional[str] = None,
         halfmove_clock: Optional[int] = 0,
         fullmove_number: Optional[int] = 1,
         game_tree: Optional[GameTree] = None,
     ):
-        self.max_moves = max_moves
+        self.max_fullmoves = max_fullmoves
         self.game_tree = game_tree or GameTree()
         self.active_color = active_color or "w"
         self.halfmove_clock = halfmove_clock
@@ -295,7 +295,7 @@ class Board:
             self.black.move()
 
         while not self.result:
-            if (self.fullmove_number - 1) == self.max_moves:
+            if (self.fullmove_number - 1) == self.max_fullmoves:
                 break
 
             print_move_heading(term_size, self.fullmove_number)
