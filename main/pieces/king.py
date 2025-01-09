@@ -32,21 +32,35 @@ class King(Piece):
     ):
         super().__init__(attr, agent, x, y)
 
+        """
+        If an item is in the cache, it means this King is safe
+        from that piece for the time being
+        """
+        self._cache = {}
+        self.cache_hit = 0
+        self.cache_miss = 0
+
         if has_moved is None:
             initial_y = 1 if self.agent.color == constants.WHITE else 8
             self.has_moved = self.position != ("e", initial_y)
         else:
             self.has_moved = has_moved
 
+    def clear_cache(self, attr: Optional[str] = None):
+        if attr is None:
+            self._cache = {}
+        elif attr in self._cache:
+            del self._cache[attr]
+
     def _can_castle(self, rook: Rook | None) -> Tuple[str | None, bool]:
         if rook is None or rook.has_moved or self.has_moved or self.is_in_check():
             return None, False
 
         if rook.x == "a":  # Queenside
-            castle_through_check = self.is_in_check(("d", self.y))
+            castle_through_check = self.is_in_check(target_position=("d", self.y))
             new_king_xpos = "c"
         else:  # Kingside
-            castle_through_check = self.is_in_check(("f", self.y))
+            castle_through_check = self.is_in_check(target_position=("f", self.y))
             new_king_xpos = "g"
 
         return new_king_xpos, (
@@ -59,7 +73,7 @@ class King(Piece):
         if (
             new_position not in constants.SQUARES
             or new_position in self.forbidden_squares
-            or self.is_in_check(new_position)
+            or self.is_in_check(target_position=new_position)
         ):
             return False
 
@@ -84,7 +98,11 @@ class King(Piece):
 
         return valid_moves
 
-    def is_in_check(self, target_position: Optional[Position] = None) -> bool:
+    def is_in_check(
+        self,
+        use_cache: Optional[bool] = False,
+        target_position: Optional[Position] = None,
+    ) -> bool:
         """
         This is used in several different ways:
         1. To ensure a move from this King's agent would not leave this King in check
@@ -109,25 +127,42 @@ class King(Piece):
             halfmove = HalfMove(color=self.agent.color, change=change)
 
             self.agent.board.apply_halfmove(halfmove)
-            is_capturable = self._is_capturable()
+            is_capturable = self._is_capturable(use_cache=use_cache)
             self.agent.board.rollback_halfmove(halfmove)
         else:
-            is_capturable = self._is_capturable()
+            is_capturable = self._is_capturable(use_cache=use_cache)
 
         return is_capturable
 
-    def _is_capturable(self) -> bool:
+    def _is_capturable(self, use_cache: bool) -> bool:
         # TODO: Think of a way to ~avoid~ calling this for every single move
         # Or at least try to reduce the number of opponent pieces that we evaluate
         # Maybe only loop over movable pieces? Maybe there's some piece of this
         # we could memoize?
 
         for _, piece in self.opponent.pieces:
+            if piece.attr in self._cache:
+                self.cache_hit += 1
+            else:
+                self.cache_miss += 1
+
             if isinstance(piece, (WhitePawn, BlackPawn, Knight, King)):
+                # TODO need to properly invalidate this cache...
+                # Try also passing down a 'dry' flag for get_game_result
+
+                # print('cache:', self._cache)
+                # if use_cache and piece.attr in self._cache:
+                #     return self._cache[piece.attr]
+
                 for x_d, y_d in piece.capture_movements:
                     new_position = piece.x + x_d, piece.y + y_d
                     if new_position == self.position:
                         return True
+                        # self._cache[piece.attr] = True
+                        # return self._cache[piece.attr]
+                    if use_cache:
+                        self._cache[piece.attr] = False
+
             else:
                 for x_d, y_d in piece.movements:
                     new_position = piece.x + x_d, piece.y + y_d
@@ -136,6 +171,9 @@ class King(Piece):
                         # of those checks either don't apply or are redundant
                         if piece.is_open_path(new_position):
                             return True
+                            # self._cache[piece.attr] = True
+                            # return self._cache[piece.attr]
+                # self._cache[piece.attr] = False
 
         return False
 

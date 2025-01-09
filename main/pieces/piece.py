@@ -166,7 +166,7 @@ class Piece:
 
         halfmove = HalfMove(color=self.agent.color, change=change)
         self.agent.board.apply_halfmove(halfmove)
-        in_check = king.is_in_check()
+        in_check = king.is_in_check(use_cache=True)  # TODO use cache here?
         self.agent.board.rollback_halfmove(halfmove)
 
         return in_check
@@ -261,5 +261,7 @@ class Piece:
         change = self.construct_change(x, y, **kwargs)
         halfmove = HalfMove(color=self.agent.color, change=change)
         self.agent.board.apply_halfmove(halfmove)
+
+        # self.opponent.king.clear_cache(self.attr)
 
         return halfmove
