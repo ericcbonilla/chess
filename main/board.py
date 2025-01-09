@@ -79,24 +79,26 @@ class Board:
     def active_agent(self) -> "Agent":
         return self.white if self.active_color == "w" else self.black
 
-    # def get_sight(self, position: Position) -> Dict["Piece", Set[Position]]:
-    #     return {piece: piece.sight_cache for piece in self.sight_registry[position]}
-
-    def clear_piece_caches(self, position: Position):
-        to_unregister = set()
-
-        for piece in self.sight_registry[position]:
-            to_unregister.add(piece)
-            piece.clear_cache()
-        for piece in to_unregister:
-            self.sight_registry[position].remove(piece)
+    def collect_caches(self, position: Position):
+        return {piece: piece.sight_cache for piece in self.sight_registry[position]}
 
     def compute_sight(self):
-        # TODO remove when done?
         for _, piece in self.white.pieces:
-            piece.sight
+            piece.get_sight()
         for _, piece in self.black.pieces:
-            piece.sight
+            piece.get_sight()
+
+    @property
+    def cache_hits(self):
+        return sum(piece.cache_hit for _, piece in self.white.pieces) + sum(
+            piece.cache_hit for _, piece in self.black.pieces
+        )
+
+    @property
+    def cache_misses(self):
+        return sum(piece.cache_miss for _, piece in self.white.pieces) + sum(
+            piece.cache_miss for _, piece in self.black.pieces
+        )
 
     @staticmethod
     def _get_row(
@@ -203,6 +205,10 @@ class Board:
         for piece, change in cache_changes.items():
             piece.sight_cache = change[1]
 
+    def update_registry(self, registry_changes):
+        for position, change in registry_changes[1].items():
+            self.sight_registry[position] = change
+
     def apply_change(self, change: Change):
         """
         All game state changes (i.e. changes to Board, Agents, and Pieces) should happen
@@ -241,7 +247,7 @@ class Board:
         self.halfmove_clock = change["halfmove_clock"][1]
         self.active_color = "w" if self.active_color == "b" else "b"
         self.fullmove_number = change["fullmove_number"][1]
-        # self.update_caches(change["caches"])
+        self.update_caches(change["caches"])
 
     def apply_gametree(self, root: FullMove):
         for node in root:
@@ -293,9 +299,13 @@ class Board:
             halfmove.change["fullmove_number"][1],
             halfmove.change["fullmove_number"][0],
         )
-        # inverted_change["caches"] = {
-        #     piece: (cc[1], cc[0]) for piece, cc in halfmove.change["caches"].items()
-        # }
+        inverted_change["caches"] = {
+            piece: (cc[1], cc[0]) for piece, cc in halfmove.change["caches"].items()
+        }
+        inverted_change["registry"] = (
+            halfmove.change["registry"][1],
+            halfmove.change["registry"][0],
+        )
 
         self.apply_change(inverted_change)
         self.game_tree.prune()

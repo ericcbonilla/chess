@@ -27,6 +27,7 @@ class TestGetLatestHalfmove:
                 "fullmove_number": (1, 1),
                 "fen": "",
                 "caches": {},
+                "registry": ({}, {}),
             },
         )
 
@@ -52,6 +53,7 @@ class TestGetLatestHalfmove:
                 "fullmove_number": (1, 2),
                 "fen": "",
                 "caches": {},
+                "registry": ({}, {}),
             },
         )
 
@@ -77,6 +79,7 @@ class TestGetLatestHalfmove:
                 "fullmove_number": (2, 2),
                 "fen": "",
                 "caches": {},
+                "registry": ({}, {}),
             },
         )
 
@@ -102,6 +105,7 @@ class TestGetLatestHalfmove:
                 "fullmove_number": (2, 3),
                 "fen": "",
                 "caches": {},
+                "registry": ({}, {}),
             },
         )
 

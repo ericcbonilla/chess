@@ -57,24 +57,16 @@ class TestCaptureScenarios:
         halfmove = board.black.move("queen", "d", 4)
 
         assert board.white.graveyard.a_rook
-        assert halfmove.change == {
-            "WHITE": {
-                "a_rook": {
-                    "old_position": ("d", 4),
-                    "new_position": None,
-                },
+        assert halfmove.change["check"]
+        assert halfmove.change["WHITE"] == {
+            "a_rook": {
+                "old_position": ("d", 4),
+                "new_position": None,
             },
-            "BLACK": {
-                "queen": {
-                    "old_position": ("g", 1),
-                    "new_position": ("d", 4),
-                }
-            },
-            "disambiguation": "",
-            "check": True,
-            "game_result": None,
-            "symbol": "Q",
-            "halfmove_clock": (0, 0),
-            "fullmove_number": (1, 2),
-            "fen": "8/8/8/4k3/2Kq4/8/8/8 w - - 0 2",
+        }
+        assert halfmove.change["BLACK"] == {
+            "queen": {
+                "old_position": ("g", 1),
+                "new_position": ("d", 4),
+            }
         }

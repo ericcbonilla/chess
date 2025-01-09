@@ -78,6 +78,7 @@ class Pawn(Piece):
 
     def augment_change(self, x: XPosition, y: int, change: Change, **kwargs) -> Change:
         change["halfmove_clock"] = (self.agent.board.halfmove_clock, 0)
+        change["caches"][self] = (self.sight_cache, set())
 
         if (x, y) == self.opponent.en_passant_target:
             piece = self.opponent.get_by_position(x, self.y)

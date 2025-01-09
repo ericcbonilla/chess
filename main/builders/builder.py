@@ -143,6 +143,7 @@ class BoardBuilder:
         )
         self._set_pieces(agent=board.white, scaffold=self._get_scaffold(white_data))
         self._set_pieces(agent=board.black, scaffold=self._get_scaffold(black_data))
+        board.compute_sight()
 
         return board
 
@@ -189,6 +190,7 @@ class BoardBuilder:
 
         self._set_pieces(agent=board.white, scaffold=self._get_scaffold(white_data))
         self._set_pieces(agent=board.black, scaffold=self._get_scaffold(black_data))
+        board.compute_sight()
 
         return board
 

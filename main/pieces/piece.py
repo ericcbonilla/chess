@@ -27,6 +27,8 @@ class Piece:
         self.x = XPosition(x)
         self.y = y
         self.sight_cache = set()
+        self.cache_hit = 0
+        self.cache_miss = 0
 
     movements: Set = NotImplemented
     capture_movements: Set = NotImplemented
@@ -84,13 +86,12 @@ class Piece:
             return False
         return True
 
-    @property
-    def sight(self) -> Set[Position | None]:
+    def get_sight(self) -> Set[Position | None]:
         if self.sight_cache:
-            # print(f"{self}: Cache hit!")
+            self.cache_hit += 1
             return self.sight_cache
 
-        # print(f"{self}: Cache miss!")
+        self.cache_miss += 1
         for x_d, y_d in self.capture_movements:
             new_position = self.x + x_d, self.y + y_d
             if new_position not in constants.SQUARES:
@@ -105,15 +106,12 @@ class Piece:
                 self.sight_cache.add(new_position)
                 self.agent.board.sight_registry[new_position].add(self)
 
-            # 12/29 TRYING
-            elif new_position in self.opponent.positions:
-                self.agent.board.sight_registry[new_position].add(self)
-
         self.sight_cache.add(None)
         return self.sight_cache
 
-    def clear_cache(self):
-        self.sight_cache = set()
+    @property
+    def sight(self) -> Set[Position | None]:
+        return self.get_sight()
 
     def is_valid_move(
         self,
@@ -272,12 +270,28 @@ class Piece:
             }
             change["halfmove_clock"] = (self.agent.board.halfmove_clock, 0)
 
-        # piece_caches = self.agent.board.clear_piece_caches(
-        #     (self.x, self.y), dry_run=True
-        # ) | self.agent.board.clear_piece_caches((x, y), dry_run=True)
-        # change["caches"] = {
-        #     piece: (cache, set()) for piece, cache in piece_caches.items()
-        # }
+        piece_caches = self.agent.board.collect_caches(
+            (self.x, self.y)
+        ) | self.agent.board.collect_caches((x, y))
+
+        # Do we need the new and old caches here? Why not just rollback to the old one?
+        # Wait...all of the piece caches here are to be reset. So this is correct.
+        change["caches"] = {
+            piece: (cache, set()) for piece, cache in piece_caches.items()
+        }
+
+        # Ok, instead of recording the entire registry (???), just record the
+        # registered pieces for the old and new square?
+        change["registry"] = (
+            {
+                (self.x, self.y): self.agent.board.sight_registry[(self.x, self.y)],
+                (x, y): self.agent.board.sight_registry[(x, y)],
+            },
+            {
+                (self.x, self.y): set(),
+                (x, y): set(),
+            },
+        )
 
         if augment:
             change = self.augment_change(x, y, change, **kwargs)
@@ -299,8 +313,16 @@ class Piece:
         change = self.construct_change(x, y, **kwargs)
         halfmove = HalfMove(color=self.agent.color, change=change)
 
-        self.agent.board.clear_piece_caches((self.x, self.y))
-        self.agent.board.clear_piece_caches((x, y))
+        # 1/9
+        # When we commit the move, invalidate the sight of pieces that
+        # can see the old and new squares. This accounts for discoveries,
+        # blocking of checks, etc.
+        # We DON'T do this for lookaheads...but do we need to?
+
+        # Yeah this is happening separately from all other changes,
+        # so it can't be rolled back. Which I think won't work...
+        # self.agent.board.collect_caches((self.x, self.y))
+        # self.agent.board.collect_caches((x, y))
         self.agent.board.apply_halfmove(halfmove)
 
         return halfmove
