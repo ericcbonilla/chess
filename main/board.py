@@ -118,7 +118,7 @@ class Board:
 
     def get_fen(
         self, idx: Optional[float] = None, internal: Optional[bool] = False
-    ) -> str | None:
+    ) -> str:
         if idx:
             halfmove = get_halfmove(idx, self.game_tree.root)
             return halfmove.change["fen"]
@@ -142,14 +142,12 @@ class Board:
         )
 
         if internal:
-            return (
-                f"{piece_placement} {self.active_color} {castling_rights} "
-                f"{en_passant_target} {self.halfmove_clock} {self.fullmove_number}"
-            )
+            return fen
         else:
             print(fen)
             pyperclip.copy(fen)
             print("\nCopied to clipboard!")
+            return fen
 
     def _get_movetext(
         self, compact: Optional[bool] = True, colored: Optional[bool] = True
