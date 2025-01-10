@@ -90,6 +90,7 @@ class ManualAgent(Agent):
             x = XPosition(x)
 
             # TODO change this and get_matching_piece() to just call is_valid_move()
+            # I think we're losing a lot of time calculating every valid move
             valid_moves = piece.get_valid_moves()
             captures = piece.get_captures(valid_moves)
 

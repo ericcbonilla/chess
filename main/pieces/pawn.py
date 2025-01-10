@@ -16,10 +16,6 @@ class Pawn(Piece):
     capture_movements: Set = NotImplemented
     unicode = "\u2659"
 
-    @property
-    def forbidden_squares(self) -> Set[Position]:
-        return self.agent.positions | self.opponent.positions
-
     def is_valid_capture(
         self,
         new_position: Position,
@@ -43,7 +39,7 @@ class Pawn(Piece):
     ) -> bool:
         if (
             new_position not in constants.SQUARES
-            or new_position in self.forbidden_squares
+            or new_position in (self.agent.positions | self.opponent.positions)
             or not self.is_open_path(new_position)
         ):
             return False

@@ -149,6 +149,20 @@ class TestPawnScenarios:
             },
         }
 
+    def test_pawn_moving_two_squares_cant_jump_over_piece(self, builder):
+        board = builder.from_data(
+            white_data=[
+                {"piece_type": King, "x": "f", "y": 3},
+                {"piece_type": WhitePawn, "x": "f", "y": 2},
+            ],
+            black_data=[
+                {"piece_type": King, "x": "e", "y": 8},
+            ],
+        )
+
+        with pytest.raises(InvalidMoveError):
+            board.white.move("f_pawn", "f", 4)
+
 
 class TestEnPassant:
     def test_white_pawn_moving_two_squares_sets_en_passant_target(self, builder):

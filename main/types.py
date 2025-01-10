@@ -35,6 +35,7 @@ class PieceChange(TypedDict):
 
 AgentChange = Dict[str, PieceChange | Tuple[Position, None]]
 CacheChanges = Dict["Piece", Tuple[Set, Set]]
+RegistryChanges = Tuple[Dict[Position, Set["Piece"] | None]]
 
 
 class LookaheadResults(TypedDict):
@@ -51,6 +52,7 @@ class Change(LookaheadResults):
     halfmove_clock: Tuple[int, int]
     fullmove_number: Tuple[int, int]
     caches: NotRequired[CacheChanges]
+    registry: NotRequired[RegistryChanges]
 
 
 class PieceScaffold(TypedDict):

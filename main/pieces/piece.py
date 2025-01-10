@@ -47,10 +47,6 @@ class Piece:
         return self.x, self.y
 
     @property
-    def forbidden_squares(self) -> Set[Position]:
-        return self.agent.positions
-
-    @property
     def king(self) -> "King":
         return self.agent.king
 
@@ -214,8 +210,6 @@ class Piece:
         halfmove = HalfMove(color=self.agent.color, change=change)
         self.agent.board.apply_halfmove(halfmove)
 
-        # breakpoint()
-
         check = self.opponent.king.is_in_check()
         fen = self.agent.board.get_fen(internal=True)
         game_result = self.get_game_result(check=check)
@@ -273,15 +267,9 @@ class Piece:
         piece_caches = self.agent.board.collect_caches(
             (self.x, self.y)
         ) | self.agent.board.collect_caches((x, y))
-
-        # Do we need the new and old caches here? Why not just rollback to the old one?
-        # Wait...all of the piece caches here are to be reset. So this is correct.
         change["caches"] = {
             piece: (cache, set()) for piece, cache in piece_caches.items()
         }
-
-        # Ok, instead of recording the entire registry (???), just record the
-        # registered pieces for the old and new square?
         change["registry"] = (
             {
                 (self.x, self.y): self.agent.board.sight_registry[(self.x, self.y)],
@@ -313,16 +301,6 @@ class Piece:
         change = self.construct_change(x, y, **kwargs)
         halfmove = HalfMove(color=self.agent.color, change=change)
 
-        # 1/9
-        # When we commit the move, invalidate the sight of pieces that
-        # can see the old and new squares. This accounts for discoveries,
-        # blocking of checks, etc.
-        # We DON'T do this for lookaheads...but do we need to?
-
-        # Yeah this is happening separately from all other changes,
-        # so it can't be rolled back. Which I think won't work...
-        # self.agent.board.collect_caches((self.x, self.y))
-        # self.agent.board.collect_caches((x, y))
         self.agent.board.apply_halfmove(halfmove)
 
         return halfmove
