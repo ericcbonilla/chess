@@ -14,14 +14,12 @@ if TYPE_CHECKING:
 
 class RandomAgent(Agent):
     def _random_move(self, piece: "Piece") -> Optional[HalfMove]:
-        valid_moves = piece.get_valid_moves()
-        captures = piece.get_captures(valid_moves)
-        legal_moves = list(valid_moves | captures)
+        valid_moves = list(piece.get_valid_moves())
 
-        if not legal_moves:
+        if not valid_moves:
             return None
 
-        pick = random.sample(legal_moves, 1)[0]
+        pick = random.sample(valid_moves, 1)[0]
         if pick in piece.opponent.positions | {piece.opponent.en_passant_target}:
             cprint(
                 f"{piece} capturing on {pick}",

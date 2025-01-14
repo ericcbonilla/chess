@@ -1,4 +1,5 @@
-from main.pieces import King, Knight, Rook, WhitePawn
+from main.agents import AggressiveAgent
+from main.pieces import BlackPawn, King, Knight, Queen, Rook, WhitePawn
 
 
 class TestManualAgent:
@@ -114,3 +115,40 @@ class TestManualAgent:
 
         captured = capsys.readouterr()
         assert '"Nd2" is an illegal move' in captured.out
+
+
+class TestAggressiveAgent:
+    def test_pawn_captures_when_available(self, builder):
+        board = builder.from_data(
+            white_agent_cls=AggressiveAgent,
+            white_data=[
+                {"piece_type": King, "x": "a", "y": 1},
+                {"piece_type": WhitePawn, "x": "e", "y": 5},
+            ],
+            black_data=[
+                {"piece_type": King, "x": "e", "y": 8},
+                {"piece_type": BlackPawn, "x": "f", "y": 6},
+                {"piece_type": Queen, "x": "c", "y": 2},
+            ],
+        )
+
+        halfmove = board.white.move()
+        assert halfmove.to_an() == "exf6"
+
+    def test_pawn_captures_when_only_move(self, builder):
+        board = builder.from_data(
+            white_agent_cls=AggressiveAgent,
+            white_data=[
+                {"piece_type": King, "x": "a", "y": 1},
+                {"piece_type": WhitePawn, "x": "e", "y": 5},
+            ],
+            black_data=[
+                {"piece_type": King, "x": "e", "y": 8},
+                {"piece_type": BlackPawn, "x": "f", "y": 6},
+                {"piece_type": BlackPawn, "x": "e", "y": 6},
+                {"piece_type": Queen, "x": "c", "y": 2},
+            ],
+        )
+
+        halfmove = board.white.move()
+        assert halfmove.to_an() == "exf6"

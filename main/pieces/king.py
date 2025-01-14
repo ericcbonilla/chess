@@ -16,6 +16,7 @@ if TYPE_CHECKING:
 
 class King(Piece):
     movements = {(1, 0), (0, 1), (-1, 0), (0, -1), (1, 1), (1, -1), (-1, 1), (-1, -1)}
+    castle_movements = {(-2, 0), (2, 0)}
     capture_movements = movements
     symbol = "K"
     fen_symbol = symbol
@@ -44,23 +45,35 @@ class King(Piece):
 
         if rook.x == "a":  # Queenside
             castle_through_check = self.is_in_check(("d", self.y))
+            castle_into_check = self.is_in_check(("c", self.y))
             new_king_xpos = "c"
         else:  # Kingside
             castle_through_check = self.is_in_check(("f", self.y))
+            castle_into_check = self.is_in_check(("g", self.y))
             new_king_xpos = "g"
 
         return new_king_xpos, (
-            not castle_through_check and self.is_open_path(rook.position)
+            not castle_through_check
+            and not castle_into_check
+            and self.is_open_path(rook.position)
         )
 
-    def is_valid_move(
-        self, new_position: Position, keep_king_safe: Optional[bool] = True
-    ) -> bool:
-        if (
-            new_position not in constants.SQUARES
-            or new_position in self.forbidden_squares
-            or self.is_in_check(new_position)
-        ):
+    def is_castle(self, new_position: Position) -> bool:
+        return any(
+            (self.x + x_d, self.y + y_d) == new_position
+            for x_d, y_d in self.castle_movements
+        )
+
+    def is_valid_move(self, new_position: Position) -> bool:
+        new_x, _ = new_position
+        if self.is_castle(new_position):
+            if new_x == "c":
+                _, can_castle = self._can_castle(self.agent.a_rook)
+                return can_castle
+            elif new_x == "g":
+                _, can_castle = self._can_castle(self.agent.h_rook)
+                return can_castle
+        elif not self.is_valid_movement(new_position) or self.is_in_check(new_position):
             return False
 
         return True
@@ -70,7 +83,10 @@ class King(Piece):
 
         for x_d, y_d in self.movements:
             new_position = self.x + x_d, self.y + y_d
-            if not self.is_valid_move(new_position):
+            # Not calling is_valid_move here to avoid redundant castling validation
+            if not self.is_valid_movement(new_position) or self.is_in_check(
+                new_position
+            ):
                 continue
 
             valid_moves.add(new_position)

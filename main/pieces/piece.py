@@ -50,6 +50,18 @@ class Piece:
     def king(self) -> "King":
         return self.agent.king
 
+    def is_valid_movement(self, new_position: Position) -> bool:
+        if (
+            new_position not in constants.SQUARES
+            or new_position in self.forbidden_squares
+            or not any(
+                (self.x + x_d, self.y + y_d) == new_position
+                for x_d, y_d in self.movements
+            )
+        ):
+            return False
+        return True
+
     @staticmethod
     def _get_squares_in_range(old: int, new: int) -> Iterable | Reversible:
         if old > new:
@@ -82,18 +94,12 @@ class Piece:
             return False
         return True
 
-    def is_valid_move(
-        self,
-        new_position: Position,
-        keep_king_safe: Optional[bool] = True,
-    ) -> bool:
-        if (
-            new_position not in constants.SQUARES
-            or new_position in self.forbidden_squares
-            or not self.is_open_path(new_position)
-        ):
+    def is_valid_move(self, new_position: Position) -> bool:
+        if not self.is_valid_movement(new_position):
             return False
-        elif keep_king_safe and self.king_would_be_in_check(
+        elif not self.is_open_path(new_position):
+            return False
+        elif self.king_would_be_in_check(
             king=self.king,
             new_position=new_position,
         ):
@@ -117,12 +123,6 @@ class Piece:
     def can_move(self) -> Set[Position]:
         return self.get_valid_moves(lazy=True)
 
-    def get_captures(
-        self, valid_moves: Optional[Set[Position]] = None
-    ) -> Set[Position]:
-        valid_moves = valid_moves or set()
-        return valid_moves & self.opponent.positions
-
     def get_disambiguation(self, x: XPosition, y: int) -> str:
         """
         Used for algebraic notation. If we have other pieces of the same type
@@ -141,7 +141,7 @@ class Piece:
         for sibling in siblings:
             if disambiguation in (f"{self.x}{self.y}", f"{self.y}{self.x}"):
                 break
-            if (x, y) in sibling.get_valid_moves():
+            if sibling.is_valid_move((x, y)):
                 if sibling.x == self.x:
                     disambiguation += str(self.y)
                 else:
@@ -176,6 +176,7 @@ class Piece:
             return "1-0" if self.agent.color == constants.WHITE else "0-1"
         elif not self.opponent.can_move():
             return "½-½ Stalemate"
+        # TODO game not called as immediate draw in KNK endgame, KN side was allowed to make an additional move
         elif self.agent.board.has_insufficient_material():
             return "½-½ Insufficient material"
         elif self.agent.board.halfmove_clock == 125:

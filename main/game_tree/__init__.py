@@ -7,6 +7,14 @@ from .halfmove import HalfMove
 
 
 class GameTree:
+    """
+    Responsibilities:
+    - Track changes in state for each move
+    - Assist with writing algebraic notation
+    - Assist with writing FEN
+    - (Future) Assist with strategy/line calculation
+    """
+
     def __init__(self):
         self.root: FullMove = FullMove()
         self.latest_fullmove: FullMove = self.root
