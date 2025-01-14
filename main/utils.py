@@ -30,7 +30,7 @@ def print_move_heading(term_size, fullmove_number: int):
     cprint(f"\n{fullmove_number}. {'=' * num_breaks}")
 
 
-def delta(position: Position, other: Position) -> Tuple[int, int]:
+def vector(position: Position, other: Position) -> Tuple[int, int]:
     x, y = position
     other_x, other_y = other
 

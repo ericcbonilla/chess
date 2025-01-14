@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING, Optional, Set, Tuple
 from main import constants
 from main.game_tree import HalfMove
 from main.types import Change, Position
-from main.utils import delta
+from main.utils import vector
 from main.xposition import XPosition
 
 from .bishop import Bishop
@@ -142,13 +142,13 @@ class King(Piece):
         for _, piece in self.opponent.pieces:
             if isinstance(piece, (WhitePawn, BlackPawn, Knight, King)):  # Slow pieces
                 if isinstance(piece, (WhitePawn, BlackPawn)):
-                    if delta(self.position, piece.position) != (1, 1):
+                    if vector(self.position, piece.position) != (1, 1):
                         continue
                 elif isinstance(piece, King):
-                    if delta(self.position, piece.position) > (1, 1):
+                    if vector(self.position, piece.position) > (1, 1):
                         continue
                 elif isinstance(piece, Knight):
-                    if delta(self.position, piece.position) not in [(1, 2), (2, 1)]:
+                    if vector(self.position, piece.position) not in [(1, 2), (2, 1)]:
                         continue
 
                 for x_d, y_d in piece.capture_movements:
@@ -157,14 +157,14 @@ class King(Piece):
                         return True
             else:  # Fast pieces
                 if isinstance(piece, Rook):
-                    if 0 not in delta(self.position, piece.position):
+                    if 0 not in vector(self.position, piece.position):
                         continue
                 elif isinstance(piece, Bishop):
-                    x, y = delta(self.position, piece.position)
+                    x, y = vector(self.position, piece.position)
                     if x != y:
                         continue
                 elif isinstance(piece, Queen):
-                    x, y = delta(self.position, piece.position)
+                    x, y = vector(self.position, piece.position)
                     if 0 not in (x, y) and x != y:
                         continue
 
