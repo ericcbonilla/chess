@@ -1,7 +1,8 @@
 from typing import TYPE_CHECKING, Optional
 
 from main import constants
-from main.types import Change
+from main.types import Change, Position
+from main.utils import vector
 from main.xposition import XPosition
 
 from .piece import Piece
@@ -37,6 +38,9 @@ class Rook(Piece):
             self.has_moved = self.position not in [("a", initial_y), ("h", initial_y)]
         else:
             self.has_moved = has_moved
+
+    def is_valid_vector(self, new_position: Position) -> bool:
+        return 0 in vector(self.position, new_position)
 
     def augment_change(self, x: XPosition, y: int, change: Change, **kwargs) -> Change:
         if not self.has_moved:

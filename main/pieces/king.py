@@ -6,11 +6,9 @@ from main.types import Change, Position
 from main.utils import vector
 from main.xposition import XPosition
 
-from .bishop import Bishop
 from .knight import Knight
 from .pawn import BlackPawn, WhitePawn
 from .piece import Piece
-from .queen import Queen
 from .rook import Rook
 
 if TYPE_CHECKING:
@@ -66,6 +64,9 @@ class King(Piece):
             (self.x + x_d, self.y + y_d) == new_position
             for x_d, y_d in self.castle_movements
         )
+
+    def is_valid_vector(self, new_position: Position) -> bool:
+        return vector(self.position, new_position) in [(1, 1), (0, 1), (1, 0)]
 
     def is_valid_move(self, new_position: Position) -> bool:
         new_x, _ = new_position
@@ -140,36 +141,19 @@ class King(Piece):
         # Maybe there's some piece of this we could memoize?
 
         for _, piece in self.opponent.pieces:
-            vec = vector(self.position, piece.position)
+            if isinstance(piece, (WhitePawn, BlackPawn)):
+                skip = vector(self.position, piece.position) != (1, 1)
+            else:
+                skip = not piece.is_valid_vector(self.position)
+            if skip:
+                continue
 
-            if isinstance(piece, (WhitePawn, BlackPawn, Knight, King)):  # Slow pieces
-                if isinstance(piece, (WhitePawn, BlackPawn)):
-                    if vec != (1, 1):
-                        continue
-                elif isinstance(piece, King):
-                    if vec > (1, 1):
-                        continue
-                elif isinstance(piece, Knight):
-                    if vec not in [(1, 2), (2, 1)]:
-                        continue
-
-                for x_d, y_d in piece.capture_movements:
-                    new_position = piece.x + x_d, piece.y + y_d
-                    if new_position == self.position:
-                        return True
-            else:  # Fast pieces
-                if isinstance(piece, Rook):
-                    if 0 not in vec:
-                        continue
-                elif isinstance(piece, Bishop):
-                    x, y = vec
-                    if x != y:
-                        continue
-                elif isinstance(piece, Queen):
-                    x, y = vec
-                    if 0 not in (x, y) and x != y:
-                        continue
-
+            if isinstance(piece, (Knight, King)):
+                return True
+            elif isinstance(piece, (WhitePawn, BlackPawn)):
+                if piece.is_capture(self.position):
+                    return True
+            else:
                 if piece.is_open_path(self.position):
                     return True
 

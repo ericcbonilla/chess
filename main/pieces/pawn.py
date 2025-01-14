@@ -1,7 +1,8 @@
-from typing import Optional, Set
+from typing import Set
 
 from main.game_tree import HalfMove
 from main.types import Change, Position
+from main.utils import vector
 from main.xposition import XPosition
 
 from .piece import Piece
@@ -13,13 +14,24 @@ class Pawn(Piece):
     fen_symbol = "P"
     value = 1
     capture_movements: Set = NotImplemented
+    y_init: int = NotImplemented
     unicode = "\u2659"
 
     @property
     def forbidden_squares(self) -> Set[Position]:
         return self.agent.positions | self.opponent.positions
 
+    def is_valid_vector(self, new_position: Position) -> bool:
+        vec = vector(self.position, new_position)
+        if self.y == self.y_init:
+            return vec in [(0, 1), (0, 2), (1, 1)]
+        return vec in [(0, 1), (1, 1)]
+
     def is_capture(self, new_position: Position) -> bool:
+        # TODO fix XPosition off board idk why this is causing that though
+        # Need to refactor movements so they don't even look at off board squares...
+        # return vector(self.position, new_position) == (1, 1)
+
         return any(
             (self.x + x_d, self.y + y_d) == new_position
             for x_d, y_d in self.capture_movements
@@ -94,19 +106,21 @@ class Pawn(Piece):
 
 class WhitePawn(Pawn):
     capture_movements = {(1, 1), (-1, 1)}
+    y_init = 2
 
     @property
     def movements(self):
-        if self.y == 2:
+        if self.y == self.y_init:
             return {(0, 1), (0, 2)} | self.capture_movements
         return {(0, 1)} | self.capture_movements
 
 
 class BlackPawn(Pawn):
     capture_movements = {(1, -1), (-1, -1)}
+    y_init = 7
 
     @property
     def movements(self):
-        if self.y == 7:
+        if self.y == self.y_init:
             return {(0, -1), (0, -2)} | self.capture_movements
         return {(0, -1)} | self.capture_movements

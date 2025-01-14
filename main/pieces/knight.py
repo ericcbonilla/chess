@@ -1,6 +1,5 @@
-from typing import Optional
-
 from main.types import Position
+from main.utils import vector
 
 from .piece import Piece
 
@@ -12,6 +11,9 @@ class Knight(Piece):
     fen_symbol = symbol
     value = 3
     unicode = "\u2658"
+
+    def is_valid_vector(self, new_position: Position) -> bool:
+        return vector(self.position, new_position) in [(1, 2), (2, 1)]
 
     def is_valid_move(self, new_position: Position) -> bool:
         if not self.is_valid_movement(new_position):

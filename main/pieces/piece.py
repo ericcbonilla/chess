@@ -51,6 +51,9 @@ class Piece:
     def king(self) -> "King":
         return self.agent.king
 
+    def is_valid_vector(self, new_position: Position) -> bool:
+        raise NotImplementedError
+
     # TODO I think we can apply the vector logic here and get rid of self.movements
     # entirely. Look at how messy the Rook movements are for example. Apply what you did
     # in _is_capturable to the movement validations of the individual pieces
@@ -60,10 +63,7 @@ class Piece:
         if (
             new_position not in constants.SQUARES
             or new_position in self.forbidden_squares
-            or not any(
-                (self.x + x_d, self.y + y_d) == new_position
-                for x_d, y_d in self.movements
-            )
+            or not self.is_valid_vector(new_position)
         ):
             return False
         return True
@@ -129,7 +129,7 @@ class Piece:
     def can_move(self) -> Set[Position]:
         return self.get_valid_moves(lazy=True)
 
-    def get_disambiguation(self, x: XPosition, y: int) -> str:
+    def get_disambiguation(self, x: XPosition | str, y: int) -> str:
         """
         Used for algebraic notation. If we have other pieces of the same type
         that can also move to the target square, return the rank (y) and/or
@@ -138,6 +138,7 @@ class Piece:
         """
 
         disambiguation = ""
+        x = XPosition(x)
         siblings = [
             piece
             for _, piece in self.agent.pieces
