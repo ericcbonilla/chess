@@ -27,7 +27,6 @@ class ManualAgent(Agent):
         search_fn: Callable[[Piece], bool] = lambda p: True
         piece = None
 
-        # TODO can we use similar logic to optimize get_valid_moves()?
         if an.piece_type is King:
             piece = self.king
         elif an.piece_type is Pawn:
