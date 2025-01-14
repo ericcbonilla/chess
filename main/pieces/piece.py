@@ -185,6 +185,8 @@ class Piece:
         # TODO game not called as immediate draw in KNK endgame, KN side was allowed to make an additional move
         elif self.agent.board.has_insufficient_material():
             return "½-½ Insufficient material"
+        elif self.agent.board.draw_by_repetition():
+            return "½-½ Repetition"
         elif self.agent.board.halfmove_clock == 125:
             # https://en.wikipedia.org/wiki/Fifty-move_rule#Seventy-five-move_rule
             return "½-½ Seventy-five-move rule"

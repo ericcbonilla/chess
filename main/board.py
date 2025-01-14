@@ -281,7 +281,7 @@ class Board:
         self.apply_change(inverted_change)
         self.game_tree.prune()
 
-    def has_insufficient_material(self):
+    def has_insufficient_material(self) -> bool:
         scenarios = [
             ([0], [0]),
             ([0], [0, 3]),
@@ -296,6 +296,9 @@ class Board:
             black_match = Counter(self.black.material) == Counter(black_material)
             if white_match and black_match:
                 return True
+        return False
+
+    def draw_by_repetition(self) -> bool:
         return False
 
     def play(self, num_fullmoves: Optional[int] = None):

@@ -21,6 +21,7 @@ GameResult = Literal[
     "0-1",
     "½-½ Stalemate",
     "½-½ Insufficient material",
+    "½-½ Repetition",
     "½-½ Seventy-five-move rule",
 ]
 
