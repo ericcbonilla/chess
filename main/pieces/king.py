@@ -3,11 +3,14 @@ from typing import TYPE_CHECKING, Optional, Set, Tuple
 from main import constants
 from main.game_tree import HalfMove
 from main.types import Change, Position
+from main.utils import vector
 from main.xposition import XPosition
 
+from .bishop import Bishop
 from .knight import Knight
 from .pawn import BlackPawn, WhitePawn
 from .piece import Piece
+from .queen import Queen
 from .rook import Rook
 
 if TYPE_CHECKING:
@@ -134,24 +137,41 @@ class King(Piece):
 
     def _is_capturable(self) -> bool:
         # TODO: Think of a way to ~avoid~ calling this for every single move
-        # Or at least try to reduce the number of opponent pieces that we evaluate
-        # Maybe only loop over movable pieces? Maybe there's some piece of this
-        # we could memoize?
+        # Maybe there's some piece of this we could memoize?
 
         for _, piece in self.opponent.pieces:
-            if isinstance(piece, (WhitePawn, BlackPawn, Knight, King)):
+            vec = vector(self.position, piece.position)
+
+            if isinstance(piece, (WhitePawn, BlackPawn, Knight, King)):  # Slow pieces
+                if isinstance(piece, (WhitePawn, BlackPawn)):
+                    if vec != (1, 1):
+                        continue
+                elif isinstance(piece, King):
+                    if vec > (1, 1):
+                        continue
+                elif isinstance(piece, Knight):
+                    if vec not in [(1, 2), (2, 1)]:
+                        continue
+
                 for x_d, y_d in piece.capture_movements:
                     new_position = piece.x + x_d, piece.y + y_d
                     if new_position == self.position:
                         return True
-            else:
-                for x_d, y_d in piece.movements:
-                    new_position = piece.x + x_d, piece.y + y_d
-                    if new_position == self.position:
-                        # Don't need to do a full validity check here, since most
-                        # of those checks either don't apply or are redundant
-                        if piece.is_open_path(new_position):
-                            return True
+            else:  # Fast pieces
+                if isinstance(piece, Rook):
+                    if 0 not in vec:
+                        continue
+                elif isinstance(piece, Bishop):
+                    x, y = vec
+                    if x != y:
+                        continue
+                elif isinstance(piece, Queen):
+                    x, y = vec
+                    if 0 not in (x, y) and x != y:
+                        continue
+
+                if piece.is_open_path(self.position):
+                    return True
 
         return False
 
