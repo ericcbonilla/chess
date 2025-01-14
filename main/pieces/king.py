@@ -3,11 +3,14 @@ from typing import TYPE_CHECKING, Optional, Set, Tuple
 from main import constants
 from main.game_tree import HalfMove
 from main.types import Change, Position
+from main.utils import delta
 from main.xposition import XPosition
 
+from .bishop import Bishop
 from .knight import Knight
 from .pawn import BlackPawn, WhitePawn
 from .piece import Piece
+from .queen import Queen
 from .rook import Rook
 
 if TYPE_CHECKING:
@@ -134,17 +137,37 @@ class King(Piece):
 
     def _is_capturable(self) -> bool:
         # TODO: Think of a way to ~avoid~ calling this for every single move
-        # Or at least try to reduce the number of opponent pieces that we evaluate
-        # Maybe only loop over movable pieces? Maybe there's some piece of this
-        # we could memoize?
+        # Maybe there's some piece of this we could memoize?
 
         for _, piece in self.opponent.pieces:
-            if isinstance(piece, (WhitePawn, BlackPawn, Knight, King)):
+            if isinstance(piece, (WhitePawn, BlackPawn, Knight, King)):  # Slow pieces
+                if isinstance(piece, (WhitePawn, BlackPawn)):
+                    if delta(self.position, piece.position) != (1, 1):
+                        continue
+                elif isinstance(piece, King):
+                    if delta(self.position, piece.position) > (1, 1):
+                        continue
+                elif isinstance(piece, Knight):
+                    if delta(self.position, piece.position) not in [(1, 2), (2, 1)]:
+                        continue
+
                 for x_d, y_d in piece.capture_movements:
                     new_position = piece.x + x_d, piece.y + y_d
                     if new_position == self.position:
                         return True
-            else:
+            else:  # Fast pieces
+                if isinstance(piece, Rook):
+                    if 0 not in delta(self.position, piece.position):
+                        continue
+                elif isinstance(piece, Bishop):
+                    x, y = delta(self.position, piece.position)
+                    if x != y:
+                        continue
+                elif isinstance(piece, Queen):
+                    x, y = delta(self.position, piece.position)
+                    if 0 not in (x, y) and x != y:
+                        continue
+
                 for x_d, y_d in piece.movements:
                     new_position = piece.x + x_d, piece.y + y_d
                     if new_position == self.position:
