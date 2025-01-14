@@ -1,6 +1,5 @@
 from typing import Optional
 
-from main import constants
 from main.types import Position
 
 from .piece import Piece
