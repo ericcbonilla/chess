@@ -45,13 +45,17 @@ class King(Piece):
 
         if rook.x == "a":  # Queenside
             castle_through_check = self.is_in_check(("d", self.y))
+            castle_into_check = self.is_in_check(("c", self.y))
             new_king_xpos = "c"
         else:  # Kingside
             castle_through_check = self.is_in_check(("f", self.y))
+            castle_into_check = self.is_in_check(("g", self.y))
             new_king_xpos = "g"
 
         return new_king_xpos, (
-            not castle_through_check and self.is_open_path(rook.position)
+            not castle_through_check
+            and not castle_into_check
+            and self.is_open_path(rook.position)
         )
 
     def is_castle(self, new_position: Position) -> bool:

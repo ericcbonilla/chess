@@ -94,6 +94,37 @@ class TestCastling:
         with pytest.raises(InvalidMoveError):
             board.black.move("king", "g", 8)
 
+    def test_cant_castle_into_check(self, builder):
+        board = builder.from_data(
+            white_data=[
+                {"piece_type": King, "x": "b", "y": 1},
+                {"piece_type": Bishop, "x": "b", "y": 7},
+            ],
+            black_data=[
+                {"piece_type": King, "x": "e", "y": 8},
+                {"piece_type": Rook, "x": "a", "y": 8},
+            ],
+            active_color="b",
+        )
+
+        with pytest.raises(InvalidMoveError):
+            board.black.move("king", "c", 8)
+
+    def test_cant_castle_into_check_from_king(self, builder):
+        board = builder.from_data(
+            white_data=[
+                {"piece_type": King, "x": "b", "y": 7},
+            ],
+            black_data=[
+                {"piece_type": King, "x": "e", "y": 8},
+                {"piece_type": Rook, "x": "a", "y": 8},
+            ],
+            active_color="b",
+        )
+
+        with pytest.raises(InvalidMoveError):
+            board.black.move("king", "c", 8)
+
     def test_cant_castle_if_skewered(self, builder):
         board = builder.from_data(
             white_data=[
