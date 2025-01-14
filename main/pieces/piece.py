@@ -1,3 +1,4 @@
+from functools import cached_property
 from typing import TYPE_CHECKING, Iterable, Optional, Reversible, Set
 
 from main import constants
@@ -33,7 +34,7 @@ class Piece:
     value: int = NotImplemented
     unicode: str = NotImplemented
 
-    @property
+    @cached_property
     def opponent(self) -> "Agent":
         attr = "black" if self.agent is self.agent.board.white else "white"
         return getattr(self.agent.board, attr)
@@ -46,7 +47,7 @@ class Piece:
     def forbidden_squares(self) -> Set[Position]:
         return self.agent.positions
 
-    @property
+    @cached_property
     def king(self) -> "King":
         return self.agent.king
 

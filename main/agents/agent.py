@@ -55,24 +55,32 @@ class Agent:
 
     en_passant_target: Optional[Position] = None
 
-    # Caches of the sets of pieces and their positions.
+    # Caches of the pieces and their positions
     # Stays updated to the current halfmove
+    _pieces_cache: List[Tuple[str, "Piece"]] = field(default_factory=list)
     _positions_cache: Set[Position] = field(default_factory=set)
 
     def __repr__(self):
         return f'{self.color}:\n{"".join(f"  {a}: {p}\n" for a, p in self.pieces)}'
 
+    def cache_pieces(self):
+        self._pieces_cache = []
+        for attr in constants.PIECE_ATTRS:
+            if piece := getattr(self, attr):
+                self._pieces_cache.append((attr, piece))
+
     def cache_positions(self):
         self._positions_cache = set(piece.position for _, piece in self.pieces)
 
-    # TODO this is the current most expensive operation, gets called 1000+ times per halfmove.
-    # Can we cache this for the lifetime of the halfmove? At least cache the positions?
-    # Clear the cache when the move is committed in piece.move()
     @property
-    def pieces(self) -> Iterable[Tuple[str, "Piece"]]:
+    def pieces(self) -> List[Tuple[str, "Piece"]]:
+        if self._pieces_cache:
+            return self._pieces_cache
+
         for attr in constants.PIECE_ATTRS:
             if piece := getattr(self, attr):
-                yield attr, piece
+                self._pieces_cache.append((attr, piece))
+        return self._pieces_cache
 
     @property
     def material_sum(self) -> int:
@@ -87,7 +95,8 @@ class Agent:
         if self._positions_cache:
             return self._positions_cache
 
-        return set(piece.position for _, piece in self.pieces)
+        self._positions_cache = set(piece.position for _, piece in self.pieces)
+        return self._positions_cache
 
     @property
     def castling_rights(self) -> str:

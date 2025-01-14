@@ -210,6 +210,7 @@ class Board:
                     if "has_moved" in datum:
                         existing_piece.has_moved = datum["has_moved"]
 
+            agent.cache_pieces()
             agent.cache_positions()
 
         if "game_result" in change and change["game_result"]:
