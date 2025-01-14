@@ -210,6 +210,8 @@ class Board:
                     if "has_moved" in datum:
                         existing_piece.has_moved = datum["has_moved"]
 
+            agent.cache_positions()
+
         if "game_result" in change and change["game_result"]:
             self.result = change["game_result"]
 
@@ -230,7 +232,14 @@ class Board:
 
     def rollback_halfmove(self, halfmove: Optional[HalfMove] = None):
         halfmove = halfmove or self.game_tree.get_latest_halfmove()
-        inverted_change = deepcopy(constants.BLANK_CHANGE)
+        inverted_change = {
+            constants.WHITE: {},
+            constants.BLACK: {},
+            "disambiguation": "",
+            "check": False,
+            "game_result": None,
+            "symbol": None,
+        }
 
         for agent in (self.white, self.black):
             if halfmove.change[agent.color]:

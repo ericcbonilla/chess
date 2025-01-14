@@ -55,8 +55,15 @@ class Agent:
 
     en_passant_target: Optional[Position] = None
 
+    # Caches of the sets of pieces and their positions.
+    # Stays updated to the current halfmove
+    _positions_cache: Set[Position] = field(default_factory=set)
+
     def __repr__(self):
         return f'{self.color}:\n{"".join(f"  {a}: {p}\n" for a, p in self.pieces)}'
+
+    def cache_positions(self):
+        self._positions_cache = set(piece.position for _, piece in self.pieces)
 
     # TODO this is the current most expensive operation, gets called 1000+ times per halfmove.
     # Can we cache this for the lifetime of the halfmove? At least cache the positions?
@@ -77,6 +84,9 @@ class Agent:
 
     @property
     def positions(self) -> Set[Position]:
+        if self._positions_cache:
+            return self._positions_cache
+
         return set(piece.position for _, piece in self.pieces)
 
     @property
