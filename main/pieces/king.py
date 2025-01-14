@@ -137,9 +137,6 @@ class King(Piece):
         return is_capturable
 
     def _is_capturable(self) -> bool:
-        # TODO: Think of a way to ~avoid~ calling this for every single move
-        # Maybe there's some piece of this we could memoize?
-
         for _, piece in self.opponent.pieces:
             if isinstance(piece, (WhitePawn, BlackPawn)):
                 skip = vector(self.position, piece.position) != (1, 1)
