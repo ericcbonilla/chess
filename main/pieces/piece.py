@@ -112,7 +112,6 @@ class Piece:
 
         return True
 
-    # TODO test RandomAgent - make sure pawns can capture
     def get_valid_moves(self, lazy: Optional[bool] = False) -> Set[Position]:
         valid_moves = set()
 
