@@ -60,10 +60,7 @@ class King(Piece):
             for x_d, y_d in self.castle_movements
         )
 
-    def is_valid_move(
-        self,
-        new_position: Position,
-    ) -> bool:
+    def is_valid_move(self, new_position: Position) -> bool:
         new_x, _ = new_position
         if self.is_castle(new_position):
             if new_x == "c":
