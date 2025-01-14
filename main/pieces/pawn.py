@@ -25,16 +25,12 @@ class Pawn(Piece):
             for x_d, y_d in self.capture_movements
         )
 
-    def is_valid_move(
-        self,
-        new_position: Position,
-        keep_king_safe: Optional[bool] = True,
-    ) -> bool:
+    def is_valid_move(self, new_position: Position) -> bool:
         if self.is_capture(new_position):
             if new_position in self.opponent.positions | {
                 self.opponent.en_passant_target
             }:
-                if keep_king_safe and self.king_would_be_in_check(
+                if self.king_would_be_in_check(
                     king=self.king,
                     new_position=new_position,
                 ):
@@ -42,7 +38,7 @@ class Pawn(Piece):
                 return True
             return False
 
-        return super().is_valid_move(new_position, keep_king_safe)
+        return super().is_valid_move(new_position)
 
     def get_disambiguation(self, x: XPosition, y: int) -> str:
         return ""

@@ -61,7 +61,8 @@ class King(Piece):
         )
 
     def is_valid_move(
-        self, new_position: Position, keep_king_safe: Optional[bool] = True
+        self,
+        new_position: Position,
     ) -> bool:
         new_x, _ = new_position
         if self.is_castle(new_position):

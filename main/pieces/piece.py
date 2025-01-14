@@ -94,17 +94,12 @@ class Piece:
             return False
         return True
 
-    def is_valid_move(
-        self,
-        new_position: Position,
-        # TODO not needed anymore???
-        keep_king_safe: Optional[bool] = True,
-    ) -> bool:
+    def is_valid_move(self, new_position: Position) -> bool:
         if not self.is_valid_movement(new_position):
             return False
         elif not self.is_open_path(new_position):
             return False
-        elif keep_king_safe and self.king_would_be_in_check(
+        elif self.king_would_be_in_check(
             king=self.king,
             new_position=new_position,
         ):
