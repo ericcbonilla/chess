@@ -128,6 +128,19 @@ class TestCastling:
 
 
 class TestKingScenarios:
+    def test_king_cannot_move_multiple_squares_if_not_castling(self, builder):
+        board = builder.from_data(
+            white_data=[
+                {"piece_type": King, "x": "e", "y": 1},
+            ],
+            black_data=[
+                {"piece_type": King, "x": "e", "y": 8},
+            ],
+        )
+
+        with pytest.raises(InvalidMoveError):
+            board.white.move("king", "e", 3)
+
     def test_when_king_added_on_starting_square_has_moved_false(self, builder):
         board = builder.from_data(
             white_data=[

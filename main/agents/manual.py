@@ -44,8 +44,7 @@ class ManualAgent(Agent):
                 if (
                     search_fn(piece)
                     and isinstance(piece, an.piece_type)
-                    and pick in piece.get_valid_moves()
-                    or pick in piece.get_captures()
+                    and piece.is_valid_move(pick)
                 )
             ]
 
@@ -59,7 +58,7 @@ class ManualAgent(Agent):
             except IndexError:
                 raise NotationError(f'"{an.text}" is an illegal move')
         else:
-            if pick not in piece.get_valid_moves():
+            if not piece.is_valid_move(pick):
                 raise NotationError(f'"{an.text}" is an illegal move')
 
         if not an.is_capture and an.pick in piece.opponent.positions:
@@ -89,10 +88,8 @@ class ManualAgent(Agent):
         if attr and x and y:
             piece = getattr(self, attr)
             x = XPosition(x)
-            valid_moves = piece.get_valid_moves()
-            captures = piece.get_captures(valid_moves)
 
-            if (x, y) in valid_moves | captures:
+            if piece.is_valid_move((x, y)):
                 return piece.move(x, y, **kwargs)
 
             raise InvalidMoveError(f"Moving {piece} to {(x, y)} is invalid")
