@@ -58,6 +58,9 @@ class Agent:
     def __repr__(self):
         return f'{self.color}:\n{"".join(f"  {a}: {p}\n" for a, p in self.pieces)}'
 
+    # TODO this is the current most expensive operation, gets called 1000+ times per halfmove.
+    # Can we cache this for the lifetime of the halfmove? At least cache the positions?
+    # Clear the cache when the move is committed in piece.move()
     @property
     def pieces(self) -> Iterable[Tuple[str, "Piece"]]:
         for attr in constants.PIECE_ATTRS:

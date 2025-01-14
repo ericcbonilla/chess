@@ -50,6 +50,11 @@ class Piece:
     def king(self) -> "King":
         return self.agent.king
 
+    # TODO I think we can apply the vector logic here and get rid of self.movements
+    # entirely. Look at how messy the Rook movements are for example. Apply what you did
+    # in _is_capturable to the movement validations of the individual pieces
+    # e.g. if vector(King.position, new_position) != (1, 1), then invalid!
+    # Gotta think about how we'd calc get_valid_moves though
     def is_valid_movement(self, new_position: Position) -> bool:
         if (
             new_position not in constants.SQUARES

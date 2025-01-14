@@ -140,15 +140,17 @@ class King(Piece):
         # Maybe there's some piece of this we could memoize?
 
         for _, piece in self.opponent.pieces:
+            vec = vector(self.position, piece.position)
+
             if isinstance(piece, (WhitePawn, BlackPawn, Knight, King)):  # Slow pieces
                 if isinstance(piece, (WhitePawn, BlackPawn)):
-                    if vector(self.position, piece.position) != (1, 1):
+                    if vec != (1, 1):
                         continue
                 elif isinstance(piece, King):
-                    if vector(self.position, piece.position) > (1, 1):
+                    if vec > (1, 1):
                         continue
                 elif isinstance(piece, Knight):
-                    if vector(self.position, piece.position) not in [(1, 2), (2, 1)]:
+                    if vec not in [(1, 2), (2, 1)]:
                         continue
 
                 for x_d, y_d in piece.capture_movements:
@@ -157,24 +159,19 @@ class King(Piece):
                         return True
             else:  # Fast pieces
                 if isinstance(piece, Rook):
-                    if 0 not in vector(self.position, piece.position):
+                    if 0 not in vec:
                         continue
                 elif isinstance(piece, Bishop):
-                    x, y = vector(self.position, piece.position)
+                    x, y = vec
                     if x != y:
                         continue
                 elif isinstance(piece, Queen):
-                    x, y = vector(self.position, piece.position)
+                    x, y = vec
                     if 0 not in (x, y) and x != y:
                         continue
 
-                for x_d, y_d in piece.movements:
-                    new_position = piece.x + x_d, piece.y + y_d
-                    if new_position == self.position:
-                        # Don't need to do a full validity check here, since most
-                        # of those checks either don't apply or are redundant
-                        if piece.is_open_path(new_position):
-                            return True
+                if piece.is_open_path(self.position):
+                    return True
 
         return False
 
