@@ -1,6 +1,5 @@
 import os
 from collections import Counter
-from copy import deepcopy
 from datetime import date
 from typing import TYPE_CHECKING, Dict, Optional
 

@@ -5,6 +5,10 @@ from main.pieces import Bishop, King, Knight, Queen, Rook, WhitePawn
 
 
 class TestCastling:
+    def test_king_cant_move_to_its_own_square(self, default_board):
+        with pytest.raises(InvalidMoveError):
+            default_board.white.move("king", "e", 1)
+
     def test_white_kingside_castle(self, default_board):
         default_board.white.move("g_knight", "f", 3)
         default_board.black.move("b_knight", "c", 6)

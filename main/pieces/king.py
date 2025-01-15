@@ -6,11 +6,9 @@ from main.types import Change, Position
 from main.utils import vector
 from main.xposition import XPosition
 
-from .bishop import Bishop
 from .knight import Knight
 from .pawn import BlackPawn, WhitePawn
 from .piece import Piece
-from .queen import Queen
 from .rook import Rook
 
 if TYPE_CHECKING:
@@ -67,6 +65,9 @@ class King(Piece):
             for x_d, y_d in self.castle_movements
         )
 
+    def is_valid_vector(self, new_position: Position) -> bool:
+        return vector(self.position, new_position) in [(1, 1), (0, 1), (1, 0)]
+
     def is_valid_move(self, new_position: Position) -> bool:
         new_x, _ = new_position
         if self.is_castle(new_position):
@@ -84,15 +85,12 @@ class King(Piece):
     def get_valid_moves(self, lazy: Optional[bool] = False) -> Set[Position]:
         valid_moves = set()
 
-        for x_d, y_d in self.movements:
-            new_position = self.x + x_d, self.y + y_d
+        for cand in self.get_candidate_moves():
             # Not calling is_valid_move here to avoid redundant castling validation
-            if not self.is_valid_movement(new_position) or self.is_in_check(
-                new_position
-            ):
+            if not self.is_valid_movement(cand) or self.is_in_check(cand):
                 continue
 
-            valid_moves.add(new_position)
+            valid_moves.add(cand)
             if lazy:
                 return valid_moves
 
@@ -136,40 +134,17 @@ class King(Piece):
         return is_capturable
 
     def _is_capturable(self) -> bool:
-        # TODO: Think of a way to ~avoid~ calling this for every single move
-        # Maybe there's some piece of this we could memoize?
-
         for _, piece in self.opponent.pieces:
-            vec = vector(self.position, piece.position)
+            if isinstance(piece, (WhitePawn, BlackPawn)):
+                skip = not piece.is_capture_vector(self.position)
+            else:
+                skip = not piece.is_valid_vector(self.position)
+            if skip:
+                continue
 
-            if isinstance(piece, (WhitePawn, BlackPawn, Knight, King)):  # Slow pieces
-                if isinstance(piece, (WhitePawn, BlackPawn)):
-                    if vec != (1, 1):
-                        continue
-                elif isinstance(piece, King):
-                    if vec > (1, 1):
-                        continue
-                elif isinstance(piece, Knight):
-                    if vec not in [(1, 2), (2, 1)]:
-                        continue
-
-                for x_d, y_d in piece.capture_movements:
-                    new_position = piece.x + x_d, piece.y + y_d
-                    if new_position == self.position:
-                        return True
-            else:  # Fast pieces
-                if isinstance(piece, Rook):
-                    if 0 not in vec:
-                        continue
-                elif isinstance(piece, Bishop):
-                    x, y = vec
-                    if x != y:
-                        continue
-                elif isinstance(piece, Queen):
-                    x, y = vec
-                    if 0 not in (x, y) and x != y:
-                        continue
-
+            if isinstance(piece, (WhitePawn, BlackPawn, Knight, King)):
+                return True
+            else:
                 if piece.is_open_path(self.position):
                     return True
 

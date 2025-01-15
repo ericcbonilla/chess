@@ -51,20 +51,19 @@ class Piece:
     def king(self) -> "King":
         return self.agent.king
 
-    # TODO I think we can apply the vector logic here and get rid of self.movements
-    # entirely. Look at how messy the Rook movements are for example. Apply what you did
-    # in _is_capturable to the movement validations of the individual pieces
-    # e.g. if vector(King.position, new_position) != (1, 1), then invalid!
-    # Gotta think about how we'd calc get_valid_moves though
+    def get_candidate_moves(self) -> Set[Position]:
+        candidate_moves = set(
+            (self.x + x_d, self.y + y_d) for x_d, y_d in self.movements
+        )
+        return candidate_moves & constants.SQUARES
+
+    def is_valid_vector(self, new_position: Position) -> bool:
+        raise NotImplementedError
+
     def is_valid_movement(self, new_position: Position) -> bool:
-        if (
-            new_position not in constants.SQUARES
-            or new_position in self.forbidden_squares
-            or not any(
-                (self.x + x_d, self.y + y_d) == new_position
-                for x_d, y_d in self.movements
-            )
-        ):
+        if new_position in self.forbidden_squares:
+            return False
+        elif not self.is_valid_vector(new_position):
             return False
         return True
 
@@ -116,11 +115,10 @@ class Piece:
     def get_valid_moves(self, lazy: Optional[bool] = False) -> Set[Position]:
         valid_moves = set()
 
-        for x_d, y_d in self.movements:
-            new_position = self.x + x_d, self.y + y_d
-
-            if self.is_valid_move(new_position):
-                valid_moves.add(new_position)
+        for cand in self.get_candidate_moves():
+            # TODO? We're redundantly checking vectors here, but it doesn't seem to add much
+            if self.is_valid_move(cand):
+                valid_moves.add(cand)
                 if lazy:
                     return valid_moves
 
@@ -129,7 +127,7 @@ class Piece:
     def can_move(self) -> Set[Position]:
         return self.get_valid_moves(lazy=True)
 
-    def get_disambiguation(self, x: XPosition, y: int) -> str:
+    def get_disambiguation(self, x: XPosition | str, y: int) -> str:
         """
         Used for algebraic notation. If we have other pieces of the same type
         that can also move to the target square, return the rank (y) and/or
@@ -138,6 +136,7 @@ class Piece:
         """
 
         disambiguation = ""
+        x = XPosition(x)
         siblings = [
             piece
             for _, piece in self.agent.pieces
