@@ -47,6 +47,8 @@ class TestGetGameResult:
                 {"piece_type": King, "x": "a", "y": 8},
             ],
         )
+        board.halfmove_clock = 30
+        board.fullmove_number = 15
         halfmove = board.white.move("h_rook", "b", 6)
 
         assert not halfmove.change["check"]

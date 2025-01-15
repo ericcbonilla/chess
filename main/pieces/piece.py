@@ -179,7 +179,16 @@ class Piece:
     def get_game_result(self, check: bool) -> GameResult:
         if check and not self.opponent.can_move():
             return "1-0" if self.agent.color == constants.WHITE else "0-1"
-        elif not self.opponent.can_move():
+        elif (
+            # .can_move() is computationally expensive; stalemate is
+            # likely impossible until move 10, and in practice won't be
+            # reached until much later than that (15+)
+            # https://en.wikipedia.org/wiki/List_of_world_records_in_chess#:~:text=The%20shortest%20known%20stalemate%2C%20composed,Qh5%20Ra6%203.
+            # 1.e3 a5 2.Qh5 Ra6 3.Qxa5 h5 4.Qxc7 Rah6 5.h4 f6 6.Qxd7+ Kf7
+            # 7.Qxb7 Qd3 8.Qxb8 Qh7 9.Qxc8 Kg6 10.Qe6 ½-½
+            self.agent.board.fullmove_number >= 15
+            and not self.opponent.can_move()
+        ):
             return "½-½ Stalemate"
         # TODO game not called as immediate draw in KNK endgame, KN side was allowed to make an additional move
         elif self.agent.board.has_insufficient_material():
@@ -187,7 +196,6 @@ class Piece:
         elif self.agent.board.draw_by_repetition():
             return "½-½ Repetition"
         elif self.agent.board.halfmove_clock == 125:
-            # https://en.wikipedia.org/wiki/Fifty-move_rule#Seventy-five-move_rule
             return "½-½ Seventy-five-move rule"
         return None
 
