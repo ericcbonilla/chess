@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Optional, Set, Tuple
 
 from main import constants
 from main.types import Change, Position
@@ -41,6 +41,20 @@ class Rook(Piece):
 
     def is_valid_vector(self, new_position: Position) -> bool:
         return 0 in vector(self.position, new_position)
+
+    def _movements(self) -> Set[Tuple[int, int]]:
+
+        # TODO start here, implement this for bishop and queen and then see if its worth it
+        movements = set()
+        x, y = self.position
+        x.wrap = True
+
+        for d in range(1, 8):
+            movements.add((x.to_int() + d, y))
+            movements.add((x.to_int(), ((y + d) % 8) or 8))
+        x.wrap = False
+
+        return movements
 
     def augment_change(self, x: XPosition, y: int, change: Change, **kwargs) -> Change:
         if not self.has_moved:
