@@ -59,6 +59,13 @@ class Piece:
     # in _is_capturable to the movement validations of the individual pieces
     # e.g. if vector(King.position, new_position) != (1, 1), then invalid!
     # Gotta think about how we'd calc get_valid_moves though
+
+    # Maybe try redefining Piece.movements to be computed at runtime, based on the
+    # current position. We can rule out any movement directions that would put the
+    # piece off the board
+
+    # Right now get_valid_moves is doing extra work - it doesn't need to check
+    # vectors within is_valid_move, we know they're already valid
     def is_valid_movement(self, new_position: Position) -> bool:
         if (
             new_position not in constants.SQUARES
