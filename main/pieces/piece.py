@@ -60,16 +60,6 @@ class Piece:
     def is_valid_vector(self, new_position: Position) -> bool:
         raise NotImplementedError
 
-    # TODO I think we can apply the vector logic here and get rid of self.movements
-    # entirely. Look at how messy the Rook movements are for example. Apply what you did
-    # in _is_capturable to the movement validations of the individual pieces
-    # e.g. if vector(King.position, new_position) != (1, 1), then invalid!
-    # Gotta think about how we'd calc get_valid_moves though
-
-    # Maybe try redefining Piece.movements to be computed at runtime, based on the
-    # current position. We can rule out any movement directions that would put the
-    # piece off the board
-
     def is_valid_movement(self, new_position: Position) -> bool:
         if new_position in self.forbidden_squares:
             return False
