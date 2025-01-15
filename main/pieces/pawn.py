@@ -1,6 +1,5 @@
 from typing import Set
 
-from main import constants
 from main.game_tree import HalfMove
 from main.types import Change, Position
 from main.utils import vector
