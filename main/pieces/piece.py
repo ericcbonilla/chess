@@ -186,7 +186,7 @@ class Piece:
             # https://en.wikipedia.org/wiki/List_of_world_records_in_chess#:~:text=The%20shortest%20known%20stalemate%2C%20composed,Qh5%20Ra6%203.
             # 1.e3 a5 2.Qh5 Ra6 3.Qxa5 h5 4.Qxc7 Rah6 5.h4 f6 6.Qxd7+ Kf7
             # 7.Qxb7 Qd3 8.Qxb8 Qh7 9.Qxc8 Kg6 10.Qe6 ½-½
-            self.agent.board.fullmove_number >= 15
+            self.agent.board.fullmove_number >= 10
             and not self.opponent.can_move()
         ):
             return "½-½ Stalemate"
