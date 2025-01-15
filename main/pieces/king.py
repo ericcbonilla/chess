@@ -85,15 +85,12 @@ class King(Piece):
     def get_valid_moves(self, lazy: Optional[bool] = False) -> Set[Position]:
         valid_moves = set()
 
-        for x_d, y_d in self.movements:
-            new_position = self.x + x_d, self.y + y_d
+        for cand in self.get_candidate_moves():
             # Not calling is_valid_move here to avoid redundant castling validation
-            if not self.is_valid_movement(new_position) or self.is_in_check(
-                new_position
-            ):
+            if not self.is_valid_movement(cand) or self.is_in_check(cand):
                 continue
 
-            valid_moves.add(new_position)
+            valid_moves.add(cand)
             if lazy:
                 return valid_moves
 

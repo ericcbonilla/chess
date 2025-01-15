@@ -32,9 +32,7 @@ class Pawn(Piece):
         return vector(self.position, new_position) == (1, 1)
 
     def is_valid_move(self, new_position: Position) -> bool:
-        if new_position not in constants.SQUARES:
-            return False
-        elif self.is_capture_vector(new_position):
+        if self.is_capture_vector(new_position):
             if new_position in self.opponent.positions | {
                 self.opponent.en_passant_target
             }:

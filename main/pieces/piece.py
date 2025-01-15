@@ -51,6 +51,12 @@ class Piece:
     def king(self) -> "King":
         return self.agent.king
 
+    def get_candidate_moves(self) -> Set[Position]:
+        candidate_moves = set(
+            (self.x + x_d, self.y + y_d) for x_d, y_d in self.movements
+        )
+        return candidate_moves & constants.SQUARES
+
     def is_valid_vector(self, new_position: Position) -> bool:
         raise NotImplementedError
 
@@ -64,14 +70,10 @@ class Piece:
     # current position. We can rule out any movement directions that would put the
     # piece off the board
 
-    # Right now get_valid_moves is doing extra work - it doesn't need to check
-    # vectors within is_valid_move, we know they're already valid
     def is_valid_movement(self, new_position: Position) -> bool:
-        if (
-            new_position not in constants.SQUARES
-            or new_position in self.forbidden_squares
-            or not self.is_valid_vector(new_position)
-        ):
+        if new_position in self.forbidden_squares:
+            return False
+        elif not self.is_valid_vector(new_position):
             return False
         return True
 
@@ -123,11 +125,10 @@ class Piece:
     def get_valid_moves(self, lazy: Optional[bool] = False) -> Set[Position]:
         valid_moves = set()
 
-        for x_d, y_d in self.movements:
-            new_position = self.x + x_d, self.y + y_d
-
-            if self.is_valid_move(new_position):
-                valid_moves.add(new_position)
+        for cand in self.get_candidate_moves():
+            # TODO? We're redundantly checking vectors here, but it doesn't seem to add much
+            if self.is_valid_move(cand):
+                valid_moves.add(cand)
                 if lazy:
                     return valid_moves
 
