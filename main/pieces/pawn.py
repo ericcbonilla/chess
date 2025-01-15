@@ -16,6 +16,7 @@ class Pawn(Piece):
     capture_movements: Set = NotImplemented
     y_init: int = NotImplemented
     unicode = "\u2659"
+    a = 1
 
     @property
     def forbidden_squares(self) -> Set[Position]:
