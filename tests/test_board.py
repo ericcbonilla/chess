@@ -101,7 +101,6 @@ class TestHasInsufficientMaterial:
                 {"piece_type": Rook, "x": "d", "y": 2},
             ],
         )
-        board.halfmove_clock = 40
         board.fullmove_number = 20
         halfmove = board.white.move("king", "d", 2)
 
@@ -120,7 +119,6 @@ class TestHasInsufficientMaterial:
                 {"piece_type": Rook, "x": "d", "y": 2},
             ],
         )
-        board.halfmove_clock = 40
         board.fullmove_number = 20
         halfmove = board.white.move("king", "d", 2)
 
@@ -137,7 +135,6 @@ class TestHasInsufficientMaterial:
             ],
             active_color="b",
         )
-        board.halfmove_clock = 40
         board.fullmove_number = 20
         halfmove = board.black.move("king", "d", 3)
 
@@ -155,7 +152,6 @@ class TestHasInsufficientMaterial:
             ],
             active_color="b",
         )
-        board.halfmove_clock = 40
         board.fullmove_number = 20
         halfmove = board.black.move("king", "d", 3)
 
@@ -172,7 +168,6 @@ class TestHasInsufficientMaterial:
                 {"piece_type": Knight, "x": "b", "y": 6},
             ],
         )
-        board.halfmove_clock = 40
         board.fullmove_number = 20
         halfmove = board.white.move("king", "d", 2)
 
@@ -191,7 +186,6 @@ class TestHasInsufficientMaterial:
             ],
             active_color="b",
         )
-        board.halfmove_clock = 40
         board.fullmove_number = 20
         halfmove = board.black.move("king", "d", 3)
 
@@ -210,7 +204,6 @@ class TestHasInsufficientMaterial:
             ],
             active_color="b",
         )
-        board.halfmove_clock = 40
         board.fullmove_number = 20
         halfmove = board.black.move("king", "d", 3)
 
