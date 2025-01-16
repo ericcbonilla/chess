@@ -357,7 +357,7 @@ class TestKingScenarios:
             white_data=[
                 {"piece_type": King, "x": "a", "y": 1},
                 {"piece_type": WhitePawn, "x": "a", "y": 2},
-                {"piece_type": Bishop, "x": "b", "y": 1},
+                {"piece_type": Rook, "x": "b", "y": 1},
             ],
             black_data=[
                 {"piece_type": King, "x": "h", "y": 8},

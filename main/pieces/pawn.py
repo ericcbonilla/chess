@@ -28,11 +28,14 @@ class Pawn(Piece):
             return vec in [(0, 1), (0, 2), (1, 1)]
         return vec in [(0, 1), (1, 1)]
 
-    def is_capture_vector(self, new_position: Position) -> bool:
-        return vector(self.position, new_position) == (1, 1)
+    def is_capture(self, new_position: Position) -> bool:
+        return any(
+            (self.x + x_d, self.y + y_d) == new_position
+            for x_d, y_d in self.capture_movements
+        )
 
     def is_valid_move(self, new_position: Position) -> bool:
-        if self.is_capture_vector(new_position):
+        if self.is_capture(new_position):
             if new_position in self.opponent.positions | {
                 self.opponent.en_passant_target
             }:

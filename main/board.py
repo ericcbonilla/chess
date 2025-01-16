@@ -7,10 +7,11 @@ import pyperclip
 from colorist import Color
 
 from main import constants
+from main.exceptions import NotFoundError
 from main.game_tree import FullMove, GameTree, HalfMove
 from main.game_tree.utils import get_halfmove
 from main.types import Change, GameResult, Position
-from main.utils import cprint, print_move_heading
+from main.utils import cprint, print_move_heading, truncate_fen
 from main.xposition import XPosition
 
 if TYPE_CHECKING:
@@ -39,12 +40,14 @@ class Board:
         halfmove_clock: Optional[int] = 0,
         fullmove_number: Optional[int] = 1,
         game_tree: Optional[GameTree] = None,
+        fen_cts: Optional[Dict] = None,
     ):
         self.max_fullmoves = max_fullmoves
         self.game_tree = game_tree or GameTree()
         self.active_color = active_color or "w"
         self.halfmove_clock = halfmove_clock
         self.fullmove_number = fullmove_number
+        self.fen_cts = fen_cts
         self.result: GameResult = None
 
         self._white = None
@@ -98,6 +101,8 @@ class Board:
     def get_fen(
         self, idx: Optional[float] = None, internal: Optional[bool] = False
     ) -> str:
+        # TODO Look into optimizing this
+
         if idx:
             halfmove = get_halfmove(idx, self.game_tree.root)
             return halfmove.change["fen"]
@@ -177,7 +182,7 @@ class Board:
         setattr(piece.agent.graveyard, attr, piece)
         setattr(piece.agent, attr, None)
 
-    def apply_change(self, change: Change):
+    def apply_change(self, change: Change, rollback: Optional[bool] = False):
         """
         All game state changes (i.e. changes to Board, Agents, and Pieces) should happen
         here. State should never be changed from anywhere else.
@@ -214,6 +219,11 @@ class Board:
 
         if "game_result" in change and change["game_result"]:
             self.result = change["game_result"]
+        if "fen" in change:
+            if rollback:
+                self.fen_cts[truncate_fen(change["fen"])] -= 1
+            else:
+                self.fen_cts[truncate_fen(change["fen"])] += 1
 
         self.halfmove_clock = change["halfmove_clock"][1]
         self.active_color = "w" if self.active_color == "b" else "b"
@@ -277,15 +287,14 @@ class Board:
             halfmove.change["fullmove_number"][0],
         )
 
-        self.apply_change(inverted_change)
+        self.apply_change(inverted_change, rollback=True)
         self.game_tree.prune()
 
-    def has_insufficient_material(self):
+    def has_insufficient_material(self) -> bool:
         scenarios = [
-            ([0], [0]),
-            ([0], [0, 3]),
-            ([0, 3], [0]),
-            ([0, 3], [0, 3]),
+            ([0], [0]),  # KK
+            ([0], [0, 3]),  # KKN or KKB
+            ([0, 3], [0]),  # KNK or KBK
         ]
 
         if self.white.material_sum > 3 or self.black.material_sum > 3:
@@ -295,7 +304,22 @@ class Board:
             black_match = Counter(self.black.material) == Counter(black_material)
             if white_match and black_match:
                 return True
+
+        if Counter(self.white.material) == Counter([0, 3]) and Counter(
+            self.black.material
+        ) == Counter([0, 3]):
+            try:
+                white_bishop = self.white.get_bishop()
+                black_bishop = self.black.get_bishop()
+            except NotFoundError:
+                return False
+
+            return white_bishop.dark is black_bishop.dark
+
         return False
+
+    def draw_by_repetition(self, fen: str) -> bool:
+        return self.fen_cts[truncate_fen(fen)] == 2
 
     def play(self, num_fullmoves: Optional[int] = None):
         term_size = os.get_terminal_size()
@@ -315,7 +339,9 @@ class Board:
 
             print_move_heading(term_size, self.fullmove_number)
             self.white.move()
-            self.black.move()
-            elapsed_fullmoves += 1
+
+            if not self.result:
+                self.black.move()
+                elapsed_fullmoves += 1
 
         print(f"\nMoves played: {self.fullmove_number - 1}. Result: {self.result}")

@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING, List, Optional, Set, Tuple
 
 from main import constants
 from main.agents.graveyard import Graveyard
+from main.exceptions import NotFoundError
 from main.game_tree import HalfMove
 from main.pieces import Bishop, BlackPawn, King, Knight, Queen, Rook, WhitePawn
 from main.types import AgentColor, Position, Promotee
@@ -114,7 +115,14 @@ class Agent:
             if piece.position == (x, y):
                 return piece
 
-        raise Exception(f"Piece not found on {(x, y)}")
+        raise NotFoundError(f"Piece not found on {(x, y)}")
+
+    def get_bishop(self) -> Bishop:
+        for _, piece in self.pieces:
+            if isinstance(piece, Bishop):
+                return piece
+
+        raise NotFoundError("Bishop not found")
 
     def can_move(self) -> bool:
         for _, piece in self.pieces:

@@ -101,6 +101,7 @@ class TestHasInsufficientMaterial:
                 {"piece_type": Rook, "x": "d", "y": 2},
             ],
         )
+        board.fullmove_number = 20
         halfmove = board.white.move("king", "d", 2)
 
         assert halfmove.change["game_result"] is None
@@ -118,6 +119,7 @@ class TestHasInsufficientMaterial:
                 {"piece_type": Rook, "x": "d", "y": 2},
             ],
         )
+        board.fullmove_number = 20
         halfmove = board.white.move("king", "d", 2)
 
         assert halfmove.change["game_result"] is None
@@ -133,6 +135,7 @@ class TestHasInsufficientMaterial:
             ],
             active_color="b",
         )
+        board.fullmove_number = 20
         halfmove = board.black.move("king", "d", 3)
 
         assert halfmove.change["game_result"] == "½-½ Insufficient material"
@@ -149,6 +152,7 @@ class TestHasInsufficientMaterial:
             ],
             active_color="b",
         )
+        board.fullmove_number = 20
         halfmove = board.black.move("king", "d", 3)
 
         assert halfmove.change["game_result"] == "½-½ Insufficient material"
@@ -164,11 +168,12 @@ class TestHasInsufficientMaterial:
                 {"piece_type": Knight, "x": "b", "y": 6},
             ],
         )
+        board.fullmove_number = 20
         halfmove = board.white.move("king", "d", 2)
 
         assert halfmove.change["game_result"] == "½-½ Insufficient material"
 
-    def test_kbkn_yields_draw(self, builder):
+    def test_kbkn_does_not_yield_draw(self, builder):
         board = builder.from_data(
             white_data=[
                 {"piece_type": King, "x": "e", "y": 1},
@@ -181,6 +186,25 @@ class TestHasInsufficientMaterial:
             ],
             active_color="b",
         )
+        board.fullmove_number = 20
+        halfmove = board.black.move("king", "d", 3)
+
+        assert halfmove.change["game_result"] is None
+
+    def test_kbkb_same_color_bishops_yields_draw(self, builder):
+        board = builder.from_data(
+            white_data=[
+                {"piece_type": King, "x": "e", "y": 1},
+                {"piece_type": Rook, "x": "d", "y": 3},
+                {"piece_type": Bishop, "x": "a", "y": 8},
+            ],
+            black_data=[
+                {"piece_type": King, "x": "c", "y": 4},
+                {"piece_type": Bishop, "x": "b", "y": 5},
+            ],
+            active_color="b",
+        )
+        board.fullmove_number = 20
         halfmove = board.black.move("king", "d", 3)
 
         assert halfmove.change["game_result"] == "½-½ Insufficient material"
@@ -293,3 +317,103 @@ class TestHalfmoveClock:
 
         assert board.halfmove_clock == 125
         assert halfmove.change["game_result"] == "0-1"
+
+
+class TestDrawByRepetition:
+    def test_when_starting_position_occurs_three_times_yields_draw(self, default_board):
+        # First "repetition" includes the starting position
+        default_board.white.move("b_knight", "c", 3)
+        default_board.black.move("b_knight", "c", 6)
+
+        # Two
+        default_board.white.move("b_knight", "b", 1)
+        default_board.black.move("b_knight", "b", 8)
+        default_board.white.move("b_knight", "c", 3)
+        halfmove = default_board.black.move("b_knight", "c", 6)
+
+        assert halfmove.change["game_result"] is None
+
+        # Three
+        default_board.white.move("b_knight", "b", 1)
+        halfmove = default_board.black.move("b_knight", "b", 8)
+
+        assert halfmove.change["game_result"] == "½-½ Repetition"
+
+    def test_when_midgame_position_occurs_three_times_yields_draw(self, builder):
+        board = builder.from_fen(
+            "r1bq1rk1/ppppnppp/2n5/1B2p3/1b2P3/2N2P2/PPPPN1PP/R1BQ1RK1 b - - 8 6"
+        )
+
+        board.black.move("f_bishop", "a", 5)
+        board.white.move("c_bishop", "a", 4)
+
+        # Two
+        board.black.move("f_bishop", "b", 4)
+        board.white.move("c_bishop", "b", 5)
+        board.black.move("f_bishop", "a", 5)
+        halfmove = board.white.move("c_bishop", "a", 4)
+
+        assert halfmove.change["game_result"] is None
+
+        # Three
+        board.black.move("f_bishop", "b", 4)
+        halfmove = board.white.move("c_bishop", "b", 5)
+
+        assert halfmove.change["game_result"] == "½-½ Repetition"
+
+    def test_when_endgame_position_occurs_three_times_yields_draw(self, builder):
+        board = builder.from_data(
+            white_data=[
+                {"piece_type": King, "x": "e", "y": 1},
+                {"piece_type": Rook, "x": "d", "y": 3},
+            ],
+            black_data=[
+                {"piece_type": King, "x": "c", "y": 5},
+            ],
+            active_color="w",
+        )
+
+        board.white.move("a_rook", "c", 3)
+        board.black.move("king", "d", 5)
+
+        # Two
+        board.white.move("a_rook", "d", 3)
+        board.black.move("king", "c", 5)
+        board.white.move("a_rook", "c", 3)
+        halfmove = board.black.move("king", "d", 5)
+
+        assert halfmove.change["game_result"] is None
+
+        # Three
+        board.white.move("a_rook", "d", 3)
+        halfmove = board.black.move("king", "c", 5)
+
+        assert halfmove.change["game_result"] == "½-½ Repetition"
+
+    def test_when_nonsuccessive_position_occurs_three_times_yields_draw(self, builder):
+        board = builder.from_fen(
+            "r1bq1rk1/ppppnppp/2n5/1B2p3/1b2P3/2N2P2/PPPPN1PP/R1BQ1RK1 b - - 8 6"
+        )
+
+        board.black.move("f_bishop", "a", 5)
+        board.white.move("c_bishop", "c", 4)
+
+        # Additional moves
+        board.black.move("h_rook", "e", 8)
+        board.white.move("h_rook", "e", 1)
+        board.black.move("h_rook", "f", 8)
+        board.white.move("h_rook", "f", 1)
+
+        # Two
+        board.black.move("f_bishop", "b", 4)
+        board.white.move("c_bishop", "b", 5)
+        board.black.move("f_bishop", "a", 5)
+        halfmove = board.white.move("c_bishop", "a", 4)
+
+        assert halfmove.change["game_result"] is None
+
+        # Three
+        board.black.move("f_bishop", "b", 4)
+        halfmove = board.white.move("c_bishop", "b", 5)
+
+        assert halfmove.change["game_result"] == "½-½ Repetition"

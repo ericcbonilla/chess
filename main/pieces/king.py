@@ -136,14 +136,17 @@ class King(Piece):
     def _is_capturable(self) -> bool:
         for _, piece in self.opponent.pieces:
             if isinstance(piece, (WhitePawn, BlackPawn)):
-                skip = not piece.is_capture_vector(self.position)
+                skip = not piece.is_capture(self.position)
             else:
                 skip = not piece.is_valid_vector(self.position)
             if skip:
                 continue
 
-            if isinstance(piece, (WhitePawn, BlackPawn, Knight, King)):
+            if isinstance(piece, (Knight, King)):
                 return True
+            elif isinstance(piece, (WhitePawn, BlackPawn)):
+                if piece.is_capture(self.position):
+                    return True
             else:
                 if piece.is_open_path(self.position):
                     return True
