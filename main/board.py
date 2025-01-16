@@ -106,14 +106,17 @@ class Board:
         if idx:
             halfmove = get_halfmove(idx, self.game_tree.root)
             return halfmove.change["fen"]
+
         piece_placement = ""
         white_memo = {p.position: p.fen_symbol for _, p in self.white.pieces}
         black_memo = {p.position: p.fen_symbol.lower() for _, p in self.black.pieces}
         for y in constants.RANKS:
             piece_placement += self._get_row(y, white_memo, black_memo)
+
         castling_rights = (
             self.white.castling_rights + self.black.castling_rights.lower()
         ) or "-"
+
         if target := self.white.en_passant_target or self.black.en_passant_target:
             x, y = target
             en_passant_target = f"{x}{str(y)}"
