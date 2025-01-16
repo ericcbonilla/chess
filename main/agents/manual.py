@@ -83,6 +83,8 @@ class ManualAgent(Agent):
     ) -> Optional[HalfMove]:
         if self is not self.board.active_agent:
             raise GameplayError("Agent is not active")
+        elif self.board.result:
+            raise GameplayError("The game has ended")
 
         if attr and x and y:
             piece = getattr(self, attr)

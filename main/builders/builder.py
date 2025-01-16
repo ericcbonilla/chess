@@ -1,5 +1,6 @@
 import itertools
 import re
+from collections import defaultdict
 from typing import TYPE_CHECKING, List, Optional, Type
 
 from main import constants
@@ -9,6 +10,7 @@ from main.exceptions import BuildError
 from main.notation import FEN
 from main.pieces import SYMBOLS_MAP, Bishop, King, Knight, Queen, Rook
 from main.types import AgentScaffold, PieceScaffold
+from main.utils import truncate_fen
 from main.xposition import XPosition
 
 from .scaffolds import BLACK_SCAFFOLD, EMPTY_SCAFFOLD, WHITE_SCAFFOLD
@@ -127,6 +129,10 @@ class BoardBuilder:
         board = self._get_board(white_agent_cls, black_agent_cls, max_fullmoves, "w")
         self._set_pieces(agent=board.white, scaffold=WHITE_SCAFFOLD)
         self._set_pieces(agent=board.black, scaffold=BLACK_SCAFFOLD)
+        board.fen_cts = defaultdict(
+            int, {"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -": 1}
+        )
+
         return board
 
     def from_data(
@@ -143,6 +149,9 @@ class BoardBuilder:
         )
         self._set_pieces(agent=board.white, scaffold=self._get_scaffold(white_data))
         self._set_pieces(agent=board.black, scaffold=self._get_scaffold(black_data))
+        board.fen_cts = defaultdict(
+            int, {truncate_fen(board.get_fen(internal=True)): 1}
+        )
 
         return board
 
@@ -183,6 +192,7 @@ class BoardBuilder:
             halfmove_clock=fen.halfmove_clock,
             fullmove_number=fen.fullmove_number,
         )
+        board.fen_cts = defaultdict(int, {truncate_fen(text): 1})
         if fen.en_passant_target:
             inactive_agent = board.white if fen.active_color == "b" else board.black
             inactive_agent.en_passant_target = fen.en_passant_target

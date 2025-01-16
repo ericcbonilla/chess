@@ -176,7 +176,7 @@ class Piece:
 
         return in_check
 
-    def get_game_result(self, check: bool) -> GameResult:
+    def get_game_result(self, check: bool, fen: str) -> GameResult:
         if check and not self.opponent.can_move():
             return "1-0" if self.agent.color == constants.WHITE else "0-1"
         elif (
@@ -193,7 +193,7 @@ class Piece:
         # TODO game not called as immediate draw in KNK endgame, KN side was allowed to make an additional move
         elif self.agent.board.has_insufficient_material():
             return "½-½ Insufficient material"
-        elif self.agent.board.draw_by_repetition():
+        elif self.agent.board.draw_by_repetition(fen):
             return "½-½ Repetition"
         elif self.agent.board.halfmove_clock == 125:
             return "½-½ Seventy-five-move rule"
@@ -205,7 +205,7 @@ class Piece:
 
         check = self.opponent.king.is_in_check()
         fen = self.agent.board.get_fen(internal=True)
-        game_result = self.get_game_result(check=check)
+        game_result = self.get_game_result(check=check, fen=fen)
 
         self.agent.board.rollback_halfmove(halfmove)
 

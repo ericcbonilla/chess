@@ -35,3 +35,7 @@ def vector(position: Position, other: Position) -> Tuple[int, int]:
     other_x, other_y = other
 
     return abs(x.to_int() - other_x.to_int()), abs(y - other_y)
+
+
+def truncate_fen(fen: str) -> str:
+    return " ".join(fen.split(" ")[0:4])

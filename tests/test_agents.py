@@ -1,4 +1,7 @@
+import pytest
+
 from main.agents import AggressiveAgent
+from main.exceptions import GameplayError
 from main.pieces import BlackPawn, King, Knight, Queen, Rook, WhitePawn
 
 
@@ -115,6 +118,30 @@ class TestManualAgent:
 
         captured = capsys.readouterr()
         assert '"Nd2" is an illegal move' in captured.out
+
+    def test_agent_cant_move_when_not_active(self, default_board):
+        with pytest.raises(GameplayError) as exc_info:
+            default_board.black.move("e_pawn", "e", 5)
+
+        assert str(exc_info.value) == "Agent is not active"
+
+    def test_agent_cant_move_when_game_has_ended(self, builder):
+        board = builder.from_data(
+            white_data=[
+                {"piece_type": King, "x": "e", "y": 1},
+                {"piece_type": Rook, "x": "d", "y": 3},
+            ],
+            black_data=[
+                {"piece_type": King, "x": "c", "y": 4},
+            ],
+            active_color="b",
+        )
+        board.black.move("king", "d", 3)
+
+        with pytest.raises(GameplayError) as exc_info:
+            board.white.move("king", "f", 1)
+
+        assert str(exc_info.value) == "The game has ended"
 
 
 class TestAggressiveAgent:
