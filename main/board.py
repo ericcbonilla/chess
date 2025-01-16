@@ -288,6 +288,7 @@ class Board:
         self.game_tree.prune()
 
     def has_insufficient_material(self) -> bool:
+        # TODO apparently this isn't quite right... https://www.chess.com/terms/draw-chess
         scenarios = [
             ([0], [0]),
             ([0], [0, 3]),
@@ -325,7 +326,9 @@ class Board:
 
             print_move_heading(term_size, self.fullmove_number)
             self.white.move()
-            self.black.move()
-            elapsed_fullmoves += 1
+
+            if not self.result:
+                self.black.move()
+                elapsed_fullmoves += 1
 
         print(f"\nMoves played: {self.fullmove_number - 1}. Result: {self.result}")

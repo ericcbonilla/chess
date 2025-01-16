@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING, Optional
 
 from colorist import red
 
+from main.exceptions import GameplayError
 from main.game_tree import HalfMove
 from main.utils import cprint
 
@@ -38,6 +39,8 @@ class RandomAgent(Agent):
         y: Optional[int] = None,
     ) -> Optional[HalfMove]:
         cprint(f"Turn: {self.color}", self.color)
+        if self.board.result:
+            raise GameplayError("The game has ended")
 
         for _, piece in sorted(self.pieces, key=lambda _: random.random()):
             if (result := self._random_move(piece)) is None:

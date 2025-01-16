@@ -190,7 +190,6 @@ class Piece:
             and not self.opponent.can_move()
         ):
             return "½-½ Stalemate"
-        # TODO game not called as immediate draw in KNK endgame, KN side was allowed to make an additional move
         elif self.agent.board.has_insufficient_material():
             return "½-½ Insufficient material"
         elif self.agent.board.draw_by_repetition(fen):

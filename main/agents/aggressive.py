@@ -3,6 +3,7 @@ from typing import Optional
 
 from colorist import red
 
+from main.exceptions import GameplayError
 from main.game_tree import HalfMove
 from main.utils import cprint
 
@@ -22,6 +23,9 @@ class AggressiveAgent(RandomAgent):
             2. Captures
             3. Regular moves
         """
+
+        if self.board.result:
+            raise GameplayError("The game has ended")
 
         for _, piece in sorted(self.pieces, key=lambda _: random.random()):
             for move in piece.get_valid_moves():
