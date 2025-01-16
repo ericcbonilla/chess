@@ -8,9 +8,9 @@ from main.agents import ManualAgent
 from main.board import Board
 from main.exceptions import BuildError
 from main.notation import FEN
+from main.notation.utils import truncate_fen
 from main.pieces import SYMBOLS_MAP, Bishop, King, Knight, Queen, Rook
 from main.types import AgentScaffold, PieceScaffold
-from main.utils import truncate_fen
 from main.xposition import XPosition
 
 from .scaffolds import BLACK_SCAFFOLD, EMPTY_SCAFFOLD, WHITE_SCAFFOLD

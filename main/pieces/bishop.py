@@ -1,8 +1,8 @@
 from typing import TYPE_CHECKING
 
 from main import constants
+from main.pieces.utils import vector
 from main.types import Position
-from main.utils import vector
 
 from .piece import Piece
 

@@ -2,8 +2,8 @@ from typing import TYPE_CHECKING, Optional, Set, Tuple
 
 from main import constants
 from main.game_tree import HalfMove
+from main.pieces.utils import vector
 from main.types import Change, Position
-from main.utils import vector
 from main.xposition import XPosition
 
 from .knight import Knight

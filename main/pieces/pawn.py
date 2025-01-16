@@ -1,8 +1,8 @@
 from typing import Set
 
 from main.game_tree import HalfMove
+from main.pieces.utils import vector
 from main.types import Change, Position
-from main.utils import vector
 from main.xposition import XPosition
 
 from .piece import Piece

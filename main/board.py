@@ -10,8 +10,9 @@ from main import constants
 from main.exceptions import NotFoundError
 from main.game_tree import FullMove, GameTree, HalfMove
 from main.game_tree.utils import get_halfmove
+from main.notation.utils import truncate_fen
 from main.types import Change, GameResult, Position
-from main.utils import cprint, print_move_heading, truncate_fen
+from main.utils import cprint, print_move_heading
 from main.xposition import XPosition
 
 if TYPE_CHECKING:
