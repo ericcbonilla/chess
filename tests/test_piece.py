@@ -72,6 +72,17 @@ class TestGetGameResult:
         assert halfmove.change["check"]
         assert halfmove.change["game_result"] is None  # Can still do Nc3
 
+    def test_opponent_in_check_but_can_still_capture_pawn_yields_no_result(
+        self, builder
+    ):
+        board = builder.from_fen(
+            text="8/p3p1bp/p3B3/2PPk2p/4P2P/K1P5/P7/5RN1 w - - 1 28"
+        )
+        halfmove = board.white.move("a_rook", "f", 5)
+
+        assert halfmove.change["check"]
+        assert halfmove.change["game_result"] is None  # Can still do Kxe4
+
     def test_opponent_in_check_but_pawn_can_still_move_yields_no_result(self, builder):
         board = builder.from_data(
             white_data=[

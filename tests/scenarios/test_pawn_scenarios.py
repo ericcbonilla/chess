@@ -30,6 +30,16 @@ class TestPawnScenarios:
         with pytest.raises(InvalidMoveError):
             default_board.black.move("e_pawn", "e", 5)
 
+    def test_pawn_cannot_capture_backwards_diagonally(self, default_board):
+        default_board.white.move("e_pawn", "e", 4)
+        default_board.black.move("d_pawn", "d", 5)
+        default_board.white.move("e_pawn", "e", 5)
+        default_board.black.move("d_pawn", "d", 4)
+
+        # Trying to capture backwards diagonally
+        with pytest.raises(InvalidMoveError):
+            default_board.white.move("e_pawn", "d", 4)
+
     def test_pawn_promotion_capture_results_in_expected_state(self, builder):
         board = builder.from_data(
             white_data=[
