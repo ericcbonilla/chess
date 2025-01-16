@@ -9,6 +9,10 @@ RANKS = [8, 7, 6, 5, 4, 3, 2, 1]
 FILES = ["a", "b", "c", "d", "e", "f", "g", "h"]
 SQUARES_LIST = [(f, r) for r in RANKS for f in FILES]
 SQUARES = set(SQUARES_LIST)
+DARK_SQUARES = {
+    *[(f, r) for r in RANKS[::2] for f in FILES[1::2]],
+    *[(f, r) for r in RANKS[1::2] for f in FILES[::2]],
+}
 
 
 PIECE_ATTRS = (

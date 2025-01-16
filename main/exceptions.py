@@ -12,3 +12,7 @@ class InvalidMoveError(Exception):
 
 class NotationError(Exception):
     pass
+
+
+class NotFoundError(Exception):
+    pass

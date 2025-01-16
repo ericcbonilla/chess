@@ -101,6 +101,8 @@ class TestHasInsufficientMaterial:
                 {"piece_type": Rook, "x": "d", "y": 2},
             ],
         )
+        board.halfmove_clock = 40
+        board.fullmove_number = 20
         halfmove = board.white.move("king", "d", 2)
 
         assert halfmove.change["game_result"] is None
@@ -118,6 +120,8 @@ class TestHasInsufficientMaterial:
                 {"piece_type": Rook, "x": "d", "y": 2},
             ],
         )
+        board.halfmove_clock = 40
+        board.fullmove_number = 20
         halfmove = board.white.move("king", "d", 2)
 
         assert halfmove.change["game_result"] is None
@@ -133,6 +137,8 @@ class TestHasInsufficientMaterial:
             ],
             active_color="b",
         )
+        board.halfmove_clock = 40
+        board.fullmove_number = 20
         halfmove = board.black.move("king", "d", 3)
 
         assert halfmove.change["game_result"] == "½-½ Insufficient material"
@@ -149,6 +155,8 @@ class TestHasInsufficientMaterial:
             ],
             active_color="b",
         )
+        board.halfmove_clock = 40
+        board.fullmove_number = 20
         halfmove = board.black.move("king", "d", 3)
 
         assert halfmove.change["game_result"] == "½-½ Insufficient material"
@@ -164,11 +172,13 @@ class TestHasInsufficientMaterial:
                 {"piece_type": Knight, "x": "b", "y": 6},
             ],
         )
+        board.halfmove_clock = 40
+        board.fullmove_number = 20
         halfmove = board.white.move("king", "d", 2)
 
         assert halfmove.change["game_result"] == "½-½ Insufficient material"
 
-    def test_kbkn_yields_draw(self, builder):
+    def test_kbkn_does_not_yield_draw(self, builder):
         board = builder.from_data(
             white_data=[
                 {"piece_type": King, "x": "e", "y": 1},
@@ -181,6 +191,27 @@ class TestHasInsufficientMaterial:
             ],
             active_color="b",
         )
+        board.halfmove_clock = 40
+        board.fullmove_number = 20
+        halfmove = board.black.move("king", "d", 3)
+
+        assert halfmove.change["game_result"] is None
+
+    def test_kbkb_same_color_bishops_yields_draw(self, builder):
+        board = builder.from_data(
+            white_data=[
+                {"piece_type": King, "x": "e", "y": 1},
+                {"piece_type": Rook, "x": "d", "y": 3},
+                {"piece_type": Bishop, "x": "a", "y": 8},
+            ],
+            black_data=[
+                {"piece_type": King, "x": "c", "y": 4},
+                {"piece_type": Bishop, "x": "b", "y": 5},
+            ],
+            active_color="b",
+        )
+        board.halfmove_clock = 40
+        board.fullmove_number = 20
         halfmove = board.black.move("king", "d", 3)
 
         assert halfmove.change["game_result"] == "½-½ Insufficient material"

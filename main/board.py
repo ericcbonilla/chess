@@ -7,6 +7,7 @@ import pyperclip
 from colorist import Color
 
 from main import constants
+from main.exceptions import NotFoundError
 from main.game_tree import FullMove, GameTree, HalfMove
 from main.game_tree.utils import get_halfmove
 from main.types import Change, GameResult, Position
@@ -100,6 +101,8 @@ class Board:
     def get_fen(
         self, idx: Optional[float] = None, internal: Optional[bool] = False
     ) -> str:
+        # TODO Look into optimizing this
+
         if idx:
             halfmove = get_halfmove(idx, self.game_tree.root)
             return halfmove.change["fen"]
@@ -288,12 +291,10 @@ class Board:
         self.game_tree.prune()
 
     def has_insufficient_material(self) -> bool:
-        # TODO apparently this isn't quite right... https://www.chess.com/terms/draw-chess
         scenarios = [
-            ([0], [0]),
-            ([0], [0, 3]),
-            ([0, 3], [0]),
-            ([0, 3], [0, 3]),
+            ([0], [0]),  # KK
+            ([0], [0, 3]),  # KKN or KKB
+            ([0, 3], [0]),  # KNK or KBK
         ]
 
         if self.white.material_sum > 3 or self.black.material_sum > 3:
@@ -303,6 +304,18 @@ class Board:
             black_match = Counter(self.black.material) == Counter(black_material)
             if white_match and black_match:
                 return True
+
+        if Counter(self.white.material) == Counter([0, 3]) and Counter(
+            self.black.material
+        ) == Counter([0, 3]):
+            try:
+                white_bishop = self.white.get_bishop()
+                black_bishop = self.black.get_bishop()
+            except NotFoundError:
+                return False
+
+            return white_bishop.dark is black_bishop.dark
+
         return False
 
     def draw_by_repetition(self, fen: str) -> bool:

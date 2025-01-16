@@ -136,6 +136,8 @@ class TestManualAgent:
             ],
             active_color="b",
         )
+        board.halfmove_clock = 40
+        board.fullmove_number = 20
         board.black.move("king", "d", 3)
 
         with pytest.raises(GameplayError) as exc_info:

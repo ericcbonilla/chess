@@ -190,7 +190,11 @@ class Piece:
             and not self.opponent.can_move()
         ):
             return "½-½ Stalemate"
-        elif self.agent.board.has_insufficient_material():
+        elif (
+            # Safe guess...probably not possible to capture 28 pieces in 20 moves?
+            self.agent.board.fullmove_number >= 20
+            and self.agent.board.has_insufficient_material()
+        ):
             return "½-½ Insufficient material"
         elif self.agent.board.draw_by_repetition(fen):
             return "½-½ Repetition"
