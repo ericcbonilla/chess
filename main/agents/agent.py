@@ -67,46 +67,46 @@ class Agent:
     def __repr__(self):
         return f'{self.color}:\n{"".join(f"  {a}: {p}\n" for a, p in self.pieces)}'
 
-    def cache_pieces(self):
-        self._pieces_cache = []
-        append = self._pieces_cache.append
+    # def cache_pieces(self):
+    #     self._pieces_cache = []
+    #     append = self._pieces_cache.append
+    #
+    #     for attr in constants.PIECE_ATTRS:
+    #         if piece := getattr(self, attr):
+    #             append((attr, piece))
 
-        for attr in constants.PIECE_ATTRS:
-            if piece := getattr(self, attr):
-                append((attr, piece))
+    # @property
+    # def pieces(self) -> List[Tuple[str, "Piece"]]:
+    #     if self._pieces_cache:
+    #         return self._pieces_cache
+    #
+    #     self.cache_pieces()
+    #     return self._pieces_cache
 
-    @property
-    def pieces(self) -> List[Tuple[str, "Piece"]]:
-        if self._pieces_cache:
-            return self._pieces_cache
-
-        self.cache_pieces()
-        return self._pieces_cache
-
-    def cache_positions(self):
-        self._positions_cache = set(piece.position for _, piece in self.pieces)
+    # def cache_positions(self):
+    #     self._positions_cache = set(piece.position for _, piece in self.pieces)
 
     @property
     def positions(self) -> Set[Position]:
         # This will become obsolete? Just to move in piece.opponent.pieces_2 instead?
 
-        if self._positions_cache:
-            return self._positions_cache
+        return set(self.pieces_2.keys())
 
-        self.cache_positions()
-        return self._positions_cache
+        # if self._positions_cache:
+        #     return self._positions_cache
 
-    def cache_pieces_2(self) -> Dict[Position, "Piece"]:
-        # Compute the whole cache and return it
+        # self.cache_positions()
+        # return self._positions_cache
+
+    def cache_pieces_2(self):
+        # Compute the whole cache
 
         self.pieces_cache_2 = {}
         for attr in constants.PIECE_ATTRS:
             if piece := getattr(self, attr):
                 self.pieces_cache_2[piece.position] = piece
 
-        self.cache_pieces_2()
-        return self.pieces_cache_2
-
+    @property
     def pieces_2(self) -> Dict[Position, "Piece"]:
         # Return the cache of all pieces,
         # else compute the whole cache and return it
@@ -114,6 +114,8 @@ class Agent:
         # TODO now that we'll have pieces indexed by position, might be
         # able to leverage this in other places and avoid some computations
         # e.g. get_by_position
+
+        # TODO if we run into problems try caching the attr instead of whole piece
 
         if self.pieces_cache_2:
             return self.pieces_cache_2
@@ -127,7 +129,7 @@ class Agent:
 
     @property
     def material(self) -> List[int]:
-        return [piece.value for _, piece in self.pieces]
+        return [piece.value for piece in self.pieces_2.values()]
 
     @property
     def castling_rights(self) -> str:
@@ -141,21 +143,30 @@ class Agent:
         return rights
 
     def get_by_position(self, x: str, y: int) -> "Piece":
-        for _, piece in self.pieces:
-            if piece.position == (x, y):
-                return piece
+        try:
+            return self.pieces_2[(x, y)]
+        except KeyError:
+            raise NotFoundError(f"Piece not found on {(x, y)}")
 
-        raise NotFoundError(f"Piece not found on {(x, y)}")
+        # if (x, y) in self.pieces_2:
+        #     return self.pieces_2[(x, y)]
+
+        # for _, piece in self.pieces:
+        #     if piece.position == (x, y):
+        #         return piece
+
+        # raise NotFoundError(f"Piece not found on {(x, y)}")
 
     def get_bishop(self) -> Bishop:
-        for _, piece in self.pieces:
+        for piece in self.pieces_2.values():
             if isinstance(piece, Bishop):
                 return piece
 
         raise NotFoundError("Bishop not found")
 
     def can_move(self) -> bool:
-        for _, piece in self.pieces:
+        pieces = list(self.pieces_2.values())
+        for piece in pieces:
             if piece.can_move():
                 return True
 

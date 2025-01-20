@@ -109,8 +109,10 @@ class Board:
             return halfmove.change["fen"]
 
         piece_placement = ""
-        white_memo = {p.position: p.fen_symbol for _, p in self.white.pieces}
-        black_memo = {p.position: p.fen_symbol.lower() for _, p in self.black.pieces}
+        white_memo = {p.position: p.fen_symbol for p in self.white.pieces_2.values()}
+        black_memo = {
+            p.position: p.fen_symbol.lower() for p in self.black.pieces_2.values()
+        }
         for y in constants.RANKS:
             piece_placement += self._get_row(y, white_memo, black_memo)
 
@@ -184,9 +186,10 @@ class Board:
 
     @staticmethod
     def destroy_piece(piece: "Piece", attr: str):
-        # Need to check that we're not destroying a promotee here??
-        if piece.position in piece.agent.pieces_cache_2:
+        try:
             del piece.agent.pieces_cache_2[piece.position]
+        except KeyError:
+            pass
 
         setattr(piece.agent.graveyard, attr, piece)
         setattr(piece.agent, attr, None)
@@ -217,13 +220,12 @@ class Board:
                         )
                         self.add_piece(piece, attr=key, new_position=(x, y))
                     else:
-                        if (
-                            existing_piece.position
-                            in existing_piece.agent.pieces_cache_2
-                        ):
+                        try:
                             del existing_piece.agent.pieces_cache_2[
                                 (existing_piece.x, existing_piece.y)
                             ]
+                        except KeyError:
+                            pass
 
                         x, y = datum["new_position"]
                         existing_piece.x, existing_piece.y = XPosition(x), y
@@ -235,8 +237,8 @@ class Board:
                 # I think this is a bottleneck. We shouldn't have to recompute
                 # all positions and all pieces. By this point we already which
                 # (if any) pieces/positions have changed. So update only those.
-                agent.cache_pieces()
-                agent.cache_positions()
+                # agent.cache_pieces()
+                # agent.cache_positions()
 
         if "game_result" in change and change["game_result"]:
             self.result = change["game_result"]

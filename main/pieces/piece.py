@@ -45,7 +45,7 @@ class Piece:
 
     @property
     def forbidden_squares(self) -> Set[Position]:
-        return self.agent.positions
+        return self.agent.pieces_2
 
     @cached_property
     def king(self) -> "King":
@@ -139,7 +139,7 @@ class Piece:
         x = XPosition(x)
         siblings = [
             piece
-            for _, piece in self.agent.pieces
+            for piece in self.agent.pieces_2.values()
             if piece is not self and isinstance(piece, type(self))
         ]
 
@@ -250,7 +250,7 @@ class Piece:
             ),
         }
 
-        if (x, y) in self.opponent.positions:  # capture
+        if (x, y) in self.opponent.pieces_2:  # capture
             piece = self.opponent.get_by_position(x, y)
             change[self.opponent.color] = {
                 piece.attr: {

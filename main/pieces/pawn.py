@@ -20,7 +20,7 @@ class Pawn(Piece):
 
     @property
     def forbidden_squares(self) -> Set[Position]:
-        return self.agent.positions | self.opponent.positions
+        return self.agent.pieces_2 | self.opponent.pieces_2
 
     def is_valid_vector(self, new_position: Position) -> bool:
         vec = vector(self.position, new_position)
@@ -36,9 +36,10 @@ class Pawn(Piece):
 
     def is_valid_move(self, new_position: Position) -> bool:
         if self.is_capture(new_position):
-            if new_position in self.opponent.positions | {
-                self.opponent.en_passant_target
-            }:
+            if (
+                new_position in self.opponent.pieces_2
+                or new_position == self.opponent.en_passant_target
+            ):
                 if self.king_would_be_in_check(
                     king=self.king,
                     new_position=new_position,

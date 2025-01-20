@@ -20,7 +20,7 @@ class RandomAgent(Agent):
             return None
 
         pick = random.sample(valid_moves, 1)[0]
-        if pick in piece.opponent.positions | {piece.opponent.en_passant_target}:
+        if pick in piece.opponent.pieces_2 or pick == piece.opponent.en_passant_target:
             cprint(
                 f"{piece} capturing on {pick}",
                 self.color,
@@ -39,7 +39,8 @@ class RandomAgent(Agent):
     ) -> Optional[HalfMove]:
         cprint(f"Turn: {self.color}", self.color)
 
-        for _, piece in sorted(self.pieces, key=lambda _: random.random()):
+        pieces = list(self.pieces_2.values())
+        for piece in sorted(pieces, key=lambda _: random.random()):
             if (result := self._random_move(piece)) is None:
                 continue  # Piece is unmovable
             else:
