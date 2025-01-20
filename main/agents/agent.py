@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, List, Optional, Set, Tuple
+from typing import TYPE_CHECKING, Dict, List, Optional, Set, Tuple
 
 from main import constants
 from main.agents.graveyard import Graveyard
@@ -61,27 +61,65 @@ class Agent:
     _pieces_cache: List[Tuple[str, "Piece"]] = field(default_factory=list)
     _positions_cache: Set[Position] = field(default_factory=set)
 
+    # Dict for more effecient caching and lookups?
+    pieces_cache_2: Dict[Position, "Piece"] = field(default_factory=dict)
+
     def __repr__(self):
         return f'{self.color}:\n{"".join(f"  {a}: {p}\n" for a, p in self.pieces)}'
 
     def cache_pieces(self):
         self._pieces_cache = []
+        append = self._pieces_cache.append
+
         for attr in constants.PIECE_ATTRS:
             if piece := getattr(self, attr):
-                self._pieces_cache.append((attr, piece))
-
-    def cache_positions(self):
-        self._positions_cache = set(piece.position for _, piece in self.pieces)
+                append((attr, piece))
 
     @property
     def pieces(self) -> List[Tuple[str, "Piece"]]:
         if self._pieces_cache:
             return self._pieces_cache
 
+        self.cache_pieces()
+        return self._pieces_cache
+
+    def cache_positions(self):
+        self._positions_cache = set(piece.position for _, piece in self.pieces)
+
+    @property
+    def positions(self) -> Set[Position]:
+        # This will become obsolete? Just to move in piece.opponent.pieces_2 instead?
+
+        if self._positions_cache:
+            return self._positions_cache
+
+        self.cache_positions()
+        return self._positions_cache
+
+    def cache_pieces_2(self) -> Dict[Position, "Piece"]:
+        # Compute the whole cache and return it
+
+        self.pieces_cache_2 = {}
         for attr in constants.PIECE_ATTRS:
             if piece := getattr(self, attr):
-                self._pieces_cache.append((attr, piece))
-        return self._pieces_cache
+                self.pieces_cache_2[piece.position] = piece
+
+        self.cache_pieces_2()
+        return self.pieces_cache_2
+
+    def pieces_2(self) -> Dict[Position, "Piece"]:
+        # Return the cache of all pieces,
+        # else compute the whole cache and return it
+
+        # TODO now that we'll have pieces indexed by position, might be
+        # able to leverage this in other places and avoid some computations
+        # e.g. get_by_position
+
+        if self.pieces_cache_2:
+            return self.pieces_cache_2
+
+        self.cache_pieces_2()
+        return self.pieces_cache_2
 
     @property
     def material_sum(self) -> int:
@@ -90,14 +128,6 @@ class Agent:
     @property
     def material(self) -> List[int]:
         return [piece.value for _, piece in self.pieces]
-
-    @property
-    def positions(self) -> Set[Position]:
-        if self._positions_cache:
-            return self._positions_cache
-
-        self._positions_cache = set(piece.position for _, piece in self.pieces)
-        return self._positions_cache
 
     @property
     def castling_rights(self) -> str:

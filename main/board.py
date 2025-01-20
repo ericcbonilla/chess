@@ -175,7 +175,8 @@ class Board:
         print("\nCopied to clipboard!")
 
     @staticmethod
-    def add_piece(piece: "Piece", attr: str):
+    def add_piece(piece: "Piece", attr: str, new_position: Position):
+        piece.agent.pieces_cache_2[new_position] = piece
         setattr(piece.agent, attr, piece)
 
         if hasattr(piece.agent.graveyard, attr):
@@ -183,6 +184,10 @@ class Board:
 
     @staticmethod
     def destroy_piece(piece: "Piece", attr: str):
+        # Need to check that we're not destroying a promotee here??
+        if piece.position in piece.agent.pieces_cache_2:
+            del piece.agent.pieces_cache_2[piece.position]
+
         setattr(piece.agent.graveyard, attr, piece)
         setattr(piece.agent, attr, None)
 
@@ -210,14 +215,26 @@ class Board:
                             x=x,
                             y=y,
                         )
-                        self.add_piece(piece, attr=key)
+                        self.add_piece(piece, attr=key, new_position=(x, y))
                     else:
+                        if (
+                            existing_piece.position
+                            in existing_piece.agent.pieces_cache_2
+                        ):
+                            del existing_piece.agent.pieces_cache_2[
+                                (existing_piece.x, existing_piece.y)
+                            ]
+
                         x, y = datum["new_position"]
                         existing_piece.x, existing_piece.y = XPosition(x), y
+                        existing_piece.agent.pieces_cache_2[(x, y)] = existing_piece
 
                     if "has_moved" in datum:
                         existing_piece.has_moved = datum["has_moved"]
 
+                # I think this is a bottleneck. We shouldn't have to recompute
+                # all positions and all pieces. By this point we already which
+                # (if any) pieces/positions have changed. So update only those.
                 agent.cache_pieces()
                 agent.cache_positions()
 
