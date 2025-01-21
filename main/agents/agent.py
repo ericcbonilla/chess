@@ -78,9 +78,7 @@ class Agent:
         if self._pieces_cache:
             return self._pieces_cache
 
-        for attr in constants.PIECE_ATTRS:
-            if piece := getattr(self, attr):
-                self._pieces_cache.append((attr, piece))
+        self.cache_pieces()
         return self._pieces_cache
 
     @property
@@ -96,7 +94,7 @@ class Agent:
         if self._positions_cache:
             return self._positions_cache
 
-        self._positions_cache = set(piece.position for _, piece in self.pieces)
+        self.cache_positions()
         return self._positions_cache
 
     @property
