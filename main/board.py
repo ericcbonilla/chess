@@ -221,7 +221,7 @@ class Board:
                         self.add_piece(piece, attr=key, new_position=(x, y))
                     else:
                         try:
-                            del existing_piece.agent.pieces_cache_2[
+                            del agent.pieces_cache_2[
                                 (existing_piece.x, existing_piece.y)
                             ]
                         except KeyError:
@@ -229,7 +229,7 @@ class Board:
 
                         x, y = datum["new_position"]
                         existing_piece.x, existing_piece.y = XPosition(x), y
-                        existing_piece.agent.pieces_cache_2[(x, y)] = existing_piece
+                        agent.pieces_cache_2[(x, y)] = existing_piece
 
                     if "has_moved" in datum:
                         existing_piece.has_moved = datum["has_moved"]
