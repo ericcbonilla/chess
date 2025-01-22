@@ -1,5 +1,5 @@
 from functools import cached_property
-from typing import TYPE_CHECKING, Iterable, Optional, Reversible, Set
+from typing import TYPE_CHECKING, Dict, Iterable, Optional, Reversible, Set
 
 from main import constants
 from main.game_tree import HalfMove
@@ -44,8 +44,8 @@ class Piece:
         return self.x, self.y
 
     @property
-    def forbidden_squares(self) -> Set[Position]:
-        return self.agent.pieces_2
+    def forbidden_squares(self) -> Dict[Position, "Piece"]:
+        return self.agent.pieces
 
     @cached_property
     def king(self) -> "King":
@@ -139,7 +139,7 @@ class Piece:
         x = XPosition(x)
         siblings = [
             piece
-            for piece in self.agent.pieces_2.values()
+            for piece in self.agent.pieces.values()
             if piece is not self and isinstance(piece, type(self))
         ]
 
@@ -250,7 +250,7 @@ class Piece:
             ),
         }
 
-        if (x, y) in self.opponent.pieces_2:  # capture
+        if (x, y) in self.opponent.pieces:  # capture
             piece = self.opponent.get_by_position(x, y)
             change[self.opponent.color] = {
                 piece.attr: {

@@ -134,7 +134,7 @@ class King(Piece):
         return is_capturable
 
     def _is_capturable(self) -> bool:
-        for piece in self.opponent.pieces_2.values():
+        for piece in self.opponent.pieces.values():
             if isinstance(piece, (WhitePawn, BlackPawn)):
                 skip = not piece.is_capture(self.position)
             else:

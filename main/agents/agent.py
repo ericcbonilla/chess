@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, Dict, List, Optional, Set, Tuple
+from typing import TYPE_CHECKING, Dict, List, Optional, Set
 
 from main import constants
 from main.agents.graveyard import Graveyard
@@ -58,70 +58,37 @@ class Agent:
 
     # Caches of the pieces and their positions
     # Stays updated to the current halfmove
-    _pieces_cache: List[Tuple[str, "Piece"]] = field(default_factory=list)
-    _positions_cache: Set[Position] = field(default_factory=set)
-
-    # Dict for more effecient caching and lookups?
-    pieces_cache_2: Dict[Position, "Piece"] = field(default_factory=dict)
+    pieces_cache: Dict[Position, "Piece"] = field(default_factory=dict)
 
     def __repr__(self):
         return f'{self.color}:\n{"".join(f"  {a}: {p}\n" for a, p in self.pieces)}'
 
-    # def cache_pieces(self):
-    #     self._pieces_cache = []
-    #     append = self._pieces_cache.append
-    #
-    #     for attr in constants.PIECE_ATTRS:
-    #         if piece := getattr(self, attr):
-    #             append((attr, piece))
-
-    # @property
-    # def pieces(self) -> List[Tuple[str, "Piece"]]:
-    #     if self._pieces_cache:
-    #         return self._pieces_cache
-    #
-    #     self.cache_pieces()
-    #     return self._pieces_cache
-
-    # def cache_positions(self):
-    #     self._positions_cache = set(piece.position for _, piece in self.pieces)
-
     @property
     def positions(self) -> Set[Position]:
-        # This will become obsolete? Just to move in piece.opponent.pieces_2 instead?
+        return set(self.pieces.keys())
 
-        return set(self.pieces_2.keys())
+    def del_cache_item(self, key: Position):
+        try:
+            del self.pieces_cache[key]
+        except KeyError:
+            pass
 
-        # if self._positions_cache:
-        #     return self._positions_cache
+    def cache_pieces(self):
+        # TODO likely some other ways we can leverage this now that we have
+        # O(1) access to pieces
 
-        # self.cache_positions()
-        # return self._positions_cache
-
-    def cache_pieces_2(self):
-        # Compute the whole cache
-
-        self.pieces_cache_2 = {}
+        self.pieces_cache = {}
         for attr in constants.PIECE_ATTRS:
             if piece := getattr(self, attr):
-                self.pieces_cache_2[piece.position] = piece
+                self.pieces_cache[piece.position] = piece
 
     @property
-    def pieces_2(self) -> Dict[Position, "Piece"]:
-        # Return the cache of all pieces,
-        # else compute the whole cache and return it
+    def pieces(self) -> Dict[Position, "Piece"]:
+        if self.pieces_cache:
+            return self.pieces_cache
 
-        # TODO now that we'll have pieces indexed by position, might be
-        # able to leverage this in other places and avoid some computations
-        # e.g. get_by_position
-
-        # TODO if we run into problems try caching the attr instead of whole piece
-
-        if self.pieces_cache_2:
-            return self.pieces_cache_2
-
-        self.cache_pieces_2()
-        return self.pieces_cache_2
+        self.cache_pieces()
+        return self.pieces_cache
 
     @property
     def material_sum(self) -> int:
@@ -129,7 +96,7 @@ class Agent:
 
     @property
     def material(self) -> List[int]:
-        return [piece.value for piece in self.pieces_2.values()]
+        return [piece.value for piece in self.pieces.values()]
 
     @property
     def castling_rights(self) -> str:
@@ -144,28 +111,20 @@ class Agent:
 
     def get_by_position(self, x: str, y: int) -> "Piece":
         try:
-            return self.pieces_2[(x, y)]
+            return self.pieces[(x, y)]
         except KeyError:
             raise NotFoundError(f"Piece not found on {(x, y)}")
 
-        # if (x, y) in self.pieces_2:
-        #     return self.pieces_2[(x, y)]
-
-        # for _, piece in self.pieces:
-        #     if piece.position == (x, y):
-        #         return piece
-
-        # raise NotFoundError(f"Piece not found on {(x, y)}")
-
     def get_bishop(self) -> Bishop:
-        for piece in self.pieces_2.values():
+        for piece in self.pieces.values():
             if isinstance(piece, Bishop):
                 return piece
 
         raise NotFoundError("Bishop not found")
 
     def can_move(self) -> bool:
-        pieces = list(self.pieces_2.values())
+
+        pieces = list(self.pieces.values())
         for piece in pieces:
             if piece.can_move():
                 return True

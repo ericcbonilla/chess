@@ -8,12 +8,12 @@ class TestCaptureScenarios:
         default_board.white.move("g_knight", "f", 3)
         default_board.black.move("f_bishop", "a", 3)
         default_board.white.move("g_pawn", "g", 3)
-        assert ("b", 2) in default_board.white.pieces_2
+        assert ("b", 2) in default_board.white.pieces
 
         # Black bishop captures B pawn
         default_board.black.move("f_bishop", "b", 2)
         assert default_board.black.f_bishop.position == ("b", 2)
-        assert ("b", 2) not in default_board.white.pieces_2
+        assert ("b", 2) not in default_board.white.pieces
 
     def test_capture_puts_captured_piece_in_graveyard(self, builder):
         """

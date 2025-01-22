@@ -37,7 +37,7 @@ class ManualAgent(Agent):
             search_fn = self._get_disamb_search_fn(an=an)
 
         if piece is None:
-            pieces = list(self.pieces_2.values())
+            pieces = list(self.pieces.values())
             matching_pieces = [
                 piece
                 for piece in pieces
@@ -61,12 +61,12 @@ class ManualAgent(Agent):
             if not piece.is_valid_move(pick):
                 raise NotationError(f'"{an.text}" is an illegal move')
 
-        if not an.is_capture and an.pick in piece.opponent.pieces_2:
+        if not an.is_capture and an.pick in piece.opponent.pieces:
             raise NotationError(
                 f"Opponent piece on {an.x}{an.y}. "
                 f"Did you mean {piece.symbol}x{an.text[1:]}?"
             )
-        elif an.is_capture and an.pick not in piece.opponent.pieces_2:
+        elif an.is_capture and an.pick not in piece.opponent.pieces:
             raise NotationError(
                 f"No opponent piece on {an.x}{an.y}. "
                 f"Did you mean {piece.symbol}{an.x}{an.y}?"
