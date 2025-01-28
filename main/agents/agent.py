@@ -61,7 +61,7 @@ class Agent:
     pieces_cache: Dict[Position, "Piece"] = field(default_factory=dict)
 
     def __repr__(self):
-        return f'{self.color}:\n{"".join(f"  {a}: {p}\n" for a, p in self.pieces)}'
+        return f'{self.color}:\n{"".join(f"  {p.attr}: {p}\n" for p in self.pieces.values())}'
 
     @property
     def positions(self) -> Set[Position]:
