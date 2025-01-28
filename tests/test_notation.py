@@ -114,3 +114,13 @@ class TestAN:
     def test_invalid_an_passed_raises_notation_error(self):
         with pytest.raises(NotationError):
             AN(text="Deez")
+
+    def test_pawns_are_not_erroneously_ambiguated(self, default_board):
+        default_board.white.move(an_text="a4")
+        default_board.black.move(an_text="h6")
+
+        # It was erroneously saying the a4 pawn could also move to b3, and asking
+        # for a disambiguation
+        default_board.white.move(an_text="b3")
+
+        assert default_board.white.b_pawn.position == ("b", 3)

@@ -25,8 +25,8 @@ class Pawn(Piece):
     def is_valid_vector(self, new_position: Position) -> bool:
         vec = vector(self.position, new_position)
         if self.y == self.y_init:
-            return vec in [(0, 1), (0, 2), (1, 1)]
-        return vec in [(0, 1), (1, 1)]
+            return vec in [(0, 1), (0, 2)]
+        return vec in [(0, 1)]
 
     def is_capture(self, new_position: Position) -> bool:
         return any(
