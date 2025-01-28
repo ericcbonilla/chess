@@ -123,8 +123,8 @@ class Agent:
         raise NotFoundError("Bishop not found")
 
     def can_move(self) -> bool:
-
         pieces = list(self.pieces.values())
+
         for piece in pieces:
             if piece.can_move():
                 return True
