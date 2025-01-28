@@ -100,6 +100,8 @@ class King(Piece):
             new_king_xpos, can_castle = self._can_castle(rook)
             if can_castle and new_king_xpos:
                 valid_moves.add((new_king_xpos, self.y))
+                if lazy:
+                    return valid_moves
 
         return valid_moves
 
