@@ -161,6 +161,10 @@ class TestCastling:
         board.white.move("king", "g", 2)
         assert board.white.h_rook.position == ("h", 5)
 
+    def test_king_cant_castle_through_closed_path(self, default_board):
+        with pytest.raises(InvalidMoveError):
+            default_board.white.move("king", "g", 1)
+
 
 class TestKingScenarios:
     def test_king_cannot_move_multiple_squares_if_not_castling(self, builder):
