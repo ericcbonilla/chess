@@ -1,4 +1,4 @@
-from typing import Set
+from typing import Dict, Set
 
 from main.game_tree import HalfMove
 from main.pieces.utils import vector
@@ -19,14 +19,14 @@ class Pawn(Piece):
     a = 1
 
     @property
-    def forbidden_squares(self) -> Set[Position]:
-        return self.agent.positions | self.opponent.positions
+    def forbidden_squares(self) -> Dict[Position, "Piece"]:
+        return self.agent.pieces | self.opponent.pieces
 
     def is_valid_vector(self, new_position: Position) -> bool:
         vec = vector(self.position, new_position)
         if self.y == self.y_init:
-            return vec in [(0, 1), (0, 2), (1, 1)]
-        return vec in [(0, 1), (1, 1)]
+            return vec in [(0, 1), (0, 2)]
+        return vec in [(0, 1)]
 
     def is_capture(self, new_position: Position) -> bool:
         return any(
@@ -36,9 +36,10 @@ class Pawn(Piece):
 
     def is_valid_move(self, new_position: Position) -> bool:
         if self.is_capture(new_position):
-            if new_position in self.opponent.positions | {
-                self.opponent.en_passant_target
-            }:
+            if (
+                new_position in self.opponent.pieces
+                or new_position == self.opponent.en_passant_target
+            ):
                 if self.king_would_be_in_check(
                     king=self.king,
                     new_position=new_position,

@@ -109,8 +109,10 @@ class Board:
             return halfmove.change["fen"]
 
         piece_placement = ""
-        white_memo = {p.position: p.fen_symbol for _, p in self.white.pieces}
-        black_memo = {p.position: p.fen_symbol.lower() for _, p in self.black.pieces}
+        white_memo = {p.position: p.fen_symbol for p in self.white.pieces.values()}
+        black_memo = {
+            p.position: p.fen_symbol.lower() for p in self.black.pieces.values()
+        }
         for y in constants.RANKS:
             piece_placement += self._get_row(y, white_memo, black_memo)
 
@@ -175,7 +177,8 @@ class Board:
         print("\nCopied to clipboard!")
 
     @staticmethod
-    def add_piece(piece: "Piece", attr: str):
+    def add_piece(piece: "Piece", attr: str, new_position: Position):
+        piece.agent.pieces_cache[new_position] = piece
         setattr(piece.agent, attr, piece)
 
         if hasattr(piece.agent.graveyard, attr):
@@ -183,6 +186,8 @@ class Board:
 
     @staticmethod
     def destroy_piece(piece: "Piece", attr: str):
+        piece.agent.del_cache_item(piece.position)
+
         setattr(piece.agent.graveyard, attr, piece)
         setattr(piece.agent, attr, None)
 
@@ -195,12 +200,12 @@ class Board:
         for agent in (self.white, self.black):
             if change[agent.color]:
                 for key, datum in change[agent.color].items():
-                    existing_piece = getattr(agent, key)
+                    piece = getattr(agent, key)
 
                     if key == "en_passant_target":
                         agent.en_passant_target = datum[1]
                     elif datum["new_position"] is None:
-                        self.destroy_piece(existing_piece, attr=key)
+                        self.destroy_piece(piece, attr=key)
                     elif datum["old_position"] is None:
                         # We're either resurrecting a piece, or adding a promotee
                         x, y = datum["new_position"]
@@ -210,16 +215,15 @@ class Board:
                             x=x,
                             y=y,
                         )
-                        self.add_piece(piece, attr=key)
+                        self.add_piece(piece, attr=key, new_position=(x, y))
                     else:
+                        agent.del_cache_item(piece.position)
                         x, y = datum["new_position"]
-                        existing_piece.x, existing_piece.y = XPosition(x), y
+                        piece.x, piece.y = XPosition(x), y
+                        agent.pieces_cache[(x, y)] = piece
 
                     if "has_moved" in datum:
-                        existing_piece.has_moved = datum["has_moved"]
-
-                agent.cache_pieces()
-                agent.cache_positions()
+                        piece.has_moved = datum["has_moved"]
 
         if "game_result" in change and change["game_result"]:
             self.result = change["game_result"]

@@ -41,7 +41,13 @@ class King(Piece):
             self.has_moved = has_moved
 
     def _can_castle(self, rook: Rook | None) -> Tuple[str | None, bool]:
-        if rook is None or rook.has_moved or self.has_moved or self.is_in_check():
+        if (
+            rook is None
+            or rook.has_moved
+            or self.has_moved
+            or self.is_in_check()
+            or not self.is_open_path(rook.position)
+        ):
             return None, False
 
         if rook.x == "a":  # Queenside
@@ -53,11 +59,7 @@ class King(Piece):
             castle_into_check = self.is_in_check(("g", self.y))
             new_king_xpos = "g"
 
-        return new_king_xpos, (
-            not castle_through_check
-            and not castle_into_check
-            and self.is_open_path(rook.position)
-        )
+        return new_king_xpos, (not castle_through_check and not castle_into_check)
 
     def is_castle(self, new_position: Position) -> bool:
         return any(
@@ -98,6 +100,8 @@ class King(Piece):
             new_king_xpos, can_castle = self._can_castle(rook)
             if can_castle and new_king_xpos:
                 valid_moves.add((new_king_xpos, self.y))
+                if lazy:
+                    return valid_moves
 
         return valid_moves
 
@@ -125,16 +129,37 @@ class King(Piece):
             change = self.construct_change(*target_position, augment=False)
             halfmove = HalfMove(color=self.agent.color, change=change)
 
+            # from main import constants
+            # curr_pieces = []
+            # for attr in constants.PIECE_ATTRS:
+            #     if _piece := getattr(self.agent, attr):
+            #         curr_pieces.append(_piece)
+            #
+            # if len(self.agent.pieces_cache) != curr_pieces:
+            #     print('curr_pieces', len(curr_pieces))
+            #     print('pieces_cache', len(self.agent.pieces_cache))
+
             self.agent.board.apply_halfmove(halfmove)
             is_capturable = self._is_capturable()
             self.agent.board.rollback_halfmove(halfmove)
+
+            # from main import constants
+            # curr_pieces = []
+            # for attr in constants.PIECE_ATTRS:
+            #     if _piece := getattr(self.agent, attr):
+            #         curr_pieces.append(_piece)
+            #
+            # if len(self.agent.pieces_cache) != curr_pieces:
+            #     print('curr_pieces', len(curr_pieces))
+            #     print('pieces_cache', len(self.agent.pieces_cache))
+
         else:
             is_capturable = self._is_capturable()
 
         return is_capturable
 
     def _is_capturable(self) -> bool:
-        for _, piece in self.opponent.pieces:
+        for piece in self.opponent.pieces.values():
             if isinstance(piece, (WhitePawn, BlackPawn)):
                 skip = not piece.is_capture(self.position)
             else:
