@@ -3,6 +3,7 @@ import pytest
 from main.exceptions import NotationError
 from main.notation import AN, FEN
 from main.pieces import Bishop, King, Knight, Pawn, Queen
+from main.x import A, B, C, D, E, G, H
 
 
 class TestFEN:
@@ -12,14 +13,14 @@ class TestFEN:
         assert fen.piece_placement == "rnbqkbnr/pppppppp/8/8/3P4/8/PPP1PPPP/RNBQKBNR"
         assert fen.active_color == "b"
         assert fen.castling_rights == {
-            ("a", 8): True,
-            ("h", 8): True,
-            ("a", 1): True,
-            ("h", 1): True,
-            ("e", 8): True,
-            ("e", 1): True,
+            (A, 8): True,
+            (H, 8): True,
+            (A, 1): True,
+            (H, 1): True,
+            (E, 8): True,
+            (E, 1): True,
         }
-        assert fen.en_passant_target == ("d", 3)
+        assert fen.en_passant_target == (D, 3)
         assert fen.halfmove_clock == 0
         assert fen.fullmove_number == 1
 
@@ -30,15 +31,15 @@ class TestAN:
 
         assert an.piece_type is Pawn
         assert not an.is_capture
-        assert an.pick == ("d", 4)
+        assert an.pick == (D, 4)
 
     def test_pawn_capture_returns_expected_properties(self):
         an = AN(text="exd5")
 
         assert an.piece_type is Pawn
-        assert an.pawn_file == "e"
+        assert an.pawn_file == E
         assert an.is_capture
-        assert an.pick == ("d", 5)
+        assert an.pick == (D, 5)
 
     def test_piece_movement_returns_expected_properties(self):
         an = AN(text="Nc3")
@@ -46,14 +47,14 @@ class TestAN:
         assert an.piece_type is Knight
         assert an.pawn_file is None
         assert not an.is_capture
-        assert an.pick == ("c", 3)
+        assert an.pick == (C, 3)
 
     def test_piece_capture_returns_expected_properties(self):
         an = AN(text="Bxg5")
 
         assert an.piece_type is Bishop
         assert an.is_capture
-        assert an.pick == ("g", 5)
+        assert an.pick == (G, 5)
 
     def test_disamb_rank_returns_expected_properties(self):
         an = AN(text="Q4e1+")
@@ -65,19 +66,19 @@ class TestAN:
         an = AN(text="Qae1+")
 
         assert an.piece_type is Queen
-        assert an.disambiguation == "a"
+        assert an.disambiguation == A
 
     def test_double_disamb_returns_expected_properties(self):
         an = AN(text="Qh4e1+")
 
         assert an.piece_type is Queen
-        assert an.disambiguation == ("h", 4)
+        assert an.disambiguation == (H, 4)
 
     def test_promotion_returns_expected_properties(self):
         an = AN(text="exd8=N+")
 
-        assert an.pawn_file == "e"
-        assert an.pick == ("d", 8)
+        assert an.pawn_file == E
+        assert an.pick == (D, 8)
         assert an.promotee_type is Knight
 
     def test_check_returns_expected_properties(self):
@@ -99,7 +100,7 @@ class TestAN:
         assert an.pawn_file is None
         assert an.disambiguation is None
         assert not an.is_capture
-        assert an.x == "g"
+        assert an.x == G
         assert an.y is None
         assert an.promotee_type is None
         assert not an.check
@@ -108,7 +109,7 @@ class TestAN:
     def test_queenside_castle_check_returns_expected_properties(self):
         an = AN(text="O-O-O+")
 
-        assert an.x == "c"
+        assert an.x == C
         assert an.check
 
     def test_invalid_an_passed_raises_notation_error(self):
@@ -123,4 +124,4 @@ class TestAN:
         # for a disambiguation
         default_board.white.move(an_text="b3")
 
-        assert default_board.white.b_pawn.position == ("b", 3)
+        assert default_board.white.b_pawn.position == (B, 3)

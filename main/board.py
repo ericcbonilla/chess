@@ -13,7 +13,7 @@ from main.game_tree.utils import get_halfmove
 from main.notation.utils import truncate_fen
 from main.types import Change, GameResult, Position
 from main.utils import cprint, print_move_heading
-from main.xposition import XPosition
+from main.x import H, to_str
 
 if TYPE_CHECKING:
     from main.agents import Agent
@@ -92,7 +92,7 @@ class Board:
             if piece := white_memo.get((x, y)) or black_memo.get((x, y)):
                 row += f"{str(empty_squares_ct) if empty_squares_ct else ''}{piece}"
                 empty_squares_ct = 0
-            elif x == "h":
+            elif x == H:
                 row += str(empty_squares_ct + 1)
             else:
                 empty_squares_ct += 1
@@ -122,7 +122,7 @@ class Board:
 
         if target := self.white.en_passant_target or self.black.en_passant_target:
             x, y = target
-            en_passant_target = f"{x}{str(y)}"
+            en_passant_target = f"{to_str(x)}{str(y)}"
         else:
             en_passant_target = "-"
 
@@ -186,7 +186,7 @@ class Board:
 
     @staticmethod
     def destroy_piece(piece: "Piece", attr: str):
-        piece.agent.del_cache_item(piece.position)
+        piece.agent.del_cache_item((piece.x, piece.y))
 
         setattr(piece.agent.graveyard, attr, piece)
         setattr(piece.agent, attr, None)
@@ -217,9 +217,9 @@ class Board:
                         )
                         self.add_piece(piece, attr=key, new_position=(x, y))
                     else:
-                        agent.del_cache_item(piece.position)
+                        agent.del_cache_item((piece.x, piece.y))
                         x, y = datum["new_position"]
-                        piece.x, piece.y = XPosition(x), y
+                        piece.x, piece.y = x, y
                         agent.pieces_cache[(x, y)] = piece
 
                     if "has_moved" in datum:

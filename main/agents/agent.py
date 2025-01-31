@@ -6,7 +6,7 @@ from main.agents.graveyard import Graveyard
 from main.exceptions import NotFoundError
 from main.game_tree import HalfMove
 from main.pieces import Bishop, BlackPawn, King, Knight, Queen, Rook, WhitePawn
-from main.types import AgentColor, Position, Promotee
+from main.types import AgentColor, Position, Promotee, X
 
 if TYPE_CHECKING:
     from main.board import Board
@@ -61,7 +61,7 @@ class Agent:
     pieces_cache: Dict[Position, "Piece"] = field(default_factory=dict)
 
     def __repr__(self):
-        return f'{self.color}:\n{"".join(f"  {p.attr}: {p}\n" for p in self.pieces.values())}'
+        return f'{self.color} {type(self)}:\n{"".join(f"  {p.attr}: {p}\n" for p in self.pieces.values())}'
 
     @property
     def positions(self) -> Set[Position]:
@@ -80,7 +80,7 @@ class Agent:
         self.pieces_cache = {}
         for attr in constants.PIECE_ATTRS:
             if piece := getattr(self, attr):
-                self.pieces_cache[piece.position] = piece
+                self.pieces_cache[(piece.x, piece.y)] = piece
 
     @property
     def pieces(self) -> Dict[Position, "Piece"]:
@@ -109,7 +109,7 @@ class Agent:
 
         return rights
 
-    def get_by_position(self, x: str, y: int) -> "Piece":
+    def get_by_position(self, x: X, y: int) -> "Piece":
         try:
             return self.pieces[(x, y)]
         except KeyError:
@@ -134,7 +134,7 @@ class Agent:
     def move(
         self,
         attr: Optional[str] = None,
-        x: Optional[str] = None,
+        x: Optional[X] = None,
         y: Optional[int] = None,
     ) -> Optional[HalfMove]:
         """

@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 
 from main.types import AgentColor, Change
+from main.x import to_str
 
 
 @dataclass
@@ -67,7 +68,7 @@ class HalfMove:
         pc = [pc for pc in self.change[self.color].values() if pc["new_position"]][0]
         x, y = pc["new_position"]
 
-        return f"{x}{str(y)}"
+        return f"{to_str(x)}{str(y)}"
 
     @property
     def mate_notation(self) -> str:
@@ -107,7 +108,7 @@ class HalfMove:
         if self.capture_notation and self.change["symbol"] == "":
             pawn_slot = [sl for sl in iter(self.change[self.color]) if "pawn" in sl][0]
             x, _ = self.change[self.color][pawn_slot]["old_position"]
-            return x
+            return to_str(x)
 
         return self.change["symbol"]
 

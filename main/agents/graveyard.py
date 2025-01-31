@@ -39,7 +39,7 @@ class Graveyard:
     h_prom: Optional[Promotee] = None
 
     def __repr__(self):
-        return f'Graveyard:\n{"".join(f"  {p.attr}: {p}\n" for p in self.pieces) or "  Empty"}'
+        return f'Graveyard:\n{"".join(f"  {a}: {p}\n" for a, p in self.pieces) or "  Empty"}'
 
     @property
     def pieces(self) -> Iterable["Piece"]:

@@ -4,6 +4,7 @@ from typing import Optional
 from colorist import red
 
 from main.game_tree import HalfMove
+from main.types import X
 from main.utils import cprint
 
 from .random import RandomAgent
@@ -13,7 +14,7 @@ class AggressiveAgent(RandomAgent):
     def move(
         self,
         attr: Optional[str] = None,
-        x: Optional[str] = None,
+        x: Optional[X] = None,
         y: Optional[int] = None,
     ) -> Optional[HalfMove]:
         """

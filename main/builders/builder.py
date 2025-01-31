@@ -10,8 +10,8 @@ from main.exceptions import BuildError
 from main.notation import FEN
 from main.notation.utils import truncate_fen
 from main.pieces import SYMBOLS_MAP, Bishop, King, Knight, Queen, Rook
-from main.types import AgentScaffold, PieceScaffold
-from main.xposition import XPosition
+from main.types import AgentScaffold, PieceScaffold, X
+from main.x import A, B, C, F, G, H, to_str
 
 from .scaffolds import BLACK_SCAFFOLD, EMPTY_SCAFFOLD, WHITE_SCAFFOLD
 
@@ -56,27 +56,39 @@ class BoardBuilder:
             setattr(agent, attr, piece)
 
     def _get_slot(
-        self, scaffold: AgentScaffold, datum: PieceScaffold, x1: str, x2: str, name: str
+        self,
+        scaffold: AgentScaffold,
+        datum: PieceScaffold,
+        x1: X,
+        x2: X,
+        name: str,
     ) -> str:
-        if scaffold[f"{x1}_{name}"] and scaffold[f"{x2}_{name}"]:
+        datum_str = to_str(datum["x"])
+
+        if scaffold[f"{to_str(x1)}_{name}"] and scaffold[f"{to_str(x2)}_{name}"]:
             return self._get_promotion_slot(scaffold, datum)
-        elif datum["x"] in (x1, x2) and scaffold[f"{datum['x']}_{name}"] is None:
-            return f"{datum['x']}_{name}"
-        elif scaffold[f"{x1}_{name}"] is None:
-            return f"{x1}_{name}"
+        elif (
+            datum_str in (to_str(x1), to_str(x2))
+            and scaffold[f"{datum_str}_{name}"] is None
+        ):
+            return f"{datum_str}_{name}"
+        elif scaffold[f"{to_str(x1)}_{name}"] is None:
+            return f"{to_str(x1)}_{name}"
         else:
-            return f"{x2}_{name}"
+            return f"{to_str(x2)}_{name}"
 
     @staticmethod
     def _get_file_slot(scaffold: AgentScaffold, datum: PieceScaffold, name: str) -> str:
-        x = XPosition(datum["x"], wrap=True)
+        x = datum["x"]
         slot = None
 
         while not slot:
-            if scaffold[f"{x}_{name}"] is None:
-                slot = f"{x}_{name}"
+            if scaffold[f"{to_str(x)}_{name}"] is None:
+                slot = f"{to_str(x)}_{name}"
             else:
                 x += 1
+                if x not in [1, 8]:
+                    x = ((x + 8) % 8) or 8
                 if x == datum["x"]:
                     raise BuildError(
                         f"Could not add {datum['piece_type']} at "
@@ -105,11 +117,11 @@ class BoardBuilder:
                 else:
                     slot = self._get_promotion_slot(scaffold, datum)
             elif datum["piece_type"] is Rook:
-                slot = self._get_slot(scaffold, datum, "a", "h", "rook")
+                slot = self._get_slot(scaffold, datum, A, H, "rook")
             elif datum["piece_type"] is Knight:
-                slot = self._get_slot(scaffold, datum, "b", "g", "knight")
+                slot = self._get_slot(scaffold, datum, B, G, "knight")
             elif datum["piece_type"] is Bishop:
-                slot = self._get_slot(scaffold, datum, "c", "f", "bishop")
+                slot = self._get_slot(scaffold, datum, C, F, "bishop")
             else:
                 slot = self._get_pawn_slot(scaffold, datum)
 

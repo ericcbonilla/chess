@@ -1,10 +1,10 @@
 from functools import cached_property
-from typing import TYPE_CHECKING, Dict, Iterable, Optional, Reversible, Set
+from typing import TYPE_CHECKING, Dict, Iterable, Optional, Reversible, Set, Tuple
 
 from main import constants
 from main.game_tree import HalfMove
-from main.types import Change, GameResult, LookaheadResults, Position
-from main.xposition import XPosition
+from main.types import Change, GameResult, LookaheadResults, Position, Vector, X
+from main.x import to_str
 
 if TYPE_CHECKING:
     from main.agents import Agent
@@ -19,16 +19,18 @@ class Piece:
     - Move where I'm told by my agent (agnostic of strategy)
     """
 
-    def __repr__(self) -> str:
-        return f"<{self.__class__.__name__} ({self.unicode}): {self.position}>"
+    __slots__ = ("attr", "agent", "x", "y")
 
-    def __init__(self, attr: str, agent: "Agent", x: str, y: int):
+    def __repr__(self) -> str:
+        return f"<{self.__class__.__name__} ({self.unicode}): ({to_str(self.x)}, {self.y})>"
+
+    def __init__(self, attr: str, agent: "Agent", x: X, y: int):
         self.attr = attr
         self.agent = agent
-        self.x = XPosition(x)
+        self.x = x
         self.y = y
 
-    movements: Set = NotImplemented
+    movements: Set[Vector] = NotImplemented
     symbol: str = NotImplemented
     fen_symbol: str = NotImplemented
     value: int = NotImplemented
@@ -38,6 +40,10 @@ class Piece:
     def opponent(self) -> "Agent":
         attr = "black" if self.agent is self.agent.board.white else "white"
         return getattr(self.agent.board, attr)
+
+    @property
+    def position_readable(self) -> Tuple[str, int]:
+        return to_str(self.x), self.y
 
     @property
     def position(self) -> Position:
@@ -75,12 +81,15 @@ class Piece:
             return [p + 1 for p in range(*sorted((old, new)))][0:-1]
 
     def is_open_path(self, target_position: Position) -> bool:
+        # TODO can we simplify this with vectors
+        # Could be easier now that we have (int, int)
+
         target_x, target_y = target_position
-        x_range = self._get_squares_in_range(ord(self.x), ord(target_x))
+        x_range = self._get_squares_in_range(self.x, target_x)
         y_range = self._get_squares_in_range(self.y, target_y)
 
         if self.x != target_x and self.y == target_y:  # Horizontal
-            squares_on_path = {(chr(x), self.y) for x in x_range}
+            squares_on_path = {(x, self.y) for x in x_range}
         elif self.x == target_x and self.y != target_y:  # Vertical
             squares_on_path = {(self.x, y) for y in y_range}
         else:  # Diagonal
@@ -93,7 +102,7 @@ class Piece:
             else:  # SW
                 x_range = reversed(x_range)
                 y_range = reversed(y_range)
-            squares_on_path = {(chr(x), y) for x, y in zip(x_range, y_range)}
+            squares_on_path = {(x, y) for x, y in zip(x_range, y_range)}
 
         if squares_on_path & (self.agent.positions | self.opponent.positions):
             return False
@@ -127,7 +136,7 @@ class Piece:
     def can_move(self) -> Set[Position]:
         return self.get_valid_moves(lazy=True)
 
-    def get_disambiguation(self, x: XPosition | str, y: int) -> str:
+    def get_disambiguation(self, x: X, y: int) -> str:
         """
         Used for algebraic notation. If we have other pieces of the same type
         that can also move to the target square, return the rank (y) and/or
@@ -136,7 +145,6 @@ class Piece:
         """
 
         disambiguation = ""
-        x = XPosition(x)
         siblings = [
             piece
             for piece in self.agent.pieces.values()
@@ -144,7 +152,10 @@ class Piece:
         ]
 
         for sibling in siblings:
-            if disambiguation in (f"{self.x}{self.y}", f"{self.y}{self.x}"):
+            if disambiguation in (
+                f"{to_str(self.x)}{self.y}",
+                f"{self.y}{to_str(self.x)}",
+            ):
                 break
             if sibling.is_valid_move((x, y)):
                 if sibling.x == self.x:
@@ -152,7 +163,7 @@ class Piece:
                 else:
                     # Sibling is on the same rank, or a different rank and file entirely,
                     # in which case we still prefer to disambiguate with the file
-                    disambiguation += self.x
+                    disambiguation += to_str(self.x)
 
         # Remove duplicate characters, then sort them (e.g. 3c -> c3)
         return "".join(sorted(set(disambiguation), reverse=True))
@@ -214,7 +225,7 @@ class Piece:
 
         return {"check": check, "fen": fen, "game_result": game_result}
 
-    def augment_change(self, x: XPosition, y: int, change: Change, **kwargs) -> Change:
+    def augment_change(self, x: X, y: int, change: Change, **kwargs) -> Change:
         """
         Piece specific augmentations/side effects: castling, promotions, etc.
         """
@@ -222,7 +233,7 @@ class Piece:
 
     def construct_change(
         self,
-        x: XPosition,
+        x: X,
         y: int,
         augment: Optional[bool] = True,
         **kwargs,
@@ -276,7 +287,7 @@ class Piece:
 
         return change
 
-    def move(self, x: XPosition, y: int, **kwargs) -> HalfMove:
+    def move(self, x: X, y: int, **kwargs) -> HalfMove:
         change = self.construct_change(x, y, **kwargs)
         halfmove = HalfMove(color=self.agent.color, change=change)
         self.agent.board.apply_halfmove(halfmove)

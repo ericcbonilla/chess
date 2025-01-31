@@ -2,8 +2,7 @@ from typing import Dict, Set
 
 from main.game_tree import HalfMove
 from main.pieces.utils import vector
-from main.types import Change, Position
-from main.xposition import XPosition
+from main.types import Change, Position, Vector, X
 
 from .piece import Piece
 from .queen import Queen
@@ -13,7 +12,7 @@ class Pawn(Piece):
     symbol = ""
     fen_symbol = "P"
     value = 1
-    capture_movements: Set = NotImplemented
+    capture_movements: Set[Vector] = NotImplemented
     y_init: int = NotImplemented
     unicode = "\u2659"
     a = 1
@@ -23,7 +22,7 @@ class Pawn(Piece):
         return self.agent.pieces | self.opponent.pieces
 
     def is_valid_vector(self, new_position: Position) -> bool:
-        vec = vector(self.position, new_position)
+        vec = vector((self.x, self.y), new_position)
         if self.y == self.y_init:
             return vec in [(0, 1), (0, 2)]
         return vec in [(0, 1)]
@@ -50,10 +49,10 @@ class Pawn(Piece):
 
         return super().is_valid_move(new_position)
 
-    def get_disambiguation(self, x: XPosition, y: int) -> str:
+    def get_disambiguation(self, x: X, y: int) -> str:
         return ""
 
-    def augment_change(self, x: XPosition, y: int, change: Change, **kwargs) -> Change:
+    def augment_change(self, x: X, y: int, change: Change, **kwargs) -> Change:
         change["halfmove_clock"] = (self.agent.board.halfmove_clock, 0)
 
         if (x, y) == self.opponent.en_passant_target:
@@ -93,7 +92,7 @@ class Pawn(Piece):
             target_y = int((self.y + y) / 2)
             self.agent.en_passant_target = (self.x, target_y)
 
-    def move(self, x: XPosition, y: int, **kwargs) -> HalfMove:
+    def move(self, x: X, y: int, **kwargs) -> HalfMove:
         self.set_en_passant_target(y=y)
         return super().move(x, y, **kwargs)
 
@@ -107,7 +106,7 @@ class WhitePawn(Pawn):
     y_init = 2
 
     @property
-    def movements(self) -> Set[Position]:
+    def movements(self) -> Set[Vector]:
         if self.y == self.y_init:
             return {(0, 1), (0, 2)} | self.capture_movements
         return {(0, 1)} | self.capture_movements
@@ -118,7 +117,7 @@ class BlackPawn(Pawn):
     y_init = 7
 
     @property
-    def movements(self) -> Set[Position]:
+    def movements(self) -> Set[Vector]:
         if self.y == self.y_init:
             return {(0, -1), (0, -2)} | self.capture_movements
         return {(0, -1)} | self.capture_movements

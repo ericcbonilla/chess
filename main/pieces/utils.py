@@ -1,10 +1,8 @@
-from typing import Tuple
-
-from main.types import Position
+from main.types import Position, Vector
 
 
-def vector(position: Position, other: Position) -> Tuple[int, int]:
+def vector(position: Position, other: Position) -> Vector:
     x, y = position
     other_x, other_y = other
 
-    return abs(x.to_int() - other_x.to_int()), abs(y - other_y)
+    return abs(x - other_x), abs(y - other_y)

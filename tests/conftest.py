@@ -4,6 +4,7 @@ from main import constants
 from main.builders import BoardBuilder
 from main.game_tree import FullMove, HalfMove
 from main.pieces import Queen
+from main.x import A, B, C, D, E, F, G, H
 
 
 @pytest.fixture(scope="session")
@@ -30,8 +31,8 @@ def three_fullmove_tree():
             change={
                 "WHITE": {
                     "e_pawn": {
-                        "old_position": ("e", 2),
-                        "new_position": ("e", 4),
+                        "old_position": (E, 2),
+                        "new_position": (E, 4),
                     },
                 },
                 "BLACK": {},
@@ -50,8 +51,8 @@ def three_fullmove_tree():
                 "WHITE": {},
                 "BLACK": {
                     "e_pawn": {
-                        "old_position": ("e", 7),
-                        "new_position": ("e", 5),
+                        "old_position": (E, 7),
+                        "new_position": (E, 5),
                     }
                 },
                 "disambiguation": "",
@@ -69,8 +70,8 @@ def three_fullmove_tree():
                 change={
                     "WHITE": {
                         "g_knight": {
-                            "old_position": ("g", 1),
-                            "new_position": ("f", 3),
+                            "old_position": (G, 1),
+                            "new_position": (F, 3),
                         },
                     },
                     "BLACK": {},
@@ -89,8 +90,8 @@ def three_fullmove_tree():
                     "WHITE": {},
                     "BLACK": {
                         "b_knight": {
-                            "old_position": ("b", 8),
-                            "new_position": ("c", 6),
+                            "old_position": (B, 8),
+                            "new_position": (C, 6),
                         }
                     },
                     "disambiguation": "",
@@ -108,8 +109,8 @@ def three_fullmove_tree():
                     change={
                         "WHITE": {
                             "f_bishop": {
-                                "old_position": ("f", 1),
-                                "new_position": ("b", 5),
+                                "old_position": (F, 1),
+                                "new_position": (B, 5),
                             },
                         },
                         "BLACK": {},
@@ -128,8 +129,8 @@ def three_fullmove_tree():
                         "WHITE": {},
                         "BLACK": {
                             "a_pawn": {
-                                "old_position": ("a", 7),
-                                "new_position": ("a", 6),
+                                "old_position": (A, 7),
+                                "new_position": (A, 6),
                             }
                         },
                         "disambiguation": "",
@@ -160,8 +161,8 @@ def two_fullmove_root():
             change={
                 "WHITE": {
                     "e_pawn": {
-                        "old_position": ("e", 2),
-                        "new_position": ("e", 4),
+                        "old_position": (E, 2),
+                        "new_position": (E, 4),
                     },
                 },
                 "BLACK": {},
@@ -180,8 +181,8 @@ def two_fullmove_root():
                 "WHITE": {},
                 "BLACK": {
                     "e_pawn": {
-                        "old_position": ("e", 7),
-                        "new_position": ("e", 5),
+                        "old_position": (E, 7),
+                        "new_position": (E, 5),
                     }
                 },
                 "disambiguation": "",
@@ -199,8 +200,8 @@ def two_fullmove_root():
                 change={
                     "WHITE": {
                         "g_knight": {
-                            "old_position": ("g", 1),
-                            "new_position": ("f", 3),
+                            "old_position": (G, 1),
+                            "new_position": (F, 3),
                         },
                     },
                     "BLACK": {},
@@ -219,8 +220,8 @@ def two_fullmove_root():
                     "WHITE": {},
                     "BLACK": {
                         "b_knight": {
-                            "old_position": ("b", 8),
-                            "new_position": ("c", 6),
+                            "old_position": (B, 8),
+                            "new_position": (C, 6),
                         }
                     },
                     "disambiguation": "",
@@ -250,8 +251,8 @@ def one_and_a_half_fullmove_root():
             change={
                 "WHITE": {
                     "e_pawn": {
-                        "old_position": ("e", 2),
-                        "new_position": ("e", 4),
+                        "old_position": (E, 2),
+                        "new_position": (E, 4),
                     },
                 },
                 "BLACK": {},
@@ -270,8 +271,8 @@ def one_and_a_half_fullmove_root():
                 "WHITE": {},
                 "BLACK": {
                     "e_pawn": {
-                        "old_position": ("e", 7),
-                        "new_position": ("e", 5),
+                        "old_position": (E, 7),
+                        "new_position": (E, 5),
                     }
                 },
                 "disambiguation": "",
@@ -289,8 +290,8 @@ def one_and_a_half_fullmove_root():
                 change={
                     "WHITE": {
                         "g_knight": {
-                            "old_position": ("g", 1),
-                            "new_position": ("f", 3),
+                            "old_position": (G, 1),
+                            "new_position": (F, 3),
                         },
                     },
                     "BLACK": {},
@@ -321,8 +322,8 @@ def one_fullmove_root():
             change={
                 "WHITE": {
                     "e_pawn": {
-                        "old_position": ("e", 2),
-                        "new_position": ("e", 4),
+                        "old_position": (E, 2),
+                        "new_position": (E, 4),
                     },
                 },
                 "BLACK": {},
@@ -341,8 +342,8 @@ def one_fullmove_root():
                 "WHITE": {},
                 "BLACK": {
                     "e_pawn": {
-                        "old_position": ("e", 7),
-                        "new_position": ("e", 5),
+                        "old_position": (E, 7),
+                        "new_position": (E, 5),
                     }
                 },
                 "disambiguation": "",
@@ -370,8 +371,8 @@ def half_move_root():
             change={
                 "WHITE": {
                     "e_pawn": {
-                        "old_position": ("e", 2),
-                        "new_position": ("e", 4),
+                        "old_position": (E, 2),
+                        "new_position": (E, 4),
                     },
                 },
                 "BLACK": {},
@@ -402,8 +403,8 @@ def one_fullmove_then_capture_tree():
             change={
                 "WHITE": {
                     "e_pawn": {
-                        "old_position": ("e", 2),
-                        "new_position": ("e", 4),
+                        "old_position": (E, 2),
+                        "new_position": (E, 4),
                     },
                 },
                 "BLACK": {},
@@ -422,8 +423,8 @@ def one_fullmove_then_capture_tree():
                 "WHITE": {},
                 "BLACK": {
                     "d_pawn": {
-                        "old_position": ("d", 7),
-                        "new_position": ("d", 5),
+                        "old_position": (D, 7),
+                        "new_position": (D, 5),
                     }
                 },
                 "disambiguation": "",
@@ -441,13 +442,13 @@ def one_fullmove_then_capture_tree():
                 change={
                     "WHITE": {
                         "e_pawn": {
-                            "old_position": ("e", 4),
-                            "new_position": ("d", 5),
+                            "old_position": (E, 4),
+                            "new_position": (D, 5),
                         },
                     },
                     "BLACK": {
                         "d_pawn": {
-                            "old_position": ("d", 5),
+                            "old_position": (D, 5),
                             "new_position": None,
                         }
                     },
@@ -476,13 +477,13 @@ def white_kingside_castle():
             change={
                 "WHITE": {
                     "king": {
-                        "old_position": ("e", 1),
-                        "new_position": ("g", 1),
+                        "old_position": (E, 1),
+                        "new_position": (G, 1),
                         "has_moved": True,
                     },
                     "h_rook": {
-                        "old_position": ("h", 1),
-                        "new_position": ("f", 1),
+                        "old_position": (H, 1),
+                        "new_position": (F, 1),
                         "has_moved": True,
                     },
                 },
@@ -509,13 +510,13 @@ def white_queen_ambiguous_capture():
             change={
                 "WHITE": {
                     "queen": {
-                        "old_position": ("h", 4),
-                        "new_position": ("e", 1),
+                        "old_position": (H, 4),
+                        "new_position": (E, 1),
                     }
                 },
                 "BLACK": {
                     "queen": {
-                        "old_position": ("e", 1),
+                        "old_position": (E, 1),
                         "new_position": None,
                     }
                 },
@@ -545,18 +546,18 @@ def white_pawn_promotion_to_queen():
             change={
                 "WHITE": {
                     "g_pawn": {
-                        "old_position": ("f", 7),
+                        "old_position": (F, 7),
                         "new_position": None,
                     },
                     "g_prom": {
                         "old_position": None,
-                        "new_position": ("g", 8),
+                        "new_position": (G, 8),
                         "piece_type": Queen,
                     },
                 },
                 "BLACK": {
                     "h_rook": {
-                        "old_position": ("g", 8),
+                        "old_position": (G, 8),
                         "new_position": None,
                     }
                 },
