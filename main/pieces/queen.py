@@ -14,5 +14,5 @@ class Queen(Piece):
     unicode = "\u2655"
 
     def is_valid_vector(self, new_position: Position) -> bool:
-        x, y = vector(self.position, new_position)
+        x, y = vector((self.x, self.y), new_position)
         return x == y or 0 in (x, y)

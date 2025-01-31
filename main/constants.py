@@ -1,12 +1,14 @@
 from typing import List
 
 from main.types import AgentColor
+from main.x import A, B, C, D, E, F, G, H
 
 WHITE = "WHITE"
 BLACK = "BLACK"
 COLORS: List[AgentColor] = ["WHITE", "BLACK"]
 RANKS = [8, 7, 6, 5, 4, 3, 2, 1]
-FILES = ["a", "b", "c", "d", "e", "f", "g", "h"]
+FILES = [A, B, C, D, E, F, G, H]
+
 SQUARES_LIST = [(f, r) for r in RANKS for f in FILES]
 SQUARES = set(SQUARES_LIST)
 DARK_SQUARES = {

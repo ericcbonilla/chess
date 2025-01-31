@@ -4,6 +4,7 @@ from main import constants
 from main.game_tree import FullMove, GameTree, HalfMove
 from main.game_tree.utils import get_halfmove
 from main.pieces import King, Knight, Queen, Rook, WhitePawn
+from main.x import A, B, C, D, E, F, G, H
 
 
 class TestGetLatestHalfmove:
@@ -14,8 +15,8 @@ class TestGetLatestHalfmove:
             change={
                 "WHITE": {
                     "e_pawn": {
-                        "old_position": ("e", 2),
-                        "new_position": ("e", 4),
+                        "old_position": (E, 2),
+                        "new_position": (E, 4),
                     },
                 },
                 "BLACK": {},
@@ -39,8 +40,8 @@ class TestGetLatestHalfmove:
                 "WHITE": {},
                 "BLACK": {
                     "e_pawn": {
-                        "old_position": ("e", 7),
-                        "new_position": ("e", 5),
+                        "old_position": (E, 7),
+                        "new_position": (E, 5),
                     }
                 },
                 "disambiguation": "",
@@ -62,8 +63,8 @@ class TestGetLatestHalfmove:
             change={
                 "WHITE": {
                     "g_knight": {
-                        "old_position": ("g", 1),
-                        "new_position": ("f", 3),
+                        "old_position": (G, 1),
+                        "new_position": (F, 3),
                     },
                 },
                 "BLACK": {},
@@ -87,8 +88,8 @@ class TestGetLatestHalfmove:
                 "WHITE": {},
                 "BLACK": {
                     "b_knight": {
-                        "old_position": ("b", 8),
-                        "new_position": ("c", 6),
+                        "old_position": (B, 8),
+                        "new_position": (C, 6),
                     }
                 },
                 "disambiguation": "",
@@ -213,131 +214,131 @@ class TestUtils:
 
 class TestHalfMove:
     def test_when_piece_moves_to_an_returns_expected(self, default_board):
-        halfmove = default_board.white.move("g_knight", "f", 3)
+        halfmove = default_board.white.move("g_knight", F, 3)
         assert halfmove.to_an() == "Nf3"
 
     def test_when_pawn_moves_to_an_returns_expected(self, default_board):
-        default_board.white.move("e_pawn", "e", 4)
-        halfmove = default_board.black.move("c_pawn", "c", 5)
+        default_board.white.move("e_pawn", E, 4)
+        halfmove = default_board.black.move("c_pawn", C, 5)
         assert halfmove.to_an() == "c5"
 
     def test_when_piece_captures_to_an_returns_expected(self, default_board):
-        default_board.white.move("g_knight", "f", 3)
-        default_board.black.move("e_pawn", "e", 5)
-        halfmove = default_board.white.move("g_knight", "e", 5)
+        default_board.white.move("g_knight", F, 3)
+        default_board.black.move("e_pawn", E, 5)
+        halfmove = default_board.white.move("g_knight", E, 5)
 
         assert halfmove.to_an() == "Nxe5"
 
     def test_when_pawn_captures_to_an_returns_expected(self, default_board):
-        default_board.white.move("g_knight", "f", 3)
-        default_board.black.move("d_pawn", "d", 6)
-        default_board.white.move("g_knight", "e", 5)
-        halfmove = default_board.black.move("d_pawn", "e", 5)
+        default_board.white.move("g_knight", F, 3)
+        default_board.black.move("d_pawn", D, 6)
+        default_board.white.move("g_knight", E, 5)
+        halfmove = default_board.black.move("d_pawn", E, 5)
 
         assert halfmove.to_an() == "dxe5"
 
     def test_when_ambiguous_move_to_an_returns_expected(self, builder):
         board = builder.from_data(
             white_data=[
-                {"piece_type": King, "x": "a", "y": 7},
+                {"piece_type": King, "x": A, "y": 7},
             ],
             black_data=[
-                {"piece_type": King, "x": "h", "y": 8},
-                {"piece_type": Queen, "x": "f", "y": 6},
-                {"piece_type": Queen, "x": "f", "y": 4},
-                {"piece_type": Queen, "x": "h", "y": 6},
+                {"piece_type": King, "x": H, "y": 8},
+                {"piece_type": Queen, "x": F, "y": 6},
+                {"piece_type": Queen, "x": F, "y": 4},
+                {"piece_type": Queen, "x": H, "y": 6},
             ],
             active_color="b",
         )
-        halfmove = board.black.move("queen", "h", 4)
+        halfmove = board.black.move("queen", H, 4)
 
         assert halfmove.to_an() == "Qf6h4"
 
     def test_when_check_to_an_returns_expected(self, builder):
         board = builder.from_data(
             white_data=[
-                {"piece_type": King, "x": "a", "y": 7},
+                {"piece_type": King, "x": A, "y": 7},
             ],
             black_data=[
-                {"piece_type": King, "x": "h", "y": 8},
-                {"piece_type": Queen, "x": "f", "y": 6},
+                {"piece_type": King, "x": H, "y": 8},
+                {"piece_type": Queen, "x": F, "y": 6},
             ],
             active_color="b",
         )
 
-        halfmove = board.black.move("queen", "a", 1)
+        halfmove = board.black.move("queen", A, 1)
 
         assert halfmove.to_an() == "Qa1+"
 
     def test_when_queenside_castle_to_an_returns_expected(self, builder):
         board = builder.from_data(
             white_data=[
-                {"piece_type": King, "x": "e", "y": 1},
-                {"piece_type": Rook, "x": "a", "y": 1},
+                {"piece_type": King, "x": E, "y": 1},
+                {"piece_type": Rook, "x": A, "y": 1},
             ],
             black_data=[
-                {"piece_type": King, "x": "h", "y": 8},
+                {"piece_type": King, "x": H, "y": 8},
             ],
         )
-        halfmove = board.white.move("king", "c", 1)
+        halfmove = board.white.move("king", C, 1)
 
         assert halfmove.to_an() == "O-O-O"
 
     def test_when_castle_and_check_to_an_returns_expected(self, builder):
         board = builder.from_data(
             white_data=[
-                {"piece_type": King, "x": "e", "y": 1},
-                {"piece_type": Rook, "x": "h", "y": 1},
+                {"piece_type": King, "x": E, "y": 1},
+                {"piece_type": Rook, "x": H, "y": 1},
             ],
             black_data=[
-                {"piece_type": King, "x": "f", "y": 8},
+                {"piece_type": King, "x": F, "y": 8},
             ],
         )
-        halfmove = board.white.move("king", "g", 1)
+        halfmove = board.white.move("king", G, 1)
 
         assert halfmove.to_an() == "O-O+"
 
     def test_when_pawn_promotion_to_an_returns_expected(self, builder):
         board = builder.from_data(
             white_data=[
-                {"piece_type": King, "x": "e", "y": 1},
-                {"piece_type": WhitePawn, "x": "e", "y": 7},
+                {"piece_type": King, "x": E, "y": 1},
+                {"piece_type": WhitePawn, "x": E, "y": 7},
             ],
             black_data=[
-                {"piece_type": King, "x": "a", "y": 7},
+                {"piece_type": King, "x": A, "y": 7},
             ],
         )
-        halfmove = board.white.move("e_pawn", "e", 8)
+        halfmove = board.white.move("e_pawn", E, 8)
 
         assert halfmove.to_an() == "e8=Q"
 
     def test_when_pawn_promotion_capture_to_an_returns_expected(self, builder):
         board = builder.from_data(
             white_data=[
-                {"piece_type": King, "x": "e", "y": 1},
-                {"piece_type": WhitePawn, "x": "e", "y": 7},
+                {"piece_type": King, "x": E, "y": 1},
+                {"piece_type": WhitePawn, "x": E, "y": 7},
             ],
             black_data=[
-                {"piece_type": King, "x": "a", "y": 8},
-                {"piece_type": Rook, "x": "d", "y": 8},
+                {"piece_type": King, "x": A, "y": 8},
+                {"piece_type": Rook, "x": D, "y": 8},
             ],
         )
-        halfmove = board.white.move("e_pawn", "d", 8)
+        halfmove = board.white.move("e_pawn", D, 8)
 
         assert halfmove.to_an() == "exd8=Q+"
 
     def test_when_checkmate_to_an_returns_expected(self, builder):
         board = builder.from_data(
             white_data=[
-                {"piece_type": King, "x": "a", "y": 1},
+                {"piece_type": King, "x": A, "y": 1},
             ],
             black_data=[
-                {"piece_type": King, "x": "c", "y": 1},
-                {"piece_type": Rook, "x": "h", "y": 2},
-                {"piece_type": Knight, "x": "c", "y": 5},
+                {"piece_type": King, "x": C, "y": 1},
+                {"piece_type": Rook, "x": H, "y": 2},
+                {"piece_type": Knight, "x": C, "y": 5},
             ],
             active_color="b",
         )
-        halfmove = board.black.move("b_knight", "b", 3)
+        halfmove = board.black.move("b_knight", B, 3)
 
         assert halfmove.to_an() == "Nb3#"

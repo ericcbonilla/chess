@@ -1,20 +1,21 @@
 from main.pieces import Bishop, King, Knight, Queen, Rook, WhitePawn
+from main.x import A, B, C, D, E, F, G, H
 
 
 class TestGetGameResult:
     def test_white_in_check_and_cant_move_yields_checkmate(self, builder):
         board = builder.from_data(
             white_data=[
-                {"piece_type": King, "x": "a", "y": 1},
+                {"piece_type": King, "x": A, "y": 1},
             ],
             black_data=[
-                {"piece_type": King, "x": "h", "y": 8},
-                {"piece_type": Queen, "x": "f", "y": 8},
-                {"piece_type": Queen, "x": "b", "y": 7},
+                {"piece_type": King, "x": H, "y": 8},
+                {"piece_type": Queen, "x": F, "y": 8},
+                {"piece_type": Queen, "x": B, "y": 7},
             ],
             active_color="b",
         )
-        halfmove = board.black.move("queen", "a", 8)
+        halfmove = board.black.move("queen", A, 8)
 
         assert halfmove.change["check"]
         assert halfmove.change["game_result"] == "0-1"
@@ -22,17 +23,17 @@ class TestGetGameResult:
     def test_white_in_check_and_cant_move_defenders_yields_checkmate(self, builder):
         board = builder.from_data(
             white_data=[
-                {"piece_type": King, "x": "a", "y": 1},
-                {"piece_type": WhitePawn, "x": "a", "y": 2},
-                {"piece_type": Bishop, "x": "b", "y": 1},
+                {"piece_type": King, "x": A, "y": 1},
+                {"piece_type": WhitePawn, "x": A, "y": 2},
+                {"piece_type": Bishop, "x": B, "y": 1},
             ],
             black_data=[
-                {"piece_type": King, "x": "h", "y": 8},
-                {"piece_type": Bishop, "x": "h", "y": 6},
+                {"piece_type": King, "x": H, "y": 8},
+                {"piece_type": Bishop, "x": H, "y": 6},
             ],
             active_color="b",
         )
-        halfmove = board.black.move("c_bishop", "g", 7)
+        halfmove = board.black.move("c_bishop", G, 7)
 
         assert halfmove.change["check"]
         assert halfmove.change["game_result"] == "0-1"
@@ -40,16 +41,16 @@ class TestGetGameResult:
     def test_opponent_not_in_check_and_cant_moves_yields_draw(self, builder):
         board = builder.from_data(
             white_data=[
-                {"piece_type": King, "x": "a", "y": 6},
-                {"piece_type": Rook, "x": "h", "y": 6},
+                {"piece_type": King, "x": A, "y": 6},
+                {"piece_type": Rook, "x": H, "y": 6},
             ],
             black_data=[
-                {"piece_type": King, "x": "a", "y": 8},
+                {"piece_type": King, "x": A, "y": 8},
             ],
         )
         board.halfmove_clock = 20
         board.fullmove_number = 10
-        halfmove = board.white.move("h_rook", "b", 6)
+        halfmove = board.white.move("h_rook", B, 6)
 
         assert not halfmove.change["check"]
         assert halfmove.change["game_result"] == "½-½ Stalemate"
@@ -57,17 +58,17 @@ class TestGetGameResult:
     def test_opponent_in_check_but_can_still_move_yields_no_result(self, builder):
         board = builder.from_data(
             white_data=[
-                {"piece_type": King, "x": "a", "y": 1},
-                {"piece_type": WhitePawn, "x": "a", "y": 2},
-                {"piece_type": Knight, "x": "b", "y": 1},
+                {"piece_type": King, "x": A, "y": 1},
+                {"piece_type": WhitePawn, "x": A, "y": 2},
+                {"piece_type": Knight, "x": B, "y": 1},
             ],
             black_data=[
-                {"piece_type": King, "x": "h", "y": 8},
-                {"piece_type": Bishop, "x": "h", "y": 6},
+                {"piece_type": King, "x": H, "y": 8},
+                {"piece_type": Bishop, "x": H, "y": 6},
             ],
             active_color="b",
         )
-        halfmove = board.black.move("c_bishop", "g", 7)
+        halfmove = board.black.move("c_bishop", G, 7)
 
         assert halfmove.change["check"]
         assert halfmove.change["game_result"] is None  # Can still do Nc3
@@ -78,7 +79,7 @@ class TestGetGameResult:
         board = builder.from_fen(
             text="8/p3p1bp/p3B3/2PPk2p/4P2P/K1P5/P7/5RN1 w - - 1 28"
         )
-        halfmove = board.white.move("a_rook", "f", 5)
+        halfmove = board.white.move("a_rook", F, 5)
 
         assert halfmove.change["check"]
         assert halfmove.change["game_result"] is None  # Can still do Kxe4
@@ -86,18 +87,18 @@ class TestGetGameResult:
     def test_opponent_in_check_but_pawn_can_still_move_yields_no_result(self, builder):
         board = builder.from_data(
             white_data=[
-                {"piece_type": King, "x": "a", "y": 1},
-                {"piece_type": WhitePawn, "x": "a", "y": 2},
-                {"piece_type": WhitePawn, "x": "d", "y": 3},
-                {"piece_type": Bishop, "x": "b", "y": 1},
+                {"piece_type": King, "x": A, "y": 1},
+                {"piece_type": WhitePawn, "x": A, "y": 2},
+                {"piece_type": WhitePawn, "x": D, "y": 3},
+                {"piece_type": Bishop, "x": B, "y": 1},
             ],
             black_data=[
-                {"piece_type": King, "x": "h", "y": 8},
-                {"piece_type": Bishop, "x": "h", "y": 6},
+                {"piece_type": King, "x": H, "y": 8},
+                {"piece_type": Bishop, "x": H, "y": 6},
             ],
             active_color="b",
         )
-        halfmove = board.black.move("c_bishop", "g", 7)
+        halfmove = board.black.move("c_bishop", G, 7)
 
         assert halfmove.change["check"]
         assert halfmove.change["game_result"] is None  # Can still do d4
@@ -107,105 +108,105 @@ class TestGetDisambiguation:
     def test_knight_disambiguation(self, builder):
         board = builder.from_data(
             white_data=[
-                {"piece_type": King, "x": "a", "y": 1},
-                {"piece_type": Knight, "x": "c", "y": 3},
-                {"piece_type": Knight, "x": "g", "y": 3},
+                {"piece_type": King, "x": A, "y": 1},
+                {"piece_type": Knight, "x": C, "y": 3},
+                {"piece_type": Knight, "x": G, "y": 3},
             ],
             black_data=[
-                {"piece_type": King, "x": "a", "y": 8},
+                {"piece_type": King, "x": A, "y": 8},
             ],
         )
 
-        assert board.white.b_knight.get_disambiguation("e", 4) == "c"
+        assert board.white.b_knight.get_disambiguation(E, 4) == "c"
 
     def test_knight_double_disambiguation(self, builder):
         board = builder.from_data(
             white_data=[
-                {"piece_type": King, "x": "a", "y": 1},
-                {"piece_type": Knight, "x": "c", "y": 3},
-                {"piece_type": Knight, "x": "g", "y": 3},
-                {"piece_type": Knight, "x": "c", "y": 5},
+                {"piece_type": King, "x": A, "y": 1},
+                {"piece_type": Knight, "x": C, "y": 3},
+                {"piece_type": Knight, "x": G, "y": 3},
+                {"piece_type": Knight, "x": C, "y": 5},
             ],
             black_data=[
-                {"piece_type": King, "x": "a", "y": 8},
+                {"piece_type": King, "x": A, "y": 8},
             ],
         )
 
-        assert board.white.b_knight.get_disambiguation("e", 4) == "c3"
+        assert board.white.b_knight.get_disambiguation(E, 4) == "c3"
 
     def test_knight_two_knights_but_just_one_disambiguation(self, builder):
         board = builder.from_data(
             white_data=[
-                {"piece_type": King, "x": "a", "y": 1},
-                {"piece_type": Knight, "x": "c", "y": 3},
-                {"piece_type": Knight, "x": "g", "y": 3},
-                {"piece_type": Knight, "x": "g", "y": 5},
+                {"piece_type": King, "x": A, "y": 1},
+                {"piece_type": Knight, "x": C, "y": 3},
+                {"piece_type": Knight, "x": G, "y": 3},
+                {"piece_type": Knight, "x": G, "y": 5},
             ],
             black_data=[
-                {"piece_type": King, "x": "a", "y": 8},
+                {"piece_type": King, "x": A, "y": 8},
             ],
         )
 
-        assert board.white.b_knight.get_disambiguation("e", 4) == "c"
+        assert board.white.b_knight.get_disambiguation(E, 4) == "c"
 
     def test_rook_disambiguation(self, builder):
         board = builder.from_data(
             white_data=[
-                {"piece_type": King, "x": "a", "y": 1},
-                {"piece_type": Rook, "x": "g", "y": 1},
-                {"piece_type": Rook, "x": "g", "y": 6},
-                {"piece_type": Rook, "x": "c", "y": 4},
+                {"piece_type": King, "x": A, "y": 1},
+                {"piece_type": Rook, "x": G, "y": 1},
+                {"piece_type": Rook, "x": G, "y": 6},
+                {"piece_type": Rook, "x": C, "y": 4},
             ],
             black_data=[
-                {"piece_type": King, "x": "a", "y": 8},
+                {"piece_type": King, "x": A, "y": 8},
             ],
         )
 
-        assert board.white.a_rook.get_disambiguation("g", 3) == "1"
+        assert board.white.a_rook.get_disambiguation(G, 3) == "1"
 
     def test_rook_double_disambiguation(self, builder):
         board = builder.from_data(
             white_data=[
-                {"piece_type": King, "x": "a", "y": 1},
-                {"piece_type": Rook, "x": "g", "y": 1},
-                {"piece_type": Rook, "x": "g", "y": 6},
-                {"piece_type": Rook, "x": "c", "y": 3},
+                {"piece_type": King, "x": A, "y": 1},
+                {"piece_type": Rook, "x": G, "y": 1},
+                {"piece_type": Rook, "x": G, "y": 6},
+                {"piece_type": Rook, "x": C, "y": 3},
             ],
             black_data=[
-                {"piece_type": King, "x": "a", "y": 8},
+                {"piece_type": King, "x": A, "y": 8},
             ],
         )
 
-        assert board.white.a_rook.get_disambiguation("g", 3) == "g1"
+        assert board.white.a_rook.get_disambiguation(G, 3) == "g1"
 
     def test_queen_disambiguation(self, builder):
         board = builder.from_data(
             white_data=[
-                {"piece_type": King, "x": "a", "y": 1},
-                {"piece_type": Queen, "x": "b", "y": 2},
-                {"piece_type": Queen, "x": "b", "y": 4},
+                {"piece_type": King, "x": A, "y": 1},
+                {"piece_type": Queen, "x": B, "y": 2},
+                {"piece_type": Queen, "x": B, "y": 4},
             ],
             black_data=[
-                {"piece_type": King, "x": "a", "y": 8},
+                {"piece_type": King, "x": A, "y": 8},
             ],
         )
 
-        assert board.white.queen.get_disambiguation("d", 4) == "2"
+        assert board.white.queen.get_disambiguation(D, 4) == "2"
 
     def test_queen_double_disambiguation(self, builder):
         board = builder.from_data(
             white_data=[
-                {"piece_type": King, "x": "a", "y": 1},
-                {"piece_type": Queen, "x": "b", "y": 2},
-                {"piece_type": Queen, "x": "b", "y": 4},
-                {"piece_type": Queen, "x": "f", "y": 6},
+                {"piece_type": King, "x": A, "y": 1},
+                {"piece_type": Queen, "x": B, "y": 2},
+                {"piece_type": Queen, "x": B, "y": 4},
+                {"piece_type": Queen, "x": F, "y": 6},
             ],
             black_data=[
-                {"piece_type": King, "x": "a", "y": 8},
+                {"piece_type": King, "x": A, "y": 8},
             ],
         )
 
-        assert board.white.queen.get_disambiguation("d", 4) == "b2"
+        assert board.white.queen.get_disambiguation(D, 4) == "b2"
 
     def test_hella_siblings_disambiguation(self, builder):
         """
@@ -215,16 +216,16 @@ class TestGetDisambiguation:
 
         board = builder.from_data(
             white_data=[
-                {"piece_type": King, "x": "a", "y": 1},
-                {"piece_type": Knight, "x": "g", "y": 3},
-                {"piece_type": Knight, "x": "c", "y": 5},
-                {"piece_type": Knight, "x": "g", "y": 8},
-                {"piece_type": Knight, "x": "h", "y": 8},
-                {"piece_type": Knight, "x": "c", "y": 3},
+                {"piece_type": King, "x": A, "y": 1},
+                {"piece_type": Knight, "x": G, "y": 3},
+                {"piece_type": Knight, "x": C, "y": 5},
+                {"piece_type": Knight, "x": G, "y": 8},
+                {"piece_type": Knight, "x": H, "y": 8},
+                {"piece_type": Knight, "x": C, "y": 3},
             ],
             black_data=[
-                {"piece_type": King, "x": "a", "y": 8},
+                {"piece_type": King, "x": A, "y": 8},
             ],
         )
 
-        assert board.white.c_prom.get_disambiguation("e", 4) == "c3"
+        assert board.white.c_prom.get_disambiguation(E, 4) == "c3"

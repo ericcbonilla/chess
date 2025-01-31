@@ -1,7 +1,7 @@
 from typing import Dict
 
 from main.types import Position
-from main.xposition import XPosition
+from main.x import A, E, H, to_int
 
 
 class FEN:
@@ -19,19 +19,19 @@ class FEN:
     @property
     def castling_rights(self) -> Dict[Position, bool]:
         return {
-            ("a", 8): "q" in self._c,
-            ("h", 8): "k" in self._c,
-            ("a", 1): "Q" in self._c,
-            ("h", 1): "K" in self._c,
-            ("e", 8): any(ch in self._c for ch in ("k", "q")),
-            ("e", 1): any(ch in self._c for ch in ("K", "Q")),
+            (A, 8): "q" in self._c,
+            (H, 8): "k" in self._c,
+            (A, 1): "Q" in self._c,
+            (H, 1): "K" in self._c,
+            (E, 8): any(ch in self._c for ch in ("k", "q")),
+            (E, 1): any(ch in self._c for ch in ("K", "Q")),
         }
 
     @property
     def en_passant_target(self) -> Position | None:
         try:
-            x, y = self._d
-            return XPosition(x), int(y)
+            x_str, y = self._d
+            return to_int(x_str), int(y)
         except ValueError:
             return None
 

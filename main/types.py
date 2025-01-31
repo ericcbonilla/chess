@@ -12,7 +12,9 @@ from typing import (
 if TYPE_CHECKING:
     from main.pieces import Piece
 
-Position = Tuple["XPosition", int]
+X = int
+Position = Tuple[X, int]
+Vector = Tuple[int, int]
 Promotee = Union["Bishop", "Knight", "Queen", "Rook"]
 AgentColor = Literal["WHITE", "BLACK"]
 GameResult = Literal[
@@ -53,7 +55,7 @@ class Change(LookaheadResults):
 
 class PieceScaffold(TypedDict):
     piece_type: Type["Piece"]
-    x: str
+    x: int
     y: int
     has_moved: NotRequired[bool]
 

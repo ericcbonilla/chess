@@ -2,8 +2,8 @@ from typing import TYPE_CHECKING, Optional
 
 from main import constants
 from main.pieces.utils import vector
-from main.types import Change, Position
-from main.xposition import XPosition
+from main.types import Change, Position, X
+from main.x import A, H
 
 from .piece import Piece
 
@@ -27,7 +27,7 @@ class Rook(Piece):
         self,
         attr: str,
         agent: "Agent",
-        x: str,
+        x: X,
         y: int,
         has_moved: Optional[bool] = None,
     ):
@@ -35,14 +35,14 @@ class Rook(Piece):
 
         if has_moved is None:
             initial_y = 1 if self.agent.color == constants.WHITE else 8
-            self.has_moved = self.position not in [("a", initial_y), ("h", initial_y)]
+            self.has_moved = self.position not in [(A, initial_y), (H, initial_y)]
         else:
             self.has_moved = has_moved
 
     def is_valid_vector(self, new_position: Position) -> bool:
         return 0 in vector(self.position, new_position)
 
-    def augment_change(self, x: XPosition, y: int, change: Change, **kwargs) -> Change:
+    def augment_change(self, x: X, y: int, change: Change, **kwargs) -> Change:
         if not self.has_moved:
             change[self.agent.color][self.attr]["has_moved"] = True
 

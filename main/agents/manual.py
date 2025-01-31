@@ -6,9 +6,9 @@ from main.exceptions import GameplayError, InvalidMoveError, NotationError
 from main.game_tree import HalfMove
 from main.notation import AN
 from main.pieces import King, Pawn, Piece
-from main.types import Position
+from main.types import Position, X
 from main.utils import cprint
-from main.xposition import XPosition
+from main.x import to_str
 
 from .agent import Agent
 
@@ -16,7 +16,7 @@ from .agent import Agent
 class ManualAgent(Agent):
     @staticmethod
     def _get_disamb_search_fn(an: AN) -> Callable[[Piece], bool]:
-        if isinstance(an.disambiguation, XPosition):
+        if isinstance(an.disambiguation, X):
             return lambda p: p.x == an.disambiguation
         elif isinstance(an.disambiguation, int):
             return lambda p: p.y == an.disambiguation
@@ -50,7 +50,7 @@ class ManualAgent(Agent):
 
             if len(matching_pieces) > 1:
                 raise NotationError(
-                    f"More than one {an.piece_type.__name__} can move to {an.x}{an.y};"
+                    f"More than one {an.piece_type.__name__} can move to {to_str(an.x)}{an.y};"
                     f" disambiguation required"
                 )
             try:
@@ -63,7 +63,7 @@ class ManualAgent(Agent):
 
         if not an.is_capture and an.pick in piece.opponent.pieces:
             raise NotationError(
-                f"Opponent piece on {an.x}{an.y}. "
+                f"Opponent piece on {to_str(an.x)}{an.y}. "
                 f"Did you mean {piece.symbol}x{an.text[1:]}?"
             )
         elif an.is_capture and an.pick not in piece.opponent.pieces:
@@ -77,7 +77,7 @@ class ManualAgent(Agent):
     def move(
         self,
         attr: Optional[str] = None,
-        x: Optional[str | XPosition] = None,
+        x: Optional[X] = None,
         y: Optional[int] = None,
         an_text: Optional[str] = None,
         **kwargs,
@@ -89,7 +89,6 @@ class ManualAgent(Agent):
 
         if attr and x and y:
             piece = getattr(self, attr)
-            x = XPosition(x)
 
             if piece.is_valid_move((x, y)):
                 return piece.move(x, y, **kwargs)

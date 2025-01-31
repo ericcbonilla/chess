@@ -3,8 +3,8 @@ from typing import TYPE_CHECKING, Type
 
 from main.exceptions import NotationError
 from main.pieces import SYMBOLS_MAP, Pawn
-from main.types import Position, Promotee
-from main.xposition import XPosition
+from main.types import Position, Promotee, X
+from main.x import C, G, to_int
 
 if TYPE_CHECKING:
     from main.pieces import Piece
@@ -43,35 +43,36 @@ class AN:
         return SYMBOLS_MAP[symbol]
 
     @property
-    def pawn_file(self) -> XPosition | None:
+    def pawn_file(self) -> X | None:
         if self.match.group("pfile"):
-            return XPosition(self.match.group("pfile"))
+            return to_int(self.match.group("pfile"))
 
     @property
-    def disambiguation(self) -> XPosition | int | Position | None:
+    def disambiguation(self) -> X | int | Position | None:
         disamb = self.match.group("disamb")
         if disamb == "" or disamb is None:
             return None
         if re.match(r"[a-h]$", disamb):
-            return XPosition(disamb)
+            return to_int(disamb)
         elif re.match(r"[1-8]$", disamb):
             return int(disamb)
         else:
-            x, y = disamb
-            return XPosition(x), int(y)
+            x_str, y = disamb
+            return to_int(x_str), int(y)
 
     @property
     def is_capture(self) -> bool:
         return bool(self.match.group("capture"))
 
     @property
-    def x(self) -> XPosition:
+    def x(self) -> X:
         try:
-            x, _ = self.match.group("pick")
+            x_str, _ = self.match.group("pick")
+            x = to_int(x_str)
         except TypeError:
-            x = "c" if self.match.group("castle") == "O-O-O" else "g"
+            x = C if self.match.group("castle") == "O-O-O" else G
 
-        return XPosition(x)
+        return x
 
     @property
     def y(self) -> int | None:

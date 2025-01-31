@@ -2,7 +2,7 @@ from typing import TYPE_CHECKING
 
 from main import constants
 from main.pieces.utils import vector
-from main.types import Position
+from main.types import Position, X
 
 from .piece import Piece
 
@@ -22,7 +22,7 @@ class Bishop(Piece):
     value = 3
     unicode = "\u2657"
 
-    def __init__(self, attr: str, agent: "Agent", x: str, y: int):
+    def __init__(self, attr: str, agent: "Agent", x: X, y: int):
         super().__init__(attr, agent, x, y)
         self.dark = self.position in constants.DARK_SQUARES
 

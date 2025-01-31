@@ -2,6 +2,7 @@ import pytest
 
 from main.exceptions import BuildError, GameplayError
 from main.pieces import King, Queen, WhitePawn
+from main.x import A, B, C, D, E, F, G, H
 
 
 class TestBoardBuilder:
@@ -9,21 +10,21 @@ class TestBoardBuilder:
         with pytest.raises(BuildError):
             builder.from_data(
                 white_data=[
-                    {"piece_type": WhitePawn, "x": "a", "y": 2},
+                    {"piece_type": WhitePawn, "x": A, "y": 2},
                 ],
                 black_data=[
-                    {"piece_type": King, "x": "e", "y": 5},
+                    {"piece_type": King, "x": E, "y": 5},
                 ],
             )
 
     def test_pawn_added_to_correct_slot(self, builder):
         board = builder.from_data(
             white_data=[
-                {"piece_type": King, "x": "c", "y": 4},
-                {"piece_type": WhitePawn, "x": "f", "y": 2},
+                {"piece_type": King, "x": C, "y": 4},
+                {"piece_type": WhitePawn, "x": F, "y": 2},
             ],
             black_data=[
-                {"piece_type": King, "x": "e", "y": 5},
+                {"piece_type": King, "x": E, "y": 5},
             ],
         )
 
@@ -32,37 +33,37 @@ class TestBoardBuilder:
     def test_multiple_pawns_on_same_file_added_to_correct_slots(self, builder):
         board = builder.from_data(
             white_data=[
-                {"piece_type": King, "x": "c", "y": 4},
-                {"piece_type": WhitePawn, "x": "g", "y": 2},
-                {"piece_type": WhitePawn, "x": "g", "y": 3},
-                {"piece_type": WhitePawn, "x": "g", "y": 4},
+                {"piece_type": King, "x": C, "y": 4},
+                {"piece_type": WhitePawn, "x": G, "y": 2},
+                {"piece_type": WhitePawn, "x": G, "y": 3},
+                {"piece_type": WhitePawn, "x": G, "y": 4},
             ],
             black_data=[
-                {"piece_type": King, "x": "e", "y": 5},
+                {"piece_type": King, "x": E, "y": 5},
             ],
         )
 
-        assert board.white.g_pawn.position == ("g", 2)
-        assert board.white.h_pawn.position == ("g", 3)
-        assert board.white.a_pawn.position == ("g", 4)
+        assert board.white.g_pawn.position == (G, 2)
+        assert board.white.h_pawn.position == (G, 3)
+        assert board.white.a_pawn.position == (G, 4)
 
     def test_too_many_pawns_raises_build_error(self, builder):
         with pytest.raises(BuildError):
             builder.from_data(
                 white_data=[
-                    {"piece_type": King, "x": "e", "y": 1},
-                    {"piece_type": WhitePawn, "x": "a", "y": 2},
-                    {"piece_type": WhitePawn, "x": "b", "y": 2},
-                    {"piece_type": WhitePawn, "x": "c", "y": 2},
-                    {"piece_type": WhitePawn, "x": "d", "y": 2},
-                    {"piece_type": WhitePawn, "x": "e", "y": 2},
-                    {"piece_type": WhitePawn, "x": "f", "y": 2},
-                    {"piece_type": WhitePawn, "x": "g", "y": 2},
-                    {"piece_type": WhitePawn, "x": "h", "y": 2},
-                    {"piece_type": WhitePawn, "x": "a", "y": 3},
+                    {"piece_type": King, "x": E, "y": 1},
+                    {"piece_type": WhitePawn, "x": A, "y": 2},
+                    {"piece_type": WhitePawn, "x": B, "y": 2},
+                    {"piece_type": WhitePawn, "x": C, "y": 2},
+                    {"piece_type": WhitePawn, "x": D, "y": 2},
+                    {"piece_type": WhitePawn, "x": E, "y": 2},
+                    {"piece_type": WhitePawn, "x": F, "y": 2},
+                    {"piece_type": WhitePawn, "x": G, "y": 2},
+                    {"piece_type": WhitePawn, "x": H, "y": 2},
+                    {"piece_type": WhitePawn, "x": A, "y": 3},
                 ],
                 black_data=[
-                    {"piece_type": King, "x": "e", "y": 5},
+                    {"piece_type": King, "x": E, "y": 5},
                 ],
             )
 
@@ -70,30 +71,30 @@ class TestBoardBuilder:
         with pytest.raises(BuildError):
             builder.from_data(
                 white_data=[
-                    {"piece_type": King, "x": "e", "y": 1},
-                    {"piece_type": WhitePawn, "x": "a", "y": 1},
+                    {"piece_type": King, "x": E, "y": 1},
+                    {"piece_type": WhitePawn, "x": A, "y": 1},
                 ],
                 black_data=[
-                    {"piece_type": King, "x": "e", "y": 5},
+                    {"piece_type": King, "x": E, "y": 5},
                 ],
             )
 
     def test_second_added_queen_has_correct_name(self, builder):
         board = builder.from_data(
             white_data=[
-                {"piece_type": King, "x": "c", "y": 4},
-                {"piece_type": Queen, "x": "g", "y": 5},
-                {"piece_type": Queen, "x": "g", "y": 4},
-                {"piece_type": Queen, "x": "g", "y": 3},
+                {"piece_type": King, "x": C, "y": 4},
+                {"piece_type": Queen, "x": G, "y": 5},
+                {"piece_type": Queen, "x": G, "y": 4},
+                {"piece_type": Queen, "x": G, "y": 3},
             ],
             black_data=[
-                {"piece_type": King, "x": "e", "y": 5},
+                {"piece_type": King, "x": E, "y": 5},
             ],
         )
 
-        assert board.white.queen.position == ("g", 5)
-        assert board.white.g_prom.position == ("g", 4)
-        assert board.white.h_prom.position == ("g", 3)
+        assert board.white.queen.position == (G, 5)
+        assert board.white.g_prom.position == (G, 4)
+        assert board.white.h_prom.position == (G, 3)
 
     def test_from_fen_starting_position_returns_expected_board(self, builder):
         board = builder.from_fen(
@@ -116,13 +117,13 @@ class TestBoardBuilder:
             text="rnb1k2r/1p1pnpp1/p1p4p/8/3BP3/1PNB1QP1/P1P2P1K/R4R2 w - - 0 14",
         )
 
-        assert board.white.queen.position == ("f", 3)
+        assert board.white.queen.position == (F, 3)
         assert board.black.king.has_moved
 
         with pytest.raises(GameplayError):
-            board.black.move("a_pawn", "a", 5)
+            board.black.move("a_pawn", A, 5)
 
-        board.white.move("c_bishop", "g", 7)
+        board.white.move("c_bishop", G, 7)
 
         assert board.get_fen(internal=True) == (
             "rnb1k2r/1p1pnpB1/p1p4p/8/4P3/1PNB1QP1/P1P2P1K/R4R2 b - - 0 14"
@@ -133,7 +134,7 @@ class TestBoardBuilder:
             text="6k1/3R4/5Q2/8/p3N3/1P4P1/P1P2P1K/8 w - - 0 39",
         )
 
-        board.white.move("queen", "d", 8)
+        board.white.move("queen", D, 8)
 
         assert board.result == "1-0"
         assert (
@@ -146,4 +147,4 @@ class TestBoardBuilder:
             text="rnbqkbnr/pppppppp/8/8/3P4/8/PPP1PPPP/RNBQKBNR b KQkq d3 0 1",
         )
 
-        assert board.white.en_passant_target == ("d", 3)
+        assert board.white.en_passant_target == (D, 3)
