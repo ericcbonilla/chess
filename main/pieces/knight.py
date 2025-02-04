@@ -15,7 +15,6 @@ class Knight(Piece):
         [(-2, -1)],
         [(-1, -2)],
     ]
-    capture_movements = movements
     symbol = "N"
     fen_symbol = symbol
     value = 3

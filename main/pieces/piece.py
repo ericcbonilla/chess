@@ -31,7 +31,6 @@ class Piece:
         self.y = y
 
     movements: List[List[Vector]] = NotImplemented
-    capture_movements: List[List[Vector]] = NotImplemented
     symbol: str = NotImplemented
     fen_symbol: str = NotImplemented
     value: int = NotImplemented

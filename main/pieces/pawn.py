@@ -1,4 +1,4 @@
-from typing import Dict, List, Set
+from typing import Dict, List
 
 from main import constants
 from main.game_tree import HalfMove
@@ -13,7 +13,6 @@ class Pawn(Piece):
     symbol = ""
     fen_symbol = "P"
     value = 1
-    capture_movements: Set[Vector] = NotImplemented
     y_init: int = NotImplemented
     unicode = "\u2659"
 
@@ -28,11 +27,7 @@ class Pawn(Piece):
         return vec in [(0, 1)]
 
     def is_capture(self, new_position: Position) -> bool:
-        # TODO there might be a better way
-        return any(
-            (self.x + x_d, self.y + y_d) == new_position
-            for x_d, y_d in self.capture_movements
-        )
+        raise NotImplementedError
 
     def is_valid_move(self, new_position: Position) -> bool:
         if self.is_capture(new_position):
@@ -115,25 +110,29 @@ class Pawn(Piece):
 
 
 class WhitePawn(Pawn):
-    capture_movements = {(1, 1), (-1, 1)}
     y_init = 2
+
+    def is_capture(self, new_position: Position) -> bool:
+        return new_position in (
+            (self.x + 1, self.y + 1),
+            (self.x - 1, self.y + 1),
+        )
 
     @property
     def movements(self) -> List[List[Vector]]:
         if self.y == self.y_init:
-            return [[(0, 1), (0, 2)]] + [
-                [(1, 1)],
-                [(-1, 1)],
-            ]
-        return [[(0, 1)]] + [
-            [(1, 1)],
-            [(-1, 1)],
-        ]
+            return [[(0, 1), (0, 2)]] + [[(1, 1)], [(-1, 1)]]
+        return [[(0, 1)]] + [[(1, 1)], [(-1, 1)]]
 
 
 class BlackPawn(Pawn):
-    capture_movements = {(1, -1), (-1, -1)}
     y_init = 7
+
+    def is_capture(self, new_position: Position) -> bool:
+        return new_position in (
+            (self.x + 1, self.y - 1),
+            (self.x - 1, self.y - 1),
+        )
 
     @property
     def movements(self) -> List[List[Vector]]:

@@ -27,7 +27,6 @@ class King(Piece):
         [(-1, -1)],
     ]
     castle_movements = [(-2, 0), (2, 0)]
-    capture_movements = movements
     symbol = "K"
     fen_symbol = symbol
     value = 0
