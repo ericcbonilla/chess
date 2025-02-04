@@ -59,6 +59,7 @@ class Agent:
     # Caches of the pieces and their positions
     # Stays updated to the current halfmove
     pieces_cache: Dict[Position, "Piece"] = field(default_factory=dict)
+    rights_cache: Optional[str] = None
 
     def __repr__(self):
         return f'{self.color} {type(self)}:\n{"".join(f"  {p.attr}: {p}\n" for p in self.pieces.values())}'
@@ -100,12 +101,18 @@ class Agent:
 
     @property
     def castling_rights(self) -> str:
+        if self.rights_cache:
+            return self.rights_cache
+
         rights = ""
         if not self.king.has_moved:
             if self.h_rook and not self.h_rook.has_moved:
                 rights += "K"
             if self.a_rook and not self.a_rook.has_moved:
                 rights += "Q"
+
+        if rights == "":
+            self.rights_cache = rights
 
         return rights
 

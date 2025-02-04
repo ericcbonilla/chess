@@ -218,7 +218,9 @@ class Piece:
         self.agent.board.apply_halfmove(halfmove)
 
         check = self.opponent.king.is_in_check()
-        fen = self.agent.board.get_fen(internal=True)
+        fen = self.agent.board.get_fen(
+            internal=True, rows_changing=change["rows_changing"]
+        )
         game_result = self.get_game_result(check=check, fen=fen)
 
         self.agent.board.rollback_halfmove(halfmove)
@@ -238,45 +240,45 @@ class Piece:
         augment: Optional[bool] = True,
         **kwargs,
     ) -> Change:
+        color = self.agent.color
+        opponent_color = self.opponent.color
+        board = self.agent.board
         change = {
-            self.agent.color: {
+            color: {
                 self.attr: {
                     "old_position": (self.x, self.y),
                     "new_position": (x, y),
                 }
             },
-            self.opponent.color: {},
+            opponent_color: {},
             "disambiguation": "",
             "check": False,
             "game_result": None,
             "symbol": self.symbol,
-            "halfmove_clock": (
-                self.agent.board.halfmove_clock,
-                self.agent.board.halfmove_clock + 1,
-            ),
+            "halfmove_clock": (board.halfmove_clock, board.halfmove_clock + 1),
             "fullmove_number": (
-                self.agent.board.fullmove_number,
-                self.agent.board.fullmove_number
-                + (1 if self.agent.color == constants.BLACK else 0),
+                board.fullmove_number,
+                board.fullmove_number + (1 if color == constants.BLACK else 0),
             ),
         }
 
         if (x, y) in self.opponent.pieces:  # capture
             piece = self.opponent.get_by_position(x, y)
-            change[self.opponent.color] = {
+            change[opponent_color] = {
                 piece.attr: {
                     "old_position": (x, y),
                     "new_position": None,
                 }
             }
-            change["halfmove_clock"] = (self.agent.board.halfmove_clock, 0)
+            change["halfmove_clock"] = (board.halfmove_clock, 0)
 
         if augment:
             change = self.augment_change(x, y, change, **kwargs)
             change["disambiguation"] = self.get_disambiguation(x, y)
+            change["rows_changing"] = {self.y, y}
 
             if self.opponent.en_passant_target:
-                change[self.opponent.color]["en_passant_target"] = (
+                change[opponent_color]["en_passant_target"] = (
                     self.opponent.en_passant_target,
                     None,
                 )

@@ -1,7 +1,7 @@
 import os
 from collections import Counter
 from datetime import date
-from typing import TYPE_CHECKING, Dict, Optional
+from typing import TYPE_CHECKING, Dict, Optional, Set
 
 import pyperclip
 from colorist import Color
@@ -41,15 +41,16 @@ class Board:
         halfmove_clock: Optional[int] = 0,
         fullmove_number: Optional[int] = 1,
         game_tree: Optional[GameTree] = None,
-        fen_cts: Optional[Dict] = None,
     ):
         self.max_fullmoves = max_fullmoves
         self.game_tree = game_tree or GameTree()
         self.active_color = active_color or "w"
         self.halfmove_clock = halfmove_clock
         self.fullmove_number = fullmove_number
-        self.fen_cts = fen_cts
         self.result: GameResult = None
+
+        self.fen_cts = None
+        self.fen_rows = {}
 
         self._white = None
         self._black = None
@@ -60,8 +61,9 @@ class Board:
         "active_color",
         "halfmove_clock",
         "fullmove_number",
-        "fen_cts",
         "result",
+        "fen_cts",
+        "fen_rows",
         "_white",
         "_black",
     )
@@ -112,10 +114,11 @@ class Board:
         return row if y == 1 else f"{row}/"
 
     def get_fen(
-        self, idx: Optional[float] = None, internal: Optional[bool] = False
+        self,
+        idx: Optional[float] = None,
+        rows_changing: Optional[Set] = None,
+        internal: Optional[bool] = False,
     ) -> str:
-        # TODO Look into optimizing this
-
         if idx:
             halfmove = get_halfmove(idx, self.game_tree.root)
             return halfmove.change["fen"]
@@ -125,12 +128,24 @@ class Board:
         black_memo = {
             p.position: p.fen_symbol.lower() for p in self.black.pieces.values()
         }
-        for y in constants.RANKS:
-            piece_placement += self._get_row(y, white_memo, black_memo)
+
+        if rows_changing and self.fen_rows:
+            for y in constants.RANKS:
+                if y in rows_changing:
+                    row = self._get_row(y, white_memo, black_memo)
+                    piece_placement += row
+                    self.fen_rows[y] = row
+                else:
+                    piece_placement += self.fen_rows[y]
+        else:
+            for y in constants.RANKS:
+                row = self._get_row(y, white_memo, black_memo)
+                piece_placement += row
+                self.fen_rows[y] = row
 
         castling_rights = (
-            self.white.castling_rights + self.black.castling_rights.lower()
-        ) or "-"
+            f"{self.white.castling_rights}{self.black.castling_rights.lower()}" or "-"
+        )
 
         if target := self.white.en_passant_target or self.black.en_passant_target:
             x, y = target
