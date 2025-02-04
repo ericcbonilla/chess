@@ -1,5 +1,6 @@
-from typing import Dict, Set
+from typing import Dict, List, Set
 
+from main import constants
 from main.game_tree import HalfMove
 from main.pieces.utils import vector
 from main.types import Change, Position, Vector, X
@@ -15,7 +16,6 @@ class Pawn(Piece):
     capture_movements: Set[Vector] = NotImplemented
     y_init: int = NotImplemented
     unicode = "\u2659"
-    a = 1
 
     @property
     def forbidden_squares(self) -> Dict[Position, "Piece"]:
@@ -28,6 +28,7 @@ class Pawn(Piece):
         return vec in [(0, 1)]
 
     def is_capture(self, new_position: Position) -> bool:
+        # TODO there might be a better way
         return any(
             (self.x + x_d, self.y + y_d) == new_position
             for x_d, y_d in self.capture_movements
@@ -48,6 +49,18 @@ class Pawn(Piece):
             return False
 
         return super().is_valid_move(new_position)
+
+    def is_valid_candidate(self, candidate: Position) -> bool:
+        if candidate not in constants.SQUARES:
+            return False
+
+        if self.is_capture(candidate):
+            return (
+                candidate in self.opponent.pieces
+                or candidate == self.opponent.en_passant_target
+            )
+        else:
+            return candidate not in self.forbidden_squares
 
     def get_disambiguation(self, x: X, y: int) -> str:
         return ""
@@ -106,10 +119,16 @@ class WhitePawn(Pawn):
     y_init = 2
 
     @property
-    def movements(self) -> Set[Vector]:
+    def movements(self) -> List[List[Vector]]:
         if self.y == self.y_init:
-            return {(0, 1), (0, 2)} | self.capture_movements
-        return {(0, 1)} | self.capture_movements
+            return [[(0, 1), (0, 2)]] + [
+                [(1, 1)],
+                [(-1, 1)],
+            ]
+        return [[(0, 1)]] + [
+            [(1, 1)],
+            [(-1, 1)],
+        ]
 
 
 class BlackPawn(Pawn):
@@ -117,7 +136,7 @@ class BlackPawn(Pawn):
     y_init = 7
 
     @property
-    def movements(self) -> Set[Vector]:
+    def movements(self) -> List[List[Vector]]:
         if self.y == self.y_init:
-            return {(0, -1), (0, -2)} | self.capture_movements
-        return {(0, -1)} | self.capture_movements
+            return [[(0, -1), (0, -2)]] + [[(1, -1)], [(-1, -1)]]
+        return [[(0, -1)]] + [[(1, -1)], [(-1, -1)]]

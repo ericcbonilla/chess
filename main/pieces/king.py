@@ -16,8 +16,17 @@ if TYPE_CHECKING:
 
 
 class King(Piece):
-    movements = {(1, 0), (0, 1), (-1, 0), (0, -1), (1, 1), (1, -1), (-1, 1), (-1, -1)}
-    castle_movements = {(-2, 0), (2, 0)}
+    movements = [
+        [(1, 0)],
+        [(0, 1)],
+        [(-1, 0)],
+        [(0, -1)],
+        [(1, 1)],
+        [(1, -1)],
+        [(-1, 1)],
+        [(-1, -1)],
+    ]
+    castle_movements = [(-2, 0), (2, 0)]
     capture_movements = movements
     symbol = "K"
     fen_symbol = symbol
@@ -40,7 +49,7 @@ class King(Piece):
         else:
             self.has_moved = has_moved
 
-    def _can_castle(self, rook: Rook | None) -> Tuple[str | None, bool]:
+    def _can_castle(self, rook: Rook | None) -> Tuple[int | None, bool]:
         if (
             rook is None
             or rook.has_moved
@@ -85,16 +94,10 @@ class King(Piece):
         return True
 
     def get_valid_moves(self, lazy: Optional[bool] = False) -> Set[Position]:
-        valid_moves = set()
+        valid_moves = super().get_valid_moves(lazy=lazy)
 
-        for cand in self.get_candidate_moves():
-            # Not calling is_valid_move here to avoid redundant castling validation
-            if not self.is_valid_movement(cand) or self.is_in_check(cand):
-                continue
-
-            valid_moves.add(cand)
-            if lazy:
-                return valid_moves
+        if lazy and valid_moves:
+            return valid_moves
 
         for rook in (self.agent.a_rook, self.agent.h_rook):
             new_king_xpos, can_castle = self._can_castle(rook)

@@ -12,12 +12,12 @@ if TYPE_CHECKING:
 
 
 class Rook(Piece):
-    movements = {
-        *((p, 0) for p in range(1, 9)),
-        *((-p, 0) for p in range(1, 9)),
-        *((0, p) for p in range(1, 9)),
-        *((0, -p) for p in range(1, 9)),
-    }
+    movements = [
+        [(p, 0) for p in range(1, 9)],
+        [(-p, 0) for p in range(1, 9)],
+        [(0, p) for p in range(1, 9)],
+        [(0, -p) for p in range(1, 9)],
+    ]
     symbol = "R"
     fen_symbol = symbol
     value = 5

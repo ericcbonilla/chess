@@ -11,12 +11,12 @@ if TYPE_CHECKING:
 
 
 class Bishop(Piece):
-    movements = {
-        *((p, p) for p in range(1, 9)),
-        *((p, -p) for p in range(1, 9)),
-        *((-p, p) for p in range(1, 9)),
-        *((-p, -p) for p in range(1, 9)),
-    }
+    movements = [
+        [(p, p) for p in range(1, 9)],
+        [(p, -p) for p in range(1, 9)],
+        [(-p, p) for p in range(1, 9)],
+        [(-p, -p) for p in range(1, 9)],
+    ]
     symbol = "B"
     fen_symbol = symbol
     value = 3

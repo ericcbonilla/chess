@@ -7,7 +7,7 @@ from .rook import Rook
 
 
 class Queen(Piece):
-    movements = Bishop.movements | Rook.movements
+    movements = Bishop.movements + Rook.movements
     symbol = "Q"
     fen_symbol = symbol
     value = 9

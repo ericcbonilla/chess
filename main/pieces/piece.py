@@ -1,8 +1,10 @@
 from functools import cached_property
-from typing import TYPE_CHECKING, Dict, Iterable, Optional, Reversible, Set, Tuple
+from itertools import zip_longest
+from typing import TYPE_CHECKING, Dict, Iterable, List, Optional, Reversible, Set, Tuple
 
 from main import constants
 from main.game_tree import HalfMove
+from main.pieces.utils import vector
 from main.types import Change, GameResult, LookaheadResults, Position, Vector, X
 from main.x import to_str
 
@@ -30,7 +32,8 @@ class Piece:
         self.x = x
         self.y = y
 
-    movements: Set[Vector] = NotImplemented
+    movements: List[List[Vector]] = NotImplemented
+    capture_movements: List[List[Vector]] = NotImplemented
     symbol: str = NotImplemented
     fen_symbol: str = NotImplemented
     value: int = NotImplemented
@@ -57,12 +60,6 @@ class Piece:
     def king(self) -> "King":
         return self.agent.king
 
-    def get_candidate_moves(self) -> Set[Position]:
-        candidate_moves = set(
-            (self.x + x_d, self.y + y_d) for x_d, y_d in self.movements
-        )
-        return candidate_moves & constants.SQUARES
-
     def is_valid_vector(self, new_position: Position) -> bool:
         raise NotImplementedError
 
@@ -81,28 +78,18 @@ class Piece:
             return [p + 1 for p in range(*sorted((old, new)))][0:-1]
 
     def is_open_path(self, target_position: Position) -> bool:
-        # TODO can we simplify this with vectors
-        # Could be easier now that we have (int, int)
+        if vector((self.x, self.y), target_position) in [(1, 1), (0, 1), (1, 0)]:
+            return True
 
         target_x, target_y = target_position
-        x_range = self._get_squares_in_range(self.x, target_x)
-        y_range = self._get_squares_in_range(self.y, target_y)
+        step_x = 1 if self.x < target_x else -1
+        step_y = 1 if self.y < target_y else -1
+        x_range = range(self.x + step_x, target_x, step_x)
+        y_range = range(self.y + step_y, target_y, step_y)
+        fillvalue = self.x if not x_range else self.y
 
-        if self.x != target_x and self.y == target_y:  # Horizontal
-            squares_on_path = {(x, self.y) for x in x_range}
-        elif self.x == target_x and self.y != target_y:  # Vertical
-            squares_on_path = {(self.x, y) for y in y_range}
-        else:  # Diagonal
-            if target_x > self.x and target_y > self.y:  # NE
-                pass
-            elif target_x < self.x and target_y > self.y:  # NW
-                x_range = reversed(x_range)
-            elif target_x > self.x and target_y < self.y:  # SE
-                y_range = reversed(y_range)
-            else:  # SW
-                x_range = reversed(x_range)
-                y_range = reversed(y_range)
-            squares_on_path = {(x, y) for x, y in zip(x_range, y_range)}
+        _zip = zip_longest(x_range, y_range, fillvalue=fillvalue)
+        squares_on_path = set(_zip)
 
         if squares_on_path & (self.agent.positions | self.opponent.positions):
             return False
@@ -121,15 +108,31 @@ class Piece:
 
         return True
 
+    def is_valid_candidate(self, candidate: Position) -> bool:
+        if candidate not in constants.SQUARES:
+            return False
+
+        return candidate not in self.forbidden_squares
+
     def get_valid_moves(self, lazy: Optional[bool] = False) -> Set[Position]:
         valid_moves = set()
 
-        for cand in self.get_candidate_moves():
-            # TODO? We're redundantly checking vectors here, but it doesn't seem to add much
-            if self.is_valid_move(cand):
-                valid_moves.add(cand)
-                if lazy:
-                    return valid_moves
+        for batch in self.movements:
+            for x_d, y_d in batch:
+                candidate = (self.x + x_d, self.y + y_d)
+
+                if not self.is_valid_candidate(candidate):
+                    break  # Abort the batch
+                else:
+                    if not self.king_would_be_in_check(
+                        king=self.king,
+                        new_position=candidate,
+                    ):
+                        valid_moves.add(candidate)
+                        if lazy:
+                            return valid_moves
+                    if candidate in self.opponent.pieces:
+                        break  # Can't jump over pieces, abort the batch
 
         return valid_moves
 
