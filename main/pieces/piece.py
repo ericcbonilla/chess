@@ -21,8 +21,6 @@ class Piece:
     - Move where I'm told by my agent (agnostic of strategy)
     """
 
-    __slots__ = ("attr", "agent", "x", "y")
-
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__} ({self.unicode}): ({to_str(self.x)}, {self.y})>"
 

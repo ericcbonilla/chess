@@ -54,6 +54,18 @@ class Board:
         self._white = None
         self._black = None
 
+    __slots__ = (
+        "max_fullmoves",
+        "game_tree",
+        "active_color",
+        "halfmove_clock",
+        "fullmove_number",
+        "fen_cts",
+        "result",
+        "_white",
+        "_black",
+    )
+
     def __repr__(self) -> str:
         return f"{self.white}{self.white.graveyard}\n\n{self.black}{self.black.graveyard}\n"
 
