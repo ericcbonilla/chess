@@ -9,7 +9,7 @@ if TYPE_CHECKING:
     from main.pieces import Piece
 
 
-@dataclass
+@dataclass(slots=True)
 class Graveyard:
     king: Optional[King] = None
     queen: Optional[Queen] = None

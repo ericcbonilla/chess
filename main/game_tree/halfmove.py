@@ -4,7 +4,7 @@ from main.types import AgentColor, Change
 from main.x import to_str
 
 
-@dataclass
+@dataclass(slots=True)
 class HalfMove:
     """
     Contains all the necessary information to:
