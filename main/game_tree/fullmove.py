@@ -4,7 +4,7 @@ from typing import Optional
 from .halfmove import HalfMove
 
 
-@dataclass
+@dataclass(slots=True)
 class FullMove:
     white: Optional["HalfMove"] = None
     black: Optional["HalfMove"] = None
