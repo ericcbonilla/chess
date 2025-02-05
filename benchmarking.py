@@ -28,9 +28,9 @@ while games_played <= 99:
     games_played += 1
 
 mean = statistics.mean(times_per_halfmove)
-print(f"{games_played} games played. Mean time (ms) per halfmove: {mean}")
+print(f"{games_played} games played. Mean time (ms) per halfmove: {mean:.4f}")
 
 if mean > BENCHMARK:
-    red(f"Fails benchmark of {BENCHMARK}")
+    red(f"Fails benchmark of {BENCHMARK:.4f}")
 else:
-    green(f"Satisfies benchmark of {BENCHMARK}")
+    green(f"Satisfies benchmark of {BENCHMARK:.4f}")
