@@ -35,7 +35,7 @@ class Rook(Piece):
 
         if has_moved is None:
             initial_y = 1 if self.agent.color == constants.WHITE else 8
-            self.has_moved = self.position not in [(A, initial_y), (H, initial_y)]
+            self.has_moved = self.position not in {(A, initial_y), (H, initial_y)}
         else:
             self.has_moved = has_moved
 

@@ -1,6 +1,6 @@
 from functools import cached_property
 from itertools import zip_longest
-from typing import TYPE_CHECKING, Dict, Iterable, List, Optional, Reversible, Set, Tuple
+from typing import TYPE_CHECKING, Dict, List, Optional, Set, Tuple
 
 from main import constants
 from main.game_tree import HalfMove
@@ -67,15 +67,8 @@ class Piece:
             return False
         return True
 
-    @staticmethod
-    def _get_squares_in_range(old: int, new: int) -> Iterable | Reversible:
-        if old > new:
-            return range(*sorted((old, new)))[1:]
-        else:
-            return [p + 1 for p in range(*sorted((old, new)))][0:-1]
-
     def is_open_path(self, target_position: Position) -> bool:
-        if vector((self.x, self.y), target_position) in [(1, 1), (0, 1), (1, 0)]:
+        if vector((self.x, self.y), target_position) in {(1, 1), (0, 1), (1, 0)}:
             return True
 
         target_x, target_y = target_position

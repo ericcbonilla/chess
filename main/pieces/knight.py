@@ -21,7 +21,7 @@ class Knight(Piece):
     unicode = "\u2658"
 
     def is_valid_vector(self, new_position: Position) -> bool:
-        return vector(self.position, new_position) in [(1, 2), (2, 1)]
+        return vector(self.position, new_position) in {(1, 2), (2, 1)}
 
     def is_valid_move(self, new_position: Position) -> bool:
         if not self.is_valid_movement(new_position):

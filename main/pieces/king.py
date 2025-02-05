@@ -76,7 +76,7 @@ class King(Piece):
         )
 
     def is_valid_vector(self, new_position: Position) -> bool:
-        return vector((self.x, self.y), new_position) in [(1, 1), (0, 1), (1, 0)]
+        return vector((self.x, self.y), new_position) in {(1, 1), (0, 1), (1, 0)}
 
     def is_valid_move(self, new_position: Position) -> bool:
         new_x, _ = new_position

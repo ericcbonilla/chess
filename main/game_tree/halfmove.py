@@ -73,7 +73,7 @@ class HalfMove:
     @property
     def mate_notation(self) -> str:
         if self.change["check"]:
-            if self.change["game_result"] in ["1-0", "0-1"]:
+            if self.change["game_result"] in {"1-0", "0-1"}:
                 return "#"
             return "+"
         return ""
