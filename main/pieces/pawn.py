@@ -113,10 +113,10 @@ class WhitePawn(Pawn):
     y_init = 2
 
     def is_capture(self, new_position: Position) -> bool:
-        return new_position in (
+        return new_position in {
             (self.x + 1, self.y + 1),
             (self.x - 1, self.y + 1),
-        )
+        }
 
     @property
     def movements(self) -> List[List[Vector]]:
@@ -129,10 +129,10 @@ class BlackPawn(Pawn):
     y_init = 7
 
     def is_capture(self, new_position: Position) -> bool:
-        return new_position in (
+        return new_position in {
             (self.x + 1, self.y - 1),
             (self.x - 1, self.y - 1),
-        )
+        }
 
     @property
     def movements(self) -> List[List[Vector]]:

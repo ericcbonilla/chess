@@ -26,7 +26,6 @@ class King(Piece):
         [(-1, 1)],
         [(-1, -1)],
     ]
-    castle_movements = [(-2, 0), (2, 0)]
     symbol = "K"
     fen_symbol = symbol
     value = 0
@@ -70,10 +69,7 @@ class King(Piece):
         return new_king_xpos, (not castle_through_check and not castle_into_check)
 
     def is_castle(self, new_position: Position) -> bool:
-        return any(
-            (self.x + x_d, self.y + y_d) == new_position
-            for x_d, y_d in self.castle_movements
-        )
+        return new_position in {(self.x - 2, self.y), (self.x + 2, self.y)}
 
     def is_valid_vector(self, new_position: Position) -> bool:
         return vector((self.x, self.y), new_position) in {(1, 1), (0, 1), (1, 0)}

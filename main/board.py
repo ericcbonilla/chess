@@ -225,32 +225,31 @@ class Board:
         """
 
         for agent in (self.white, self.black):
-            if change[agent.color]:
-                for key, datum in change[agent.color].items():
-                    piece = getattr(agent, key)
+            for key, datum in change[agent.color].items():
+                piece = getattr(agent, key)
 
-                    if key == "en_passant_target":
-                        agent.en_passant_target = datum[1]
-                    elif datum["new_position"] is None:
-                        self.destroy_piece(piece, attr=key)
-                    elif datum["old_position"] is None:
-                        # We're either resurrecting a piece, or adding a promotee
-                        x, y = datum["new_position"]
-                        piece = datum["piece_type"](
-                            attr=key,
-                            agent=agent,
-                            x=x,
-                            y=y,
-                        )
-                        self.add_piece(piece, attr=key, new_position=(x, y))
-                    else:
-                        agent.del_cache_item((piece.x, piece.y))
-                        x, y = datum["new_position"]
-                        piece.x, piece.y = x, y
-                        agent.pieces_cache[(x, y)] = piece
+                if key == "en_passant_target":
+                    agent.en_passant_target = datum[1]
+                elif datum["new_position"] is None:
+                    self.destroy_piece(piece, attr=key)
+                elif datum["old_position"] is None:
+                    # We're either resurrecting a piece, or adding a promotee
+                    x, y = datum["new_position"]
+                    piece = datum["piece_type"](
+                        attr=key,
+                        agent=agent,
+                        x=x,
+                        y=y,
+                    )
+                    self.add_piece(piece, attr=key, new_position=(x, y))
+                else:
+                    agent.del_cache_item((piece.x, piece.y))
+                    x, y = datum["new_position"]
+                    piece.x, piece.y = x, y
+                    agent.pieces_cache[(x, y)] = piece
 
-                    if "has_moved" in datum:
-                        piece.has_moved = datum["has_moved"]
+                if "has_moved" in datum:
+                    piece.has_moved = datum["has_moved"]
 
         if "game_result" in change and change["game_result"]:
             self.result = change["game_result"]
@@ -287,25 +286,24 @@ class Board:
         }
 
         for agent in (self.white, self.black):
-            if halfmove.change[agent.color]:
-                for key, datum in halfmove.change[agent.color].items():
-                    if key == "en_passant_target":
-                        inverted_change[agent.color][key] = (datum[1], datum[0])
-                        continue
+            for key, datum in halfmove.change[agent.color].items():
+                if key == "en_passant_target":
+                    inverted_change[agent.color][key] = (datum[1], datum[0])
+                    continue
 
-                    inverted_change[agent.color][key] = {
-                        "old_position": datum["new_position"],
-                        "new_position": datum["old_position"],
-                    }
+                inverted_change[agent.color][key] = {
+                    "old_position": datum["new_position"],
+                    "new_position": datum["old_position"],
+                }
 
-                    if getattr(agent.graveyard, key):
-                        inverted_change[agent.color][key]["piece_type"] = type(
-                            getattr(agent.graveyard, key)
-                        )
-                    if "has_moved" in datum:
-                        inverted_change[agent.color][key]["has_moved"] = not datum[
-                            "has_moved"
-                        ]
+                if getattr(agent.graveyard, key):
+                    inverted_change[agent.color][key]["piece_type"] = type(
+                        getattr(agent.graveyard, key)
+                    )
+                if "has_moved" in datum:
+                    inverted_change[agent.color][key]["has_moved"] = not datum[
+                        "has_moved"
+                    ]
 
         if (
             "game_result" in halfmove.change
