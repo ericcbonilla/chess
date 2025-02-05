@@ -9,10 +9,10 @@ from main.builders import BoardBuilder
 BENCHMARK = 0.23
 games_played = 0
 times_per_halfmove = []
+builder = BoardBuilder()
 
 print("\nBenchmarking...")
 while games_played <= 99:
-    builder = BoardBuilder()
     board = builder.from_start(
         white_agent_cls=RandomAgent,
         black_agent_cls=AggressiveAgent,
