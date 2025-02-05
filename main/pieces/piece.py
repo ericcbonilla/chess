@@ -206,11 +206,11 @@ class Piece:
             return "½-½ Seventy-five-move rule"
         return None
 
-    def get_lookahead_results(self, change: Change) -> LookaheadResults:
+    def get_lookahead_results(self, change: Change, **kwargs) -> LookaheadResults:
         halfmove = HalfMove(color=self.agent.color, change=change)
         self.agent.board.apply_halfmove(halfmove)
 
-        check = self.opponent.king.is_in_check()
+        check: bool = kwargs.get("check") or self.opponent.king.is_in_check()
         fen = self.agent.board.get_fen(
             internal=True, rows_changing=change["rows_changing"]
         )
@@ -278,7 +278,7 @@ class Piece:
 
             # These must be computed after the piece-specific augmentations in
             # augment_change because castling and promotion create new possibilities
-            change = change | self.get_lookahead_results(change=change)
+            change = change | self.get_lookahead_results(change=change, **kwargs)
 
         return change
 
