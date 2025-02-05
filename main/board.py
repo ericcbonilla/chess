@@ -354,7 +354,11 @@ class Board:
     def draw_by_repetition(self, fen: str) -> bool:
         return self.fen_cts[truncate_fen(fen)] == 2
 
-    def play(self, num_fullmoves: Optional[int] = None):
+    def play(
+        self,
+        num_fullmoves: Optional[int] = None,
+        internal: Optional[bool] = False,
+    ):
         term_size = os.get_terminal_size()
         elapsed_fullmoves = 0
 
@@ -377,4 +381,5 @@ class Board:
                 self.black.move()
                 elapsed_fullmoves += 1
 
-        print(f"\nMoves played: {self.fullmove_number - 1}. Result: {self.result}")
+        if not internal:
+            print(f"\nMoves played: {self.fullmove_number - 1}. Result: {self.result}")
