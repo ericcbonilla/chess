@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Optional, Set, Tuple
+from typing import TYPE_CHECKING, Iterable, Optional, Tuple
 
 from main import constants
 from main.game_tree import HalfMove
@@ -90,20 +90,18 @@ class King(Piece):
 
         return True
 
-    def get_valid_moves(self, lazy: Optional[bool] = False) -> Set[Position]:
-        valid_moves = super().get_valid_moves(lazy=lazy)
-
-        if lazy and valid_moves:
-            return valid_moves
+    def get_valid_moves(self, lazy: Optional[bool] = False) -> Iterable[Position]:
+        for candidate in super().get_valid_moves(lazy=lazy):
+            yield candidate
+            if lazy:
+                return
 
         for rook in (self.agent.a_rook, self.agent.h_rook):
             new_king_xpos, can_castle = self._can_castle(rook)
             if can_castle and new_king_xpos:
-                valid_moves.add((new_king_xpos, self.y))
+                yield new_king_xpos, self.y
                 if lazy:
-                    return valid_moves
-
-        return valid_moves
+                    return
 
     def is_in_check(self, target_position: Optional[Position] = None) -> bool:
         """

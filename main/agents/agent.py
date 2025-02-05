@@ -133,7 +133,7 @@ class Agent:
         pieces = list(self.pieces.values())
 
         for piece in pieces:
-            if piece.can_move():
+            for _ in piece.can_move():
                 return True
 
         return False

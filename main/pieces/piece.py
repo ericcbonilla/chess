@@ -1,6 +1,6 @@
 from functools import cached_property
 from itertools import zip_longest
-from typing import TYPE_CHECKING, Dict, List, Optional, Set, Tuple
+from typing import TYPE_CHECKING, Dict, Iterable, List, Optional, Tuple
 
 from main import constants
 from main.game_tree import HalfMove
@@ -104,9 +104,7 @@ class Piece:
 
         return candidate not in self.forbidden_squares
 
-    def get_valid_moves(self, lazy: Optional[bool] = False) -> Set[Position]:
-        valid_moves = set()
-
+    def get_valid_moves(self, lazy: Optional[bool] = False) -> Iterable[Position]:
         for batch in self.movements:
             for x_d, y_d in batch:
                 candidate = (self.x + x_d, self.y + y_d)
@@ -118,16 +116,14 @@ class Piece:
                         king=self.king,
                         new_position=candidate,
                     ):
-                        valid_moves.add(candidate)
+                        yield candidate
                         if lazy:
-                            return valid_moves
+                            return
                     if candidate in self.opponent.pieces:
                         break  # Can't jump over pieces, abort the batch
 
-        return valid_moves
-
-    def can_move(self) -> Set[Position]:
-        return self.get_valid_moves(lazy=True)
+    def can_move(self) -> Iterable[Position]:
+        yield from self.get_valid_moves(lazy=True)
 
     def get_disambiguation(self, x: X, y: int) -> str:
         """
@@ -181,7 +177,9 @@ class Piece:
         return in_check
 
     def get_game_result(self, check: bool, fen: str) -> GameResult:
-        if check and not self.opponent.can_move():
+        can_move = self.opponent.can_move()
+
+        if check and not can_move:
             return "1-0" if self.agent.color == constants.WHITE else "0-1"
         elif (
             # .can_move() is computationally expensive; stalemate is
@@ -191,7 +189,7 @@ class Piece:
             # 1.e3 a5 2.Qh5 Ra6 3.Qxa5 h5 4.Qxc7 Rah6 5.h4 f6 6.Qxd7+ Kf7
             # 7.Qxb7 Qd3 8.Qxb8 Qh7 9.Qxc8 Kg6 10.Qe6 ½-½
             self.agent.board.fullmove_number >= 10
-            and not self.opponent.can_move()
+            and not can_move
         ):
             return "½-½ Stalemate"
         elif (
