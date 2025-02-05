@@ -12,12 +12,12 @@ if TYPE_CHECKING:
 
 
 class Rook(Piece):
-    movements = {
-        *((p, 0) for p in range(1, 9)),
-        *((-p, 0) for p in range(1, 9)),
-        *((0, p) for p in range(1, 9)),
-        *((0, -p) for p in range(1, 9)),
-    }
+    movements = [
+        [(p, 0) for p in range(1, 9)],
+        [(-p, 0) for p in range(1, 9)],
+        [(0, p) for p in range(1, 9)],
+        [(0, -p) for p in range(1, 9)],
+    ]
     symbol = "R"
     fen_symbol = symbol
     value = 5
@@ -35,7 +35,7 @@ class Rook(Piece):
 
         if has_moved is None:
             initial_y = 1 if self.agent.color == constants.WHITE else 8
-            self.has_moved = self.position not in [(A, initial_y), (H, initial_y)]
+            self.has_moved = self.position not in {(A, initial_y), (H, initial_y)}
         else:
             self.has_moved = has_moved
 

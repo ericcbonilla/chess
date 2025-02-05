@@ -1,7 +1,7 @@
 import os
 from collections import Counter
 from datetime import date
-from typing import TYPE_CHECKING, Dict, Optional
+from typing import TYPE_CHECKING, Dict, Optional, Set
 
 import pyperclip
 from colorist import Color
@@ -41,18 +41,32 @@ class Board:
         halfmove_clock: Optional[int] = 0,
         fullmove_number: Optional[int] = 1,
         game_tree: Optional[GameTree] = None,
-        fen_cts: Optional[Dict] = None,
     ):
         self.max_fullmoves = max_fullmoves
         self.game_tree = game_tree or GameTree()
         self.active_color = active_color or "w"
         self.halfmove_clock = halfmove_clock
         self.fullmove_number = fullmove_number
-        self.fen_cts = fen_cts
         self.result: GameResult = None
+
+        self.fen_cts = None
+        self.fen_rows = {}
 
         self._white = None
         self._black = None
+
+    __slots__ = (
+        "max_fullmoves",
+        "game_tree",
+        "active_color",
+        "halfmove_clock",
+        "fullmove_number",
+        "result",
+        "fen_cts",
+        "fen_rows",
+        "_white",
+        "_black",
+    )
 
     def __repr__(self) -> str:
         return f"{self.white}{self.white.graveyard}\n\n{self.black}{self.black.graveyard}\n"
@@ -100,10 +114,11 @@ class Board:
         return row if y == 1 else f"{row}/"
 
     def get_fen(
-        self, idx: Optional[float] = None, internal: Optional[bool] = False
+        self,
+        idx: Optional[float] = None,
+        rows_changing: Optional[Set] = None,
+        internal: Optional[bool] = False,
     ) -> str:
-        # TODO Look into optimizing this
-
         if idx:
             halfmove = get_halfmove(idx, self.game_tree.root)
             return halfmove.change["fen"]
@@ -113,12 +128,24 @@ class Board:
         black_memo = {
             p.position: p.fen_symbol.lower() for p in self.black.pieces.values()
         }
-        for y in constants.RANKS:
-            piece_placement += self._get_row(y, white_memo, black_memo)
+
+        if rows_changing and self.fen_rows:
+            for y in constants.RANKS:
+                if y in rows_changing:
+                    row = self._get_row(y, white_memo, black_memo)
+                    piece_placement += row
+                    self.fen_rows[y] = row
+                else:
+                    piece_placement += self.fen_rows[y]
+        else:
+            for y in constants.RANKS:
+                row = self._get_row(y, white_memo, black_memo)
+                piece_placement += row
+                self.fen_rows[y] = row
 
         castling_rights = (
-            self.white.castling_rights + self.black.castling_rights.lower()
-        ) or "-"
+            f"{self.white.castling_rights}{self.black.castling_rights.lower()}" or "-"
+        )
 
         if target := self.white.en_passant_target or self.black.en_passant_target:
             x, y = target
@@ -198,32 +225,31 @@ class Board:
         """
 
         for agent in (self.white, self.black):
-            if change[agent.color]:
-                for key, datum in change[agent.color].items():
-                    piece = getattr(agent, key)
+            for key, datum in change[agent.color].items():
+                piece = getattr(agent, key)
 
-                    if key == "en_passant_target":
-                        agent.en_passant_target = datum[1]
-                    elif datum["new_position"] is None:
-                        self.destroy_piece(piece, attr=key)
-                    elif datum["old_position"] is None:
-                        # We're either resurrecting a piece, or adding a promotee
-                        x, y = datum["new_position"]
-                        piece = datum["piece_type"](
-                            attr=key,
-                            agent=agent,
-                            x=x,
-                            y=y,
-                        )
-                        self.add_piece(piece, attr=key, new_position=(x, y))
-                    else:
-                        agent.del_cache_item((piece.x, piece.y))
-                        x, y = datum["new_position"]
-                        piece.x, piece.y = x, y
-                        agent.pieces_cache[(x, y)] = piece
+                if key == "en_passant_target":
+                    agent.en_passant_target = datum[1]
+                elif datum["new_position"] is None:
+                    self.destroy_piece(piece, attr=key)
+                elif datum["old_position"] is None:
+                    # We're either resurrecting a piece, or adding a promotee
+                    x, y = datum["new_position"]
+                    piece = datum["piece_type"](
+                        attr=key,
+                        agent=agent,
+                        x=x,
+                        y=y,
+                    )
+                    self.add_piece(piece, attr=key, new_position=(x, y))
+                else:
+                    agent.del_cache_item((piece.x, piece.y))
+                    x, y = datum["new_position"]
+                    piece.x, piece.y = x, y
+                    agent.pieces_cache[(x, y)] = piece
 
-                    if "has_moved" in datum:
-                        piece.has_moved = datum["has_moved"]
+                if "has_moved" in datum:
+                    piece.has_moved = datum["has_moved"]
 
         if "game_result" in change and change["game_result"]:
             self.result = change["game_result"]
@@ -260,25 +286,24 @@ class Board:
         }
 
         for agent in (self.white, self.black):
-            if halfmove.change[agent.color]:
-                for key, datum in halfmove.change[agent.color].items():
-                    if key == "en_passant_target":
-                        inverted_change[agent.color][key] = (datum[1], datum[0])
-                        continue
+            for key, datum in halfmove.change[agent.color].items():
+                if key == "en_passant_target":
+                    inverted_change[agent.color][key] = (datum[1], datum[0])
+                    continue
 
-                    inverted_change[agent.color][key] = {
-                        "old_position": datum["new_position"],
-                        "new_position": datum["old_position"],
-                    }
+                inverted_change[agent.color][key] = {
+                    "old_position": datum["new_position"],
+                    "new_position": datum["old_position"],
+                }
 
-                    if getattr(agent.graveyard, key):
-                        inverted_change[agent.color][key]["piece_type"] = type(
-                            getattr(agent.graveyard, key)
-                        )
-                    if "has_moved" in datum:
-                        inverted_change[agent.color][key]["has_moved"] = not datum[
-                            "has_moved"
-                        ]
+                if getattr(agent.graveyard, key):
+                    inverted_change[agent.color][key]["piece_type"] = type(
+                        getattr(agent.graveyard, key)
+                    )
+                if "has_moved" in datum:
+                    inverted_change[agent.color][key]["has_moved"] = not datum[
+                        "has_moved"
+                    ]
 
         if (
             "game_result" in halfmove.change

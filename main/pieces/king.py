@@ -16,9 +16,16 @@ if TYPE_CHECKING:
 
 
 class King(Piece):
-    movements = {(1, 0), (0, 1), (-1, 0), (0, -1), (1, 1), (1, -1), (-1, 1), (-1, -1)}
-    castle_movements = {(-2, 0), (2, 0)}
-    capture_movements = movements
+    movements = [
+        [(1, 0)],
+        [(0, 1)],
+        [(-1, 0)],
+        [(0, -1)],
+        [(1, 1)],
+        [(1, -1)],
+        [(-1, 1)],
+        [(-1, -1)],
+    ]
     symbol = "K"
     fen_symbol = symbol
     value = 0
@@ -40,7 +47,7 @@ class King(Piece):
         else:
             self.has_moved = has_moved
 
-    def _can_castle(self, rook: Rook | None) -> Tuple[str | None, bool]:
+    def _can_castle(self, rook: Rook | None) -> Tuple[int | None, bool]:
         if (
             rook is None
             or rook.has_moved
@@ -62,13 +69,10 @@ class King(Piece):
         return new_king_xpos, (not castle_through_check and not castle_into_check)
 
     def is_castle(self, new_position: Position) -> bool:
-        return any(
-            (self.x + x_d, self.y + y_d) == new_position
-            for x_d, y_d in self.castle_movements
-        )
+        return new_position in {(self.x - 2, self.y), (self.x + 2, self.y)}
 
     def is_valid_vector(self, new_position: Position) -> bool:
-        return vector((self.x, self.y), new_position) in [(1, 1), (0, 1), (1, 0)]
+        return vector((self.x, self.y), new_position) in {(1, 1), (0, 1), (1, 0)}
 
     def is_valid_move(self, new_position: Position) -> bool:
         new_x, _ = new_position
@@ -85,16 +89,10 @@ class King(Piece):
         return True
 
     def get_valid_moves(self, lazy: Optional[bool] = False) -> Set[Position]:
-        valid_moves = set()
+        valid_moves = super().get_valid_moves(lazy=lazy)
 
-        for cand in self.get_candidate_moves():
-            # Not calling is_valid_move here to avoid redundant castling validation
-            if not self.is_valid_movement(cand) or self.is_in_check(cand):
-                continue
-
-            valid_moves.add(cand)
-            if lazy:
-                return valid_moves
+        if lazy and valid_moves:
+            return valid_moves
 
         for rook in (self.agent.a_rook, self.agent.h_rook):
             new_king_xpos, can_castle = self._can_castle(rook)

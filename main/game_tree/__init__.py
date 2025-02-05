@@ -21,6 +21,13 @@ class GameTree:
         self.second_latest_fullmove: Optional[FullMove] = None
         self.third_latest_fullmove: Optional[FullMove] = None
 
+    __slots__ = (
+        "root",
+        "latest_fullmove",
+        "second_latest_fullmove",
+        "third_latest_fullmove",
+    )
+
     @classmethod
     def backfill(cls, root: FullMove) -> "GameTree":
         tree = cls()

@@ -1,5 +1,6 @@
-from typing import Dict, Set
+from typing import Dict, List
 
+from main import constants
 from main.game_tree import HalfMove
 from main.pieces.utils import vector
 from main.types import Change, Position, Vector, X
@@ -12,10 +13,8 @@ class Pawn(Piece):
     symbol = ""
     fen_symbol = "P"
     value = 1
-    capture_movements: Set[Vector] = NotImplemented
     y_init: int = NotImplemented
     unicode = "\u2659"
-    a = 1
 
     @property
     def forbidden_squares(self) -> Dict[Position, "Piece"]:
@@ -24,14 +23,11 @@ class Pawn(Piece):
     def is_valid_vector(self, new_position: Position) -> bool:
         vec = vector((self.x, self.y), new_position)
         if self.y == self.y_init:
-            return vec in [(0, 1), (0, 2)]
-        return vec in [(0, 1)]
+            return vec in {(0, 1), (0, 2)}
+        return vec == (0, 1)
 
     def is_capture(self, new_position: Position) -> bool:
-        return any(
-            (self.x + x_d, self.y + y_d) == new_position
-            for x_d, y_d in self.capture_movements
-        )
+        raise NotImplementedError
 
     def is_valid_move(self, new_position: Position) -> bool:
         if self.is_capture(new_position):
@@ -48,6 +44,18 @@ class Pawn(Piece):
             return False
 
         return super().is_valid_move(new_position)
+
+    def is_valid_candidate(self, candidate: Position) -> bool:
+        if candidate not in constants.SQUARES:
+            return False
+
+        if self.is_capture(candidate):
+            return (
+                candidate in self.opponent.pieces
+                or candidate == self.opponent.en_passant_target
+            )
+        else:
+            return candidate not in self.forbidden_squares
 
     def get_disambiguation(self, x: X, y: int) -> str:
         return ""
@@ -102,22 +110,32 @@ class Pawn(Piece):
 
 
 class WhitePawn(Pawn):
-    capture_movements = {(1, 1), (-1, 1)}
     y_init = 2
 
+    def is_capture(self, new_position: Position) -> bool:
+        return new_position in {
+            (self.x + 1, self.y + 1),
+            (self.x - 1, self.y + 1),
+        }
+
     @property
-    def movements(self) -> Set[Vector]:
+    def movements(self) -> List[List[Vector]]:
         if self.y == self.y_init:
-            return {(0, 1), (0, 2)} | self.capture_movements
-        return {(0, 1)} | self.capture_movements
+            return [[(0, 1), (0, 2)]] + [[(1, 1)], [(-1, 1)]]
+        return [[(0, 1)]] + [[(1, 1)], [(-1, 1)]]
 
 
 class BlackPawn(Pawn):
-    capture_movements = {(1, -1), (-1, -1)}
     y_init = 7
 
+    def is_capture(self, new_position: Position) -> bool:
+        return new_position in {
+            (self.x + 1, self.y - 1),
+            (self.x - 1, self.y - 1),
+        }
+
     @property
-    def movements(self) -> Set[Vector]:
+    def movements(self) -> List[List[Vector]]:
         if self.y == self.y_init:
-            return {(0, -1), (0, -2)} | self.capture_movements
-        return {(0, -1)} | self.capture_movements
+            return [[(0, -1), (0, -2)]] + [[(1, -1)], [(-1, -1)]]
+        return [[(0, -1)]] + [[(1, -1)], [(-1, -1)]]

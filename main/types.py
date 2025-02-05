@@ -48,6 +48,7 @@ class Change(LookaheadResults):
     WHITE: AgentChange
     BLACK: AgentChange
     disambiguation: NotRequired[str]
+    rows_changing: NotRequired[set]
     symbol: str | None
     halfmove_clock: Tuple[int, int]
     fullmove_number: Tuple[int, int]

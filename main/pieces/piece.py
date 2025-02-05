@@ -1,8 +1,10 @@
 from functools import cached_property
-from typing import TYPE_CHECKING, Dict, Iterable, Optional, Reversible, Set, Tuple
+from itertools import zip_longest
+from typing import TYPE_CHECKING, Dict, List, Optional, Set, Tuple
 
 from main import constants
 from main.game_tree import HalfMove
+from main.pieces.utils import vector
 from main.types import Change, GameResult, LookaheadResults, Position, Vector, X
 from main.x import to_str
 
@@ -19,8 +21,6 @@ class Piece:
     - Move where I'm told by my agent (agnostic of strategy)
     """
 
-    __slots__ = ("attr", "agent", "x", "y")
-
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__} ({self.unicode}): ({to_str(self.x)}, {self.y})>"
 
@@ -30,7 +30,7 @@ class Piece:
         self.x = x
         self.y = y
 
-    movements: Set[Vector] = NotImplemented
+    movements: List[List[Vector]] = NotImplemented
     symbol: str = NotImplemented
     fen_symbol: str = NotImplemented
     value: int = NotImplemented
@@ -57,12 +57,6 @@ class Piece:
     def king(self) -> "King":
         return self.agent.king
 
-    def get_candidate_moves(self) -> Set[Position]:
-        candidate_moves = set(
-            (self.x + x_d, self.y + y_d) for x_d, y_d in self.movements
-        )
-        return candidate_moves & constants.SQUARES
-
     def is_valid_vector(self, new_position: Position) -> bool:
         raise NotImplementedError
 
@@ -73,36 +67,19 @@ class Piece:
             return False
         return True
 
-    @staticmethod
-    def _get_squares_in_range(old: int, new: int) -> Iterable | Reversible:
-        if old > new:
-            return range(*sorted((old, new)))[1:]
-        else:
-            return [p + 1 for p in range(*sorted((old, new)))][0:-1]
-
     def is_open_path(self, target_position: Position) -> bool:
-        # TODO can we simplify this with vectors
-        # Could be easier now that we have (int, int)
+        if vector((self.x, self.y), target_position) in {(1, 1), (0, 1), (1, 0)}:
+            return True
 
         target_x, target_y = target_position
-        x_range = self._get_squares_in_range(self.x, target_x)
-        y_range = self._get_squares_in_range(self.y, target_y)
+        step_x = 1 if self.x < target_x else -1
+        step_y = 1 if self.y < target_y else -1
+        x_range = range(self.x + step_x, target_x, step_x)
+        y_range = range(self.y + step_y, target_y, step_y)
+        fillvalue = self.x if not x_range else self.y
 
-        if self.x != target_x and self.y == target_y:  # Horizontal
-            squares_on_path = {(x, self.y) for x in x_range}
-        elif self.x == target_x and self.y != target_y:  # Vertical
-            squares_on_path = {(self.x, y) for y in y_range}
-        else:  # Diagonal
-            if target_x > self.x and target_y > self.y:  # NE
-                pass
-            elif target_x < self.x and target_y > self.y:  # NW
-                x_range = reversed(x_range)
-            elif target_x > self.x and target_y < self.y:  # SE
-                y_range = reversed(y_range)
-            else:  # SW
-                x_range = reversed(x_range)
-                y_range = reversed(y_range)
-            squares_on_path = {(x, y) for x, y in zip(x_range, y_range)}
+        _zip = zip_longest(x_range, y_range, fillvalue=fillvalue)
+        squares_on_path = set(_zip)
 
         if squares_on_path & (self.agent.positions | self.opponent.positions):
             return False
@@ -121,15 +98,31 @@ class Piece:
 
         return True
 
+    def is_valid_candidate(self, candidate: Position) -> bool:
+        if candidate not in constants.SQUARES:
+            return False
+
+        return candidate not in self.forbidden_squares
+
     def get_valid_moves(self, lazy: Optional[bool] = False) -> Set[Position]:
         valid_moves = set()
 
-        for cand in self.get_candidate_moves():
-            # TODO? We're redundantly checking vectors here, but it doesn't seem to add much
-            if self.is_valid_move(cand):
-                valid_moves.add(cand)
-                if lazy:
-                    return valid_moves
+        for batch in self.movements:
+            for x_d, y_d in batch:
+                candidate = (self.x + x_d, self.y + y_d)
+
+                if not self.is_valid_candidate(candidate):
+                    break  # Abort the batch
+                else:
+                    if not self.king_would_be_in_check(
+                        king=self.king,
+                        new_position=candidate,
+                    ):
+                        valid_moves.add(candidate)
+                        if lazy:
+                            return valid_moves
+                    if candidate in self.opponent.pieces:
+                        break  # Can't jump over pieces, abort the batch
 
         return valid_moves
 
@@ -218,7 +211,9 @@ class Piece:
         self.agent.board.apply_halfmove(halfmove)
 
         check = self.opponent.king.is_in_check()
-        fen = self.agent.board.get_fen(internal=True)
+        fen = self.agent.board.get_fen(
+            internal=True, rows_changing=change["rows_changing"]
+        )
         game_result = self.get_game_result(check=check, fen=fen)
 
         self.agent.board.rollback_halfmove(halfmove)
@@ -238,45 +233,45 @@ class Piece:
         augment: Optional[bool] = True,
         **kwargs,
     ) -> Change:
+        color = self.agent.color
+        opponent_color = self.opponent.color
+        board = self.agent.board
         change = {
-            self.agent.color: {
+            color: {
                 self.attr: {
                     "old_position": (self.x, self.y),
                     "new_position": (x, y),
                 }
             },
-            self.opponent.color: {},
+            opponent_color: {},
             "disambiguation": "",
             "check": False,
             "game_result": None,
             "symbol": self.symbol,
-            "halfmove_clock": (
-                self.agent.board.halfmove_clock,
-                self.agent.board.halfmove_clock + 1,
-            ),
+            "halfmove_clock": (board.halfmove_clock, board.halfmove_clock + 1),
             "fullmove_number": (
-                self.agent.board.fullmove_number,
-                self.agent.board.fullmove_number
-                + (1 if self.agent.color == constants.BLACK else 0),
+                board.fullmove_number,
+                board.fullmove_number + (1 if color == constants.BLACK else 0),
             ),
         }
 
         if (x, y) in self.opponent.pieces:  # capture
             piece = self.opponent.get_by_position(x, y)
-            change[self.opponent.color] = {
+            change[opponent_color] = {
                 piece.attr: {
                     "old_position": (x, y),
                     "new_position": None,
                 }
             }
-            change["halfmove_clock"] = (self.agent.board.halfmove_clock, 0)
+            change["halfmove_clock"] = (board.halfmove_clock, 0)
 
         if augment:
             change = self.augment_change(x, y, change, **kwargs)
             change["disambiguation"] = self.get_disambiguation(x, y)
+            change["rows_changing"] = {self.y, y}
 
             if self.opponent.en_passant_target:
-                change[self.opponent.color]["en_passant_target"] = (
+                change[opponent_color]["en_passant_target"] = (
                     self.opponent.en_passant_target,
                     None,
                 )
