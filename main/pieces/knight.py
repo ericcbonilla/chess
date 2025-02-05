@@ -20,6 +20,8 @@ class Knight(Piece):
     value = 3
     unicode = "\u2658"
 
+    __slots__ = ("attr", "agent", "x", "y")
+
     def is_valid_vector(self, new_position: Position) -> bool:
         return vector(self.position, new_position) in {(1, 2), (2, 1)}
 

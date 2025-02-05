@@ -47,6 +47,8 @@ class King(Piece):
         else:
             self.has_moved = has_moved
 
+    __slots__ = ("attr", "agent", "x", "y", "has_moved")
+
     def _can_castle(self, rook: Rook | None) -> Tuple[int | None, bool]:
         if (
             rook is None

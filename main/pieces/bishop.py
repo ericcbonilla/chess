@@ -26,6 +26,8 @@ class Bishop(Piece):
         super().__init__(attr, agent, x, y)
         self.dark = self.position in constants.DARK_SQUARES
 
+    __slots__ = ("attr", "agent", "x", "y", "dark")
+
     def is_valid_vector(self, new_position: Position) -> bool:
         x, y = vector(self.position, new_position)
         return x == y

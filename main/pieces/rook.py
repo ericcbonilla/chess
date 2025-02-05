@@ -39,6 +39,8 @@ class Rook(Piece):
         else:
             self.has_moved = has_moved
 
+    __slots__ = ("attr", "agent", "x", "y", "has_moved")
+
     def is_valid_vector(self, new_position: Position) -> bool:
         return 0 in vector(self.position, new_position)
 

@@ -112,6 +112,8 @@ class Pawn(Piece):
 class WhitePawn(Pawn):
     y_init = 2
 
+    __slots__ = ("attr", "agent", "x", "y")
+
     def is_capture(self, new_position: Position) -> bool:
         return new_position in {
             (self.x + 1, self.y + 1),
@@ -127,6 +129,8 @@ class WhitePawn(Pawn):
 
 class BlackPawn(Pawn):
     y_init = 7
+
+    __slots__ = ("attr", "agent", "x", "y")
 
     def is_capture(self, new_position: Position) -> bool:
         return new_position in {
