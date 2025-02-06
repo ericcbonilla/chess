@@ -23,8 +23,3 @@ def cprint(
 
     color_fn = color_fn or (yellow if agent_color == constants.BLACK else white)
     color_fn(message)
-
-
-def print_move_heading(term_size, fullmove_number: int):
-    num_breaks = term_size.columns - len(str(fullmove_number)) - 2
-    cprint(f"\n{fullmove_number}. {'=' * num_breaks}")
