@@ -145,10 +145,10 @@ class Piece:
         ]
 
         for sibling in siblings:
-            if disambiguation in (
+            if disambiguation in {
                 f"{to_str(self.x)}{self.y}",
                 f"{self.y}{to_str(self.x)}",
-            ):
+            }:
                 break
             if sibling.is_valid_move((x, y)):
                 if sibling.x == self.x:
