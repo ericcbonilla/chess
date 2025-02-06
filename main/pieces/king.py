@@ -55,7 +55,7 @@ class King(Piece):
             or rook.has_moved
             or self.has_moved
             or self.is_in_check()
-            or not self.is_open_path((rook.x, rook.y))
+            or self.is_blocked((rook.x, rook.y))
         ):
             return None, False
 
@@ -90,20 +90,20 @@ class King(Piece):
 
         return True
 
-    def get_valid_moves(self, lazy: Optional[bool] = False) -> Set[Position]:
-        valid_moves = super().get_valid_moves(lazy=lazy)
+    def get_moveset(self, lazy: Optional[bool] = False) -> Set[Position]:
+        moveset = super().get_moveset(lazy=lazy)
 
-        if lazy and valid_moves:
-            return valid_moves
+        if lazy and moveset:
+            return moveset
 
         for rook in (self.agent.a_rook, self.agent.h_rook):
             new_king_xpos, can_castle = self._can_castle(rook)
             if can_castle and new_king_xpos:
-                valid_moves.add((new_king_xpos, self.y))
+                moveset.add((new_king_xpos, self.y))
                 if lazy:
-                    return valid_moves
+                    return moveset
 
-        return valid_moves
+        return moveset
 
     def is_in_check(self, target_position: Optional[Position] = None) -> bool:
         """
@@ -121,7 +121,7 @@ class King(Piece):
         4 and 5 evaluate based on a new, target position. For this we must apply
         and rollback the target move so that King safety is evaluated using that
         future King position. Otherwise, we allow for Kings to illegally move
-        'backwards' when skewered, because is_open_path interprets the King as being
+        'backwards' when skewered, because is_blocked interprets the King as being
         'blocked' by itself.
         """
 
@@ -152,7 +152,7 @@ class King(Piece):
                 if piece.is_capture((self.x, self.y)):
                     return True
             else:
-                if piece.is_open_path((self.x, self.y)):
+                if not piece.is_blocked((self.x, self.y)):
                     return True
 
         return False

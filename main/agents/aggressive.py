@@ -23,7 +23,7 @@ class AggressiveAgent(RandomAgent):
 
         pieces = list(self.pieces.values())
         for piece in sorted(pieces, key=lambda _: random.random()):
-            for cand in piece.get_valid_moves():
+            for cand in piece.get_moveset():
                 if piece.king_would_be_in_check(piece.opponent.king, cand):
                     return piece.move(*cand, check=True)
                 elif cand in piece.opponent.pieces:

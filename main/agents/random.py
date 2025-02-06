@@ -13,12 +13,12 @@ if TYPE_CHECKING:
 class RandomAgent(Agent):
     @staticmethod
     def _random_move(piece: "Piece") -> Optional[HalfMove]:
-        valid_moves = list(piece.get_valid_moves())
+        moveset = list(piece.get_moveset())
 
-        if not valid_moves:
+        if not moveset:
             return None
 
-        pick = random.sample(valid_moves, 1)[0]
+        pick = random.sample(moveset, 1)[0]
 
         return piece.move(*pick)
 

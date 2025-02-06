@@ -67,9 +67,9 @@ class Piece:
             return False
         return True
 
-    def is_open_path(self, target_position: Position) -> bool:
+    def is_blocked(self, target_position: Position) -> bool:
         if vector((self.x, self.y), target_position) in {(1, 1), (0, 1), (1, 0)}:
-            return True
+            return False
 
         target_x, target_y = target_position
         step_x = 1 if self.x < target_x else -1
@@ -81,14 +81,12 @@ class Piece:
         _zip = zip_longest(x_range, y_range, fillvalue=fillvalue)
         squares_on_path = set(_zip)
 
-        if squares_on_path & (self.agent.positions | self.opponent.positions):
-            return False
-        return True
+        return bool(squares_on_path & (self.agent.positions | self.opponent.positions))
 
     def is_valid_move(self, new_position: Position) -> bool:
         if not self.is_valid_movement(new_position):
             return False
-        elif not self.is_open_path(new_position):
+        elif self.is_blocked(new_position):
             return False
         elif self.king_would_be_in_check(
             king=self.king,
@@ -104,30 +102,30 @@ class Piece:
 
         return candidate not in self.forbidden_squares
 
-    def get_valid_moves(self, lazy: Optional[bool] = False) -> Set[Position]:
-        valid_moves = set()
+    def get_moveset(self, lazy: Optional[bool] = False) -> Set[Position]:
+        moveset = set()
 
         for batch in self.movements:
             for x_d, y_d in batch:
                 candidate = (self.x + x_d, self.y + y_d)
 
                 if not self.is_valid_candidate(candidate):
-                    break  # Abort the batch
+                    break  # Blocked, abort the batch
                 else:
                     if not self.king_would_be_in_check(
                         king=self.king,
                         new_position=candidate,
                     ):
-                        valid_moves.add(candidate)
+                        moveset.add(candidate)
                         if lazy:
-                            return valid_moves
+                            return moveset
                     if candidate in self.opponent.pieces:
-                        break  # Can't jump over pieces, abort the batch
+                        break  # Blocked, abort the batch
 
-        return valid_moves
+        return moveset
 
-    def can_move(self) -> Set[Position]:
-        return self.get_valid_moves(lazy=True)
+    def can_move(self) -> bool:
+        return bool(self.get_moveset(lazy=True))
 
     def get_disambiguation(self, x: X, y: int) -> str:
         """
