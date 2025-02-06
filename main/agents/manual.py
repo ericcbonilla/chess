@@ -1,13 +1,12 @@
 from typing import Callable, Optional
 
-from colorist import bright_red, red
+from colorist import bright_red
 
 from main.exceptions import GameplayError, InvalidMoveError, NotationError
 from main.game_tree import HalfMove
 from main.notation import AN
 from main.pieces import King, Pawn, Piece
 from main.types import Position, X
-from main.utils import cprint
 from main.x import to_str
 
 from .agent import Agent
@@ -110,10 +109,5 @@ class ManualAgent(Agent):
             kwargs = kwargs or {}
             if an.promotee_type:
                 kwargs = {"promotee_type": an.promotee_type}
-
-            if an.is_capture:
-                cprint(f"{piece} capturing on {pick}", self.color, color_fn=red)
-            else:
-                cprint(f"Moving {piece} to {pick}", self.color)
 
             return piece.move(*pick, **kwargs)
