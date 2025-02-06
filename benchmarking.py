@@ -6,7 +6,7 @@ from colorist import green, red
 from main.agents import AggressiveAgent, RandomAgent
 from main.builders import BoardBuilder
 
-BENCHMARK = 0.22
+BENCHMARK = 0.205
 games_played = 0
 times_per_halfmove = []
 builder = BoardBuilder()
