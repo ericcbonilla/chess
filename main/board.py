@@ -1,4 +1,3 @@
-import os
 from collections import Counter
 from datetime import date
 from typing import TYPE_CHECKING, Dict, Optional, Set
@@ -12,7 +11,6 @@ from main.game_tree import FullMove, GameTree, HalfMove
 from main.game_tree.utils import get_halfmove
 from main.notation.utils import truncate_fen
 from main.types import Change, GameResult, Position
-from main.utils import cprint, print_move_heading
 from main.x import H, to_str
 
 if TYPE_CHECKING:
@@ -359,12 +357,9 @@ class Board:
         num_fullmoves: Optional[int] = None,
         internal: Optional[bool] = False,
     ):
-        term_size = os.get_terminal_size()
         elapsed_fullmoves = 0
 
         if not self.result and self.active_agent is self.black:
-            print_move_heading(term_size, self.fullmove_number)
-            cprint(f"Turn: {constants.WHITE}\n...")
             self.black.move()
             elapsed_fullmoves += 1
 
@@ -374,7 +369,6 @@ class Board:
             if num_fullmoves is not None and elapsed_fullmoves == num_fullmoves:
                 break
 
-            print_move_heading(term_size, self.fullmove_number)
             self.white.move()
 
             if not self.result:
